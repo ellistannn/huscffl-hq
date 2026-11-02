@@ -6,6 +6,7 @@ import os
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = 'https://api.sleeper.app'
@@ -15,6 +16,31 @@ WEEKS = {'2025':16,'2026':17}
 def get(url):
     with urlopen(Request(url,headers={'User-Agent':'HUSCFFL-Score-Exporter/1.0','Accept':'application/json'}),timeout=45) as res:
         return json.load(res)
+
+def get_week_stats(year, week):
+    # These are unofficial Sleeper endpoints; availability is not guaranteed.
+    candidates = [
+        f'https://api.sleeper.app/v1/stats/nfl/regular/{year}/{week}',
+        f'https://api.sleeper.com/stats/nfl/{year}/{week}?season_type=regular',
+        f'https://api.sleeper.app/stats/nfl/{year}/{week}?season_type=regular',
+    ]
+    failures = []
+    for url in candidates:
+        try:
+            payload = get(url)
+            entries = list(unwrap(payload))
+            if len(entries) < 50:
+                failures.append(f'{url}: returned {len(entries)} records')
+                continue
+            print(f'Using player stats: {url} ({len(entries)} records)', flush=True)
+            return entries
+        except (HTTPError, URLError, ValueError, TimeoutError) as exc:
+            failures.append(f'{url}: {exc}')
+    raise RuntimeError(
+        f'No usable unofficial Sleeper stats feed for {year} week {week}. '
+        + ' | '.join(failures)
+        + '. Sleeper does not officially support these NFL-wide stats endpoints.'
+    )
 
 def normalize_position(p):
     p=str(p or '').upper()
@@ -44,9 +70,9 @@ def main():
         completed=min(completed,WEEKS[year]);out={'year':year,'weeks':completed,'players':{},'updated':datetime.now(timezone.utc).isoformat(timespec='seconds'),'source':'Sleeper weekly stats (unofficial)','scoring':'League scoring_settings'}
         if not completed: continue
         for week in range(1,completed+1):
-            raw=get(f'{BASE}/stats/nfl/regular/{year}/{week}')
+            records=get_week_stats(year,week)
             count=0
-            for pid,record in unwrap(raw):
+            for pid,record in records:
                 pid=str(pid)
                 if not isinstance(record,dict):continue
                 info=players.get(pid,{})

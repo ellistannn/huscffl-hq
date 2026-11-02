@@ -183,3 +183,12 @@ Two-team recap and preview articles now render a prominent versus-style hero at 
 ## v17 scoring additions
 
 The My Team page uses the global season/week filters for a season offense/defense line graph or a selected weekly performance report. The new Scoring Statistics navigation page compares all ten teams by total, offensive, defensive, and average points for 2025/2026. Data is calculated in the browser from Sleeper's completed weekly matchup starting lineups; current/future weeks are excluded. Missing or unmapped data remains visibly unavailable. The website requires network access to Sleeper for live scoring. To publish, upload the extracted files to the root of the GitHub Pages repository while preserving custom content.
+
+## v18 update
+- Reworked trade summaries to show each franchise's received players and traded picks, with multi-franchise support.
+- URL navigation clears selected team when leaving My Team.
+- Scoring comparison now has standings rank sorting and Standings-style clickable team names/logos.
+- Added a weekly offense/defense scatter comparison with league-average reference lines and selectable team.
+- Added My Team league rankings for offense, defense and total scoring.
+- Weekly graph hover labels include two decimal places.
+- Updated six Week 7 articles and included seven Week 8 previews/features.

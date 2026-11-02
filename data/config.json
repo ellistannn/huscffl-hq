@@ -1,0 +1,18 @@
+{
+  "leagueName": "High Up Social Club Fantasy Football League",
+  "leagueId": "1309685082163810304",
+  "season": 2026,
+  "teams": [
+    {"id":"new-york-noodles","name":"New York Noodles"},
+    {"id":"tampa-bay-tyranny","name":"Tampa Bay Tyranny"},
+    {"id":"njz-bunniez","name":"NJz Bunniez"},
+    {"id":"seattle-supersonics","name":"Seattle Supersonics"},
+    {"id":"hou-you-like-that","name":"HOU You Like That"},
+    {"id":"dalla-dalla-dallas","name":"Dalla Dalla Dallas"},
+    {"id":"good-things-we-okc","name":"Good Things We OKC!"},
+    {"id":"utah-yetis","name":"Utah Yetis"},
+    {"id":"district-of-daebak","name":"District of Daebak"},
+    {"id":"lalalala","name":"LALALALA"}
+  ],
+  "rosterOverrides": {}
+}

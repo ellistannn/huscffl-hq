@@ -1,0 +1,17 @@
+[
+  {
+    "id": "welcome-to-huscffl-hq",
+    "season": 2026,
+    "week": 1,
+    "type": "feature",
+    "title": "Welcome to League Headquarters",
+    "summary": "A new home for the stories, rivalries, and weekly coverage of HUSCFFL.",
+    "date": "2026-09-01",
+    "teams": ["all"],
+    "paragraphs": [
+      "Welcome to HUSCFFL League Headquarters, a central home for league coverage and franchise statistics.",
+      "Every weekly recap, preview, and special feature will be collected here. Select your franchise in the team menu to see its dashboard and coverage.",
+      "This is a starter article. Replace it with your real commissioner's introduction in data/stories.json."
+    ]
+  }
+]

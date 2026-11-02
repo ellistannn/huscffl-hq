@@ -101,3 +101,11 @@ The team selector filters articles and shows that franchise's dashboard with cur
 - Github Pages is static/public. Do not commit passwords, tokens, private information, or drafts you don't want visible.
 
 Official references: https://docs.sleeper.com/ and https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
+
+## Head-to-head history (2025–present)
+
+The team dashboard's **Head-to-head records** section now has an **All-Time / 2025 / 2026** selector. It fetches completed Sleeper matchups from both seasons (IDs in `data/config.json`, under `leagueIds`). All-Time combines both seasons, including playoffs.
+
+**Important:** Franchise identification is initially based on team names and manager IDs. If the same franchise changed its name or manager between seasons, 2025 records may be incomplete. Add mappings under `historicalRosterOverrides` in `data/config.json` (e.g. `"2025": {"new-york-noodles": 3}`), where `3` is the **2025** roster ID. Set `rosterOverrides` similarly for the active season. The site flags missing mappings rather than attributing matches to the wrong franchise.
+
+The 2025 data is retrieved in the browser when you load the published site; this package does **not** include a pre-verified archival snapshot of the actual results.

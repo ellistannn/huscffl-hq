@@ -109,3 +109,14 @@ The team dashboard's **Head-to-head records** section now has an **All-Time / 20
 **Important:** Franchise identification is initially based on team names and manager IDs. If the same franchise changed its name or manager between seasons, 2025 records may be incomplete. Add mappings under `historicalRosterOverrides` in `data/config.json` (e.g. `"2025": {"new-york-noodles": 3}`), where `3` is the **2025** roster ID. Set `rosterOverrides` similarly for the active season. The site flags missing mappings rather than attributing matches to the wrong franchise.
 
 The 2025 data is retrieved in the browser when you load the published site; this package does **not** include a pre-verified archival snapshot of the actual results.
+
+
+## Branding and transactions (v5)
+
+- `assets/huscffl-logo.png` contains the official transparent HUSCFFL shield, displayed in the header and hero. `assets/favicon.png` is used for the browser icon.
+- Brand colors are rose, coral, cream, and deep plum; adjust `assets/styles.css` if needed.
+- **Transactions** is a new navigation tab. The page queries Sleeper's league `/transactions/{week}` endpoints for both configured seasons, filtering completed transactions and refreshing automatically every five minutes while the page is open. The feed also appears on each mapped team dashboard.
+- The site does not use a server, authentication, or GitHub Actions for transaction polling; it requests data directly from Sleeper. New moves become visible when Sleeper exposes them and the browser next refreshes; it is **not** a push-notification feed.
+- Team transaction mapping uses franchise name first, owner ID second, and the manual overrides in `data/config.json` when provided. Verify these associations for historical franchise name/ownership changes.
+- Player IDs appear as numeric Sleeper IDs when no name catalog has been supplied; the tracker intentionally does not invent names. Draft-pick details are abbreviated.
+- The requested logo has not been modified; it is included as provided.

@@ -125,3 +125,13 @@
 
 /* v22.1 compact checkbox dropdowns */
 .player-multi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:12px 0 18px}.multi-dropdown{position:relative;min-width:0}.multi-dropdown>summary{cursor:pointer;list-style:none;padding:11px 12px;border:1px solid #d9c1ca;background:#fff;border-radius:8px;font-weight:650;display:flex;flex-direction:column;gap:3px}.multi-dropdown>summary::-webkit-details-marker{display:none}.multi-summary{font-size:.8rem;font-weight:400;color:#785f6c}.multi-menu{position:absolute;z-index:30;top:100%;left:0;min-width:235px;max-width:min(90vw,340px);width:max-content;max-height:300px;overflow:auto;box-shadow:0 12px 25px #28162730;border:1px solid #d9c1ca;border-radius:10px;background:#fff;padding:10px}.multi-actions{display:flex;justify-content:space-between;gap:12px;margin-bottom:10px}.multi-actions button{background:transparent;border:0;color:#9a405d;text-decoration:underline;cursor:pointer}.multi-items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.multi-items label{display:flex;align-items:center;gap:6px;font-weight:400;font-size:.88rem}.multi-items input{accent-color:#ae536b}@media(max-width:600px){.player-multi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.multi-menu{max-width:80vw;min-width:205px}.player-multi-grid>.multi-dropdown:nth-child(even) .multi-menu{right:0;left:auto}}
+
+/* v22.5: compact, accessible numbered pagination */
+.player-pager{display:flex;flex-direction:column;gap:10px;align-items:center;padding:18px 8px}
+.player-page-buttons{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center}
+.player-pager .player-page-button{min-width:36px;min-height:36px;padding:7px 10px;cursor:pointer;background:#fff;color:#301d2c}
+.player-pager .player-page-button.active,.player-pager .player-page-button[aria-current=page]{background:#ae5670;color:#fff;border-color:#ae5670;font-weight:700}
+.player-pager .player-page-button:disabled{opacity:.42;cursor:not-allowed}
+.player-pager .player-page-button:focus-visible{outline:3px solid #e38f9e;outline-offset:2px}
+.player-page-summary{font-size:.85rem;color:#806874}
+@media(max-width:540px){.player-page-buttons{gap:4px}.player-pager .player-page-button{min-width:32px;min-height:34px;padding:5px 8px}}

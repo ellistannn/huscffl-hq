@@ -243,3 +243,16 @@ Players and My Team roster lists have compact, checkbox-based dropdowns for seas
 - Add positional scoring comparison of all ten teams on the Scoring Statistics page using starting lineup points by actual position.
 
 - 2026 roster-ID overrides populated from the supplied Week 7 facts export; verify if franchises change ownership.
+
+
+## v22.3 positional scoring display hotfix
+
+The Scoring Statistics positional comparison now shows loading and API errors instead of an empty panel, checks for no completed/owner-mapped weekly matchup rows, and refreshes when the player position directory finishes loading. Deploy `assets/app.js` only to preserve articles and configuration.
+
+
+## v22.4 roster ownership hotfix
+Roster ownership now uses explicit configured roster IDs before transaction mappings, so it doesn't depend on transaction fetches. Displays how many Sleeper rosters were successfully mapped. Requires `assets/app.js` only if v22.3 is installed. Browser/network validation is still required; 2025 requires historical roster overrides where franchise ownership is ambiguous.
+
+## v22.5 player pagination
+
+The Players page shows up to **50 players per page**, after all sorting and filters. Numbered page buttons display a moving window of up to five pages, with first/previous/next/last controls and accessible labels. Changing player filters resets pagination to the first page. Navigating to another results page scrolls to the top of the player section. All v22.4 ownership-mapping diagnostics remain intact.

@@ -106,8 +106,8 @@ function scoringTeamClick(event,season){const button=event.target.closest('[data
 function renderScoring(){
  const area=$('#scoringTable');if(!area)return;
  const season=state.scoringSeason,current=state.scoring[season];$('#scoringSeason').value=season;
- if(!current){area.innerHTML='<p class="muted">Loading weekly scoring data from Sleeper…</p>';renderComparison();return}
- if(current.error){area.innerHTML='<p class="muted">Scoring data unavailable: '+safe(current.error)+'</p>';renderComparison();return}
+ if(!current){area.innerHTML='<p class="muted">Loading weekly scoring data from Sleeper…</p>';renderComparison();renderLeaguePositionalComparison();return}
+ if(current.error){area.innerHTML='<p class="muted">Scoring data unavailable: '+safe(current.error)+'</p>';renderComparison();renderLeaguePositionalComparison();return}
  const ranks=seasonStandingsRanks(season);
  const rows=scoringRows(season).map(t=>({...t,rank:ranks.get(t.id)??null}));
  const headers=[['rank','Rank'],['name','Team'],['games','Weeks'],['total','Total'],['off','Offense'],['def','Defense'],['avg','Avg total'],['avgOff','Avg offense'],['avgDef','Avg defense']];
@@ -139,11 +139,14 @@ function renderLeaguePositionalComparison(){
  const el=$('#leaguePositionalComparison');if(!el)return;
  const season=state.scoringSeason;
  const data=state.scoring[season];
- if(!data||data.error){el.innerHTML='<p class="muted">Positional rankings load with the selected season scoring data.</p>';return}
+ if(!data){el.innerHTML='<p class="muted">Loading positional scoring from completed Sleeper matchups…</p>';return}
+ if(data.error){el.innerHTML='<p class="muted">Unable to load positional comparisons: '+safe(data.error)+'</p>';return}
  const positions=['QB','RB','WR','TE','DL','LB','DB'];
  const selected=positions.includes(state.leaguePositionalPosition)?state.leaguePositionalPosition:'QB';
  const metric=state.leaguePositionalMetric==='total'?'total':'average';
  const source=data.rows||{};
+ const completedWeeks=Object.values(source).reduce((n,weeks)=>n+weeks.length,0);
+ if(!completedWeeks){el.innerHTML='<p class="muted">No completed matchup scoring was found for '+safe(season)+'. Check that Sleeper weekly matchups are available and the roster IDs map to HUSCFFL franchises.'+(data.failed?' '+data.failed+' weekly requests failed.':'')+(data.unmapped?' '+data.unmapped+' matchup rows could not be mapped.':'')+'</p>';return}
  const teams=state.config.teams.map(t=>{
   const weeks=source[t.id]||[];
   const total=weeks.reduce((n,w)=>n+Number(w.positional?.[selected]||0),0);
@@ -411,7 +414,7 @@ async function loadPlayerNames(){
  try{const saved=JSON.parse(localStorage.getItem(key)||'null');if(saved?.names)Object.assign(state.transactionNames,saved.names)}catch(e){}
  const needed=new Set(state.transactions.flatMap(t=>[...Object.keys(t.adds||{}),...Object.keys(t.drops||{})]));
  const names=state.transactionNames;
- try{const response=await fetch('data/player-names.json?cache='+Math.floor(Date.now()/3600000),{cache:'no-cache'});if(response.ok){const local=await response.json();Object.assign(names,local.names||local);Object.assign(state.playerPositions,local.positions||{});recalculatePositionalTotals();renderTeamRankings()}}catch(e){console.warn('Local player name catalog unavailable',e)}
+ try{const response=await fetch('data/player-names.json?cache='+Math.floor(Date.now()/3600000),{cache:'no-cache'});if(response.ok){const local=await response.json();Object.assign(names,local.names||local);Object.assign(state.playerPositions,local.positions||{});recalculatePositionalTotals();renderTeamRankings();renderLeaguePositionalComparison()}}catch(e){console.warn('Local player name catalog unavailable',e)}
  let missing=[...needed].filter(id=>!names[id]);
  if(missing.length){
    const checkedKey='huscffl-player-catalog-last-try-v2';let last=0;try{last=Number(localStorage.getItem(checkedKey)||0)}catch(e){}
@@ -426,7 +429,7 @@ async function loadPlayerNames(){
    }
  }
  try{localStorage.setItem(key,JSON.stringify({names}))}catch(e){}
- recalculatePositionalTotals();renderTeamRankings();renderTransactions();
+ recalculatePositionalTotals();renderTeamRankings();renderLeaguePositionalComparison();renderTransactions();
 }
 function renderTransactions(){
  if(!state.config||!$('#transactionList'))return;
@@ -550,18 +553,31 @@ function setupPlayerControls(){
  root.addEventListener('change',e=>{const c=e.target.dataset.playerControl;if(!c)return;state['player'+c[0].toUpperCase()+c.slice(1)]=e.target.value;state.playerPage=0;renderPlayerRows();renderTopPlayers(false)});
  root.addEventListener('input',e=>{if(e.target.dataset.playerControl==='search'){state.playerSearch=e.target.value;state.playerPage=0;renderPlayerRows();}});
 }
+function rosterFranchise(year,roster){
+ const rid=String(roster.roster_id);
+ const overrides=String(year)===String(state.config.season)?state.config.rosterOverrides||{}:state.config.historicalRosterOverrides?.[year]||{};
+ const direct=Object.entries(overrides).find(([,rosterId])=>String(rosterId)===rid)?.[0];
+ if(direct&&state.config.teams.some(t=>t.id===direct))return direct;
+ const tx=state.transactionMappings[year]?.[rid];
+ if(tx)return tx;
+ const current=String(year)===String(state.config.season)?state.rosters.find(r=>String(r.roster_id)===rid):null;
+ if(current?.teamId)return current.teamId;
+ const user=state.users.find(u=>String(u.user_id)===String(roster.owner_id));
+ const label=[roster.metadata?.team_name,user?.metadata?.team_name,user?.display_name].map(slug);
+ return state.config.teams.find(t=>label.includes(slug(t.name)))?.id||null;
+}
 function rebuildPlayerOwnership(year,rosters){
- const ownership={};const mapping=state.transactionMappings[year]||{};
- const current=year===String(state.config.season);
- const currentRosters=new Map(state.rosters.map(r=>[String(r.roster_id),r]));
+ const ownership={};let mappedRosters=0,missingRosters=[];
  for(const r of rosters){
-  const rid=String(r.roster_id);
-  const team=mapping[rid]||(current?currentRosters.get(rid)?.teamId:null)||null;
+  const rid=String(r.roster_id);const team=rosterFranchise(year,r);
+  if(team)mappedRosters++;else missingRosters.push(rid);
   const players=[...(r.players||[]),...(r.reserve||[]),...(r.taxi||[])].map(String);
   const reserves=new Set((r.reserve||[]).map(String)),taxi=new Set((r.taxi||[]).map(String));
-  for(const id of players)ownership[id]={teamId:team,label:team?teamName(team):`Roster ${rid}`,rosterId:rid,status:taxi.has(id)?'Taxi':reserves.has(id)?'IR':'Rostered'};
+  for(const id of players)ownership[id]={teamId:team,label:team?teamName(team):`Unmapped roster ${rid}`,rosterId:rid,status:taxi.has(id)?'Taxi':reserves.has(id)?'IR':'Rostered'};
  }
  state.playerRosterMap[year]=ownership;
+ state.playerOwnershipDiagnostics=state.playerOwnershipDiagnostics||{};
+ state.playerOwnershipDiagnostics[year]={rosters:rosters.length,mappedRosters,missingRosters,players:Object.keys(ownership).length};
  renderPlayerRows();renderTopPlayers();
 }
 function reconcilePlayerOwnership(){for(const [year,rosters] of Object.entries(state.rawPlayerRosters||{}))rebuildPlayerOwnership(year,rosters)}
@@ -605,10 +621,32 @@ function renderPlayerRows(){const el=$('#playerDatabaseTable');if(!el)return;con
  if(missing.length){status.textContent=`Player scoring data unavailable for ${missing.join(', ')}. Run the GitHub Actions player statistics workflow.`;el.innerHTML='';return}
  if(!state.playerWeeks.length){status.textContent='Select at least one week to calculate player rankings.';el.innerHTML='';return}
  const rows=playerRows(),ranks=rankedPlayerRows(),per=50,pages=Math.max(1,Math.ceil(rows.length/per));state.playerPage=Math.min(state.playerPage,pages-1);const visible=rows.slice(state.playerPage*per,(state.playerPage+1)*per);
- status.textContent=`${rows.length.toLocaleString()} players · ${selectedYears().join(' + ')} · ${state.playerWeeks.length} selected weeks · Roster status as of ${rosterYear()}`;
+ const diag=state.playerOwnershipDiagnostics?.[rosterYear()];
+ const mapMessage=!diag?' · Loading franchise roster ownership…':diag.missingRosters.length?` · Warning: ${diag.missingRosters.length} unmapped Sleeper roster(s): ${diag.missingRosters.join(', ')}`:` · ${diag.mappedRosters}/${diag.rosters} franchise rosters mapped`;
+ status.textContent=`${rows.length.toLocaleString()} players · ${selectedYears().join(' + ')} · ${state.playerWeeks.length} selected weeks · Roster status as of ${rosterYear()}${mapMessage}`;
  el.innerHTML=`<table class="standings-table player-table"><thead><tr><th>Player</th><th>Pos</th><th>Rank</th><th>Roster status</th><th>GP</th><th>Total FP</th><th>FP/G</th></tr></thead><tbody>${visible.map(p=>`<tr class="${p.ownership?'':'player-available'}"><td><strong>${safe(p.name)}</strong><small>${safe(p.nflTeam)}</small></td><td>${safe(p.pos)}</td><td>${safe(playerRankLabel(p,ranks))}</td><td>${safe(p.ownership?(p.ownership.status+' · '+(p.ownership.teamId?teamName(p.ownership.teamId):p.ownership.label)):'Available')}</td><td>${p.gp}</td><td>${fmt(p.points)}</td><td>${p.gp?fmt(p.average):'—'}</td></tr>`).join('')}</tbody></table>`;
- const pager=$('#playerDatabasePager');pager.innerHTML=`<button type="button" id="playerPrev" ${!state.playerPage?'disabled':''}>Previous</button><span>Page ${state.playerPage+1} / ${pages}</span><button type="button" id="playerNext" ${state.playerPage>=pages-1?'disabled':''}>Next</button>`;
- $('#playerPrev').onclick=()=>{state.playerPage--;renderPlayerRows()};$('#playerNext').onclick=()=>{state.playerPage++;renderPlayerRows()};
+ const pager=$('#playerDatabasePager');
+ const current=state.playerPage+1;
+ const first=Math.max(1,Math.min(current-2,pages-4));
+ const last=Math.min(pages,first+4);
+ const buttons=[];
+ const nav=(label,target,disabled,aria)=>`<button type="button" class="player-page-button" data-player-page="${target}" aria-label="${aria}" ${disabled?'disabled':''}>${label}</button>`;
+ buttons.push(nav('«',0,current===1,'First page'));
+ buttons.push(nav('‹',current-2,current===1,'Previous page'));
+ if(first>1){buttons.push(nav('1',0,false,'Page 1'));if(first>2)buttons.push('<span aria-hidden="true">…</span>')}
+ for(let n=first;n<=last;n++)buttons.push(`<button type="button" class="player-page-button ${n===current?'active':''}" data-player-page="${n-1}" aria-label="Page ${n}" ${n===current?'aria-current="page"':''}>${n}</button>`);
+ if(last<pages){if(last<pages-1)buttons.push('<span aria-hidden="true">…</span>');buttons.push(nav(String(pages),pages-1,false,`Page ${pages}`))}
+ buttons.push(nav('›',current,current===pages,'Next page'));
+ buttons.push(nav('»',pages-1,current===pages,'Last page'));
+ pager.innerHTML=`<span class="player-page-summary">Showing ${rows.length?state.playerPage*per+1:0}–${Math.min((state.playerPage+1)*per,rows.length)} of ${rows.length.toLocaleString()} · Page ${current} of ${pages}</span><div class="player-page-buttons">${buttons.join('')}</div>`;
+ pager.querySelectorAll('[data-player-page]').forEach(button=>button.addEventListener('click',()=>{
+  const destination=Number(button.dataset.playerPage);
+  if(destination===state.playerPage||destination<0||destination>=pages)return;
+  state.playerPage=destination;
+  renderPlayerRows();
+  const heading=document.querySelector('#playersView .section-heading')||document.querySelector('#playerDatabaseTable');
+  if(heading)heading.scrollIntoView({behavior:'instant',block:'start'});
+ }));
 }
 function renderPlayerDatabase(){if(!state.config)return;const controls=$('#playersControls');if(!controls)return;controls.innerHTML=playerControlsHTML();attachMultiEvents(controls);renderPlayerRows()}
 function renderTopPlayers(rebuild=true){
@@ -617,7 +655,7 @@ function renderTopPlayers(rebuild=true){
  const eligible=eligibleSelectedPositions();
  const rows=playerRows({unfiltered:true});
  const rankByPosition={};for(const pos of playerPositions){const list=rows.filter(p=>p.pos===pos);let rank=0,prev=null;rankByPosition[pos]=new Map();list.forEach((p,i)=>{if(prev===null||Math.abs(p.metric-prev)>0.00001)rank=i+1;prev=p.metric;rankByPosition[pos].set(p.id,rank)})}
- const mine=rows.filter(p=>eligible.includes(p.pos)&&ownMap[p.id]?.teamId===id);
+ const mine=rows.filter(p=>eligible.includes(p.pos)&&ownMap[p.id]?.teamId===id);const diag=state.playerOwnershipDiagnostics?.[rosterYear()];
  const missing=selectedYears().filter(y=>!state.playerFiles[y]?.players);
  if(rebuild||!el.querySelector('#rosterPlayerData')){
   el.innerHTML=`<div class="panel-head"><div><div class="eyebrow">THE ROSTER</div><h3>Rostered Players by Position</h3></div><button type="button" class="text-button" id="openPlayerDatabase">Full player database →</button></div>${filterDropdowns(true)}<div class="player-controls"><label>Metric <select id="topPlayerMetric"><option value="total" ${state.playerMetric==='total'?'selected':''}>Total fantasy points</option><option value="average" ${state.playerMetric==='average'?'selected':''}>Average per game</option></select></label></div><p class="muted">All current rostered players (including bench, IR, and taxi). Scoring combines checked weeks from selected seasons; ownership reflects ${rosterYear()}.</p><div id="rosterPlayerData"></div>`;
@@ -626,7 +664,7 @@ function renderTopPlayers(rebuild=true){
   el.querySelector('#openPlayerDatabase').onclick=()=>{state.view='players';state.playerTeamsSelected=[id];state.article=null;change();window.scrollTo(0,0)};
  }
  const body=el.querySelector('#rosterPlayerData');if(!body)return;
- body.innerHTML=missing.length?`<p class="muted">Missing player statistics for ${missing.join(', ')}.</p>`:!state.playerWeeks.length?'<p class="muted">Select at least one scoring week.</p>':`<div class="standings-scroll"><table class="standings-table"><thead><tr><th>Player</th><th>Rank</th><th>GP</th><th>Total FP</th><th>FP/G</th></tr></thead><tbody>${mine.map(p=>`<tr><td>${safe(p.name)}</td><td>${safe(p.pos)}${rankByPosition[p.pos]?.get(p.id)||'—'}</td><td>${p.gp}</td><td>${fmt(p.points)}</td><td>${p.gp?fmt(p.average):'—'}</td></tr>`).join('')||'<tr><td colspan="5">No rostered players found for this selection.</td></tr>'}</tbody></table></div>`;
+ body.innerHTML=missing.length?`<p class="muted">Missing player statistics for ${missing.join(', ')}.</p>`:!state.playerWeeks.length?'<p class="muted">Select at least one scoring week.</p>':`<div class="standings-scroll"><table class="standings-table"><thead><tr><th>Player</th><th>Rank</th><th>GP</th><th>Total FP</th><th>FP/G</th></tr></thead><tbody>${mine.map(p=>`<tr><td>${safe(p.name)}</td><td>${safe(p.pos)}${rankByPosition[p.pos]?.get(p.id)||'—'}</td><td>${p.gp}</td><td>${fmt(p.points)}</td><td>${p.gp?fmt(p.average):'—'}</td></tr>`).join('')||`<tr><td colspan="5">${!diag?'Loading Sleeper roster ownership…':diag.missingRosters.length?'Some Sleeper rosters are not mapped; check config.json roster IDs.':`No scored rostered players found for ${safe(teamName(id))}. Verify season and week filters.`}</td></tr>`}</tbody></table></div>`;
 }
 
 async function init(){try{const [config,stories]=await Promise.all([fetch('data/config.json').then(r=>{if(!r.ok)throw Error('config.json missing');return r.json()}),fetch('data/stories.json').then(r=>{if(!r.ok)throw Error('stories.json missing');return r.json()})]);state.config=config;state.stories=stories;state.playerYears=[state.playerYear];state.playerWeeks=Array.from({length:seasonWeeks(state.playerYear)},(_,i)=>i+1);urlState();setupSelectors();render();loadConstitution();loadLive();setInterval(loadTransactions,300000);loadPlayerScores();}catch(err){console.error(err);$('#dataStatus').textContent='Unable to load site files. Use GitHub Pages or a local server.'}}

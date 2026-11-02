@@ -157,3 +157,19 @@ This version contains six verified Week 7 recaps based on the user's `week_7_fac
 - Standings tables, including all ten home-page teams, include Sleeper Max PF (roster settings `ppts` + `ppts_decimal`). If Sleeper has not provided potential points, the API may show zero.
 - Homepage displays five compact transactions; full transaction details remain in Transactions. Desktop: standings left / transactions right; mobile: standings then transactions.
 - Constitution page reads `data/constitution.md`. Replace the placeholder there with approved rules and commit the file. Do not remove `data/constitution.md`.
+
+
+## v13: Full Standings Max PF visibility
+- The full Standings view now has a dedicated horizontally scrollable table. The rightmost **Max PF** column is always present in the rendered table, even on smaller screens.
+- Versioned CSS/JS URLs help prevent GitHub Pages and browser caches from retaining the old standings renderer.
+- If updated code is deployed but numbers show 0.00, verify Sleeper's `ppts` and `ppts_decimal` roster settings for that league season.
+
+
+## Team logos
+
+This version includes locally hosted franchise logos for all 10 teams under `assets/team-logos/`. They are used in standings, team dashboards, coverage cards, articles, and transactions so branding stays consistent across seasons.
+
+
+## Matchup article hero
+
+Two-team recap and preview articles now render a prominent versus-style hero at the top of the article with both franchise logos and names. League-wide or multi-team stories keep the standard article header.

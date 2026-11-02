@@ -7,11 +7,9 @@
     "title": "Welcome to League Headquarters",
     "summary": "A new home for the stories, rivalries, and weekly coverage of HUSCFFL.",
     "date": "2026-09-01",
-    "teams": ["all"],
-    "paragraphs": [
-      "Welcome to HUSCFFL League Headquarters, a central home for league coverage and franchise statistics.",
-      "Every weekly recap, preview, and special feature will be collected here. Select your franchise in the team menu to see its dashboard and coverage.",
-      "This is a starter article. Replace it with your real commissioner's introduction in data/stories.json."
-    ]
+    "teams": [
+      "all"
+    ],
+    "bodyHtml": "<p>Welcome to HUSCFFL League Headquarters, a central home for league coverage and franchise statistics.</p>\n<p>Every weekly recap, preview, and special feature will be collected here. Select your franchise in the team menu to see its dashboard and coverage.</p>\n<p><strong>This is a starter article.</strong> Replace or delete this file when you have real league coverage.</p>"
   }
 ]

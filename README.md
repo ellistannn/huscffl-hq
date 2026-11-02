@@ -1,44 +1,79 @@
-# HUSCFFL League Headquarters
+# HUSCFFL League Headquarters — GitHub Pages
 
-A free, mobile-friendly fantasy football league website for **GitHub Pages**. No build step, paid hosting, API key, or framework required.
+A responsive, static fantasy football league website with team filtering, individual franchise dashboards, current-season head-to-head results, standings from Sleeper, and Markdown recaps and previews.
 
-## Publish the website
+## 1. Install on GitHub Pages
 
-1. Create a **public** GitHub repository named `huscffl-hq` (or another name).
-2. Upload **the contents of this folder** to the root of the repository. Be sure `index.html`, `assets/`, and `data/` are at the top level.
-3. Go to **Settings → Pages**. Under **Build and deployment**, choose **Deploy from a branch**, branch **main**, folder **/(root)**, then **Save**.
-4. Visit `https://YOUR-GITHUB-USERNAME.github.io/huscffl-hq/` once GitHub reports deployment. You can also use a custom domain later.
+1. Create a **public** GitHub repository, e.g. `huscffl-hq`.
+2. Upload **the contents of `huscffl-site/`** into the repository root. Keep the hidden `.github/workflows/` folder. If you use GitHub's web upload interface, ensure that folder and workflow actually arrive; if not, create `.github/workflows/publish-articles.yml` in the repository using GitHub's Add file menu or push all files using Git.
+3. Under **Settings → Pages**, select **Deploy from a branch**, branch `main`, folder `/(root)`.
+4. Under **Settings → Actions → General → Workflow permissions**, enable **Read and write permissions**, if your repository allows it, so the publication workflow can commit `data/stories.json`.
+5. Confirm the `Publish HUSCFFL articles` workflow is enabled under **Actions**. Its run history will show errors if any article has invalid metadata.
+6. Open `https://YOUR-USERNAME.github.io/huscffl-hq/` after deployment. Publishing may take a short while after a commit.
 
-## Content management
+**Note:** Repository branch protection or organization policies might prevent an automatic commit. In that case, use the local fallback in Section 3 and commit the generated `data/stories.json` yourself.
 
-Edit `data/stories.json` to create and publish an article. Each article is a JSON object within the array, for example:
+## 2. Publish a ChatGPT-generated recap (normal workflow)
 
-```json
-{
-  "id": "week-8-recap",
-  "season": 2026,
-  "week": 8,
-  "type": "recap",
-  "title": "Week 8 Recap: A New Contender Emerges",
-  "summary": "The key storylines from Week 8.",
-  "date": "2026-11-03",
-  "teams": ["new-york-noodles", "utah-yetis"],
-  "paragraphs": [
-    "The opening paragraph goes here.",
-    "Add each additional paragraph as a new string."
-  ]
-}
+When you ask ChatGPT for a recap or preview, ask for a **HUSCFFL website-ready Markdown (.md) article**, with the metadata format shown below. ChatGPT can supply a downloadable `.md` file. You review it before publication.
+
+1. In your GitHub repository, open the `articles/` folder.
+2. Select **Add file → Upload files**, select the Markdown file, and commit to `main`. Alternatively use **Add file → Create new file** and paste the provided content.
+3. In **Actions**, check the `Publish HUSCFFL articles` run. It compiles Markdown into the site's `data/stories.json` automatically and commits the update. GitHub Pages then publishes it.
+4. To edit a published article, edit its `articles/<name>.md` file and commit. To remove one, delete its `.md` file and commit. There is **no need to hand-edit JSON**.
+
+Give each article a unique `id` and filename. `id` becomes the permanent shareable link (`?article=...`).
+
+### Article format
+
+Use `examples/ARTICLE-TEMPLATE.md` as a model:
+
+```md
+---
+id: 2026-week-8-recap
+season: 2026
+week: 8
+type: recap
+title: Week 8 — Around the League
+summary: A short description of the week's biggest storylines.
+date: 2026-11-03
+teams: all
+---
+
+# The Week in Review
+
+Your article text here. **Bold emphasis** and *italics* are supported.
+
+## Key Matchup
+
+- One big performance
+- Another headline
 ```
 
-Separate adjacent article objects with commas. Valid types are `recap`, `preview`, and `feature`. Use the special team ID `all` for league-wide articles. For articles concerning multiple teams, add all relevant team IDs; **otherwise the article will not appear under those teams' filters**. JSON validation is required; invalid JSON will prevent the site from loading.
+Supported types: `recap`, `preview`, `feature`. Team tags must be exactly the IDs from `data/config.json`, comma-separated (e.g. `teams: new-york-noodles, tampa-bay-tyranny`). For a general weekly league recap use `teams: all`; it appears in every team's filtered archive. For a team-specific preview, tag the relevant teams. A date must be in `YYYY-MM-DD` format. Use lowercase kebab-case for `id`.
 
-## Connect Sleeper data
+The article body supports paragraphs, `#`–`####` headings, **bold**, *italics*, lists using `-`, blockquotes, horizontal rules, inline code, and HTTP(S) links. It does not support raw HTML or Markdown tables; raw HTML is escaped for safety. The compilation system requires only Python's standard library.
 
-In `data/config.json`, `leagueId` is prefilled with the known HUSCFFL ID `1309685082163810304`. Confirm this is the **current-season** league ID; Sleeper may assign a new ID on renewal.
+The `articles/welcome-to-huscffl-hq.md` article is an explicitly marked placeholder. Delete or replace it when ready.
 
-The site automatically loads league users and rosters from Sleeper for standings, team records, PF and PA. It tries to match each roster's Sleeper team name with the team names in `data/config.json`.
+## 3. Local fallback / test build
 
-**Important:** If a team's public Sleeper name differs from the configured site name, add an explicit entry to `rosterOverrides`:
+If GitHub Actions is unavailable, or you want to preview a large set of articles locally:
+
+```bash
+python3 scripts/build_articles.py
+python3 -m http.server 8000
+```
+
+Visit `http://localhost:8000`, and commit the updated `data/stories.json` together with the `.md` files. The generated JSON is an output file; treat Markdown as the single source of truth. Invalid metadata exits with an error showing the filename and problem. The site does **not** compile Markdown in the browser.
+
+## 4. Sleeper statistics and head-to-head records
+
+`data/config.json` contains the league ID `1309685082163810304`. **Verify this is the correct current-season Sleeper league ID**, as renewed leagues use new IDs. No API key is needed for public league endpoints.
+
+The website automatically loads standings, team W–L–T, PF/PA, and calculates team-vs-team records from Sleeper's completed weekly matchup data. The head-to-head table covers the **configured season only**, not historical seasons. It includes all completed regular-season and postseason head-to-head matches that Sleeper exposes; current/in-progress weeks are excluded. If some matchup requests fail, the page warns that stats may be incomplete.
+
+**Critical:** Map your franchise names to the right Sleeper roster IDs in `data/config.json` when they don't match Sleeper team names exactly:
 
 ```json
 "rosterOverrides": {
@@ -47,31 +82,22 @@ The site automatically loads league users and rosters from Sleeper for standings
 }
 ```
 
-Numbers above are **examples, not real IDs**. Find the real `roster_id` for each franchise from `https://api.sleeper.app/v1/league/YOUR_LEAGUE_ID/rosters`, then match each roster's `owner_id` with a user in `https://api.sleeper.app/v1/league/YOUR_LEAGUE_ID/users`. This avoids silently attributing incorrect records to a team.
+These numeric IDs are **examples only**. Look up the actual IDs at `https://api.sleeper.app/v1/league/1309685082163810304/rosters` and match roster `owner_id` against `https://api.sleeper.app/v1/league/1309685082163810304/users`. The site intentionally does not guess at ambiguous mappings.
 
-When Sleeper is temporarily unavailable, the site still shows all published stories, and unavailable numeric stats show dashes.
+## 5. Filters and links
 
-## Team and article links
+- League coverage: `?view=archive`
+- My team: `?team=new-york-noodles`
+- Specific team and week: `?view=archive&team=utah-yetis&week=8`
+- Direct article: `?article=2026-week-8-recap`
 
-- All teams: `?view=teams`
-- A specific team: `?team=new-york-noodles`
-- An archive filtered by team and week: `?view=archive&team=utah-yetis&week=8`
-- Direct article link: `?article=week-8-recap`
+The team selector filters articles and shows that franchise's dashboard with current-season head-to-head records against each of the other nine teams.
 
-Filters and articles can be bookmarked and shared.
+## Current limitations
 
-## Current scope and next enhancements
+- Only **real** articles supplied in the `articles/` folder are published; the welcome post is a placeholder.
+- Public Sleeper league endpoints must be accessible for live standings and H2H stats; article browsing works independently.
+- No all-time multi-season H2H, automated ChatGPT authoring, private admin interface, in-browser publishing, Markdown tables, or player-by-player roster details yet.
+- Github Pages is static/public. Do not commit passwords, tokens, private information, or drafts you don't want visible.
 
-- Included: responsive design, article archive, week/team/content-type filters, personalized franchise panels, live Sleeper standings, records and PF/PA, standalone article pages, shareable URLs.
-- Not included yet: automatic generation or publishing of articles, player-name mapping for starting lineups, Max PF, historical charts, complete weekly scoreboards, detailed roster pages, all-time league history, or a publishing admin form.
-- This is static public hosting: **do not store secrets or private information in the repository**.
-- The included welcome article is explicitly placeholder content, not a real game recap.
-
-## Preview locally
-
-Run `python3 -m http.server 8000` from this directory, then open `http://localhost:8000`. Opening `index.html` directly via `file://` will not reliably load the JSON files.
-
-## Reference
-
-- Sleeper official API: https://docs.sleeper.com/
-- GitHub Pages publishing: https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
+Official references: https://docs.sleeper.com/ and https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site

@@ -179,3 +179,7 @@ Two-team recap and preview articles now render a prominent versus-style hero at 
 - Up to nine latest articles on the homepage.
 - Clickable sorting (rank, name, PF, PA, Max PF) on homepage and full standings; W and L remain visible but not sortable. Original league rank is retained.
 - 2025 champion trophy overlay on New York Noodles' logo across the site; original image unchanged.
+
+## v17 scoring additions
+
+The My Team page uses the global season/week filters for a season offense/defense line graph or a selected weekly performance report. The new Scoring Statistics navigation page compares all ten teams by total, offensive, defensive, and average points for 2025/2026. Data is calculated in the browser from Sleeper's completed weekly matchup starting lineups; current/future weeks are excluded. Missing or unmapped data remains visibly unavailable. The website requires network access to Sleeper for live scoring. To publish, upload the extracted files to the root of the GitHub Pages repository while preserving custom content.

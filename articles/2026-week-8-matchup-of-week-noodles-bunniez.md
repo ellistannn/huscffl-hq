@@ -2,7 +2,7 @@
 id: 2026-week-8-matchup-of-week-noodles-bunniez
 season: 2026
 week: 8
-type: preview
+type: feature
 title: Matchup of the Week: Noodles vs. Bunniez Is the First True Test at the Top
 summary: An in-depth Week 8 feature on the unbeaten Noodles facing the 6–1 Bunniez, with key position battles.
 date: 2026-11-02

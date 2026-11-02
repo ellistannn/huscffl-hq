@@ -192,3 +192,18 @@ The My Team page uses the global season/week filters for a season offense/defens
 - Added My Team league rankings for offense, defense and total scoring.
 - Weekly graph hover labels include two decimal places.
 - Updated six Week 7 articles and included seven Week 8 previews/features.
+
+### Scatter plot hover labels
+The Offense vs. Defense scatter plot shows a prominent tooltip containing the franchise name, average offense, and average defense on pointer hover or keyboard focus. Clicking or tapping a point continues to highlight the team.
+
+
+## v19 release notes
+- Team-logo markers on scoring scatter plot; hover/focus tooltips and click/tap selection preserved.
+- Trophy badge moved to overlap the lower-right corner of the New York Noodles team logo.
+- Global toolbar hidden from Standings, Scoring Statistics, Transactions and Constitution; their page-specific controls remain.
+- Matchup of the Week is a Feature rather than a Preview.
+- My Team order: weekly scoring/matchup, head-to-head, league scoring comparison, recent transactions.
+- Recent transactions link to a team-prefiltered full Transactions page.
+- Footer includes a link to Sleeper.
+- Player ID resolution uses a daily generated player-name directory, with live fallback.
+- GitHub Actions workflow `refresh-player-names.yml` must be enabled and granted contents:write.

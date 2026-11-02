@@ -213,3 +213,14 @@ The Offense vs. Defense scatter plot shows a prominent tooltip containing the fr
 - My Team: three most recent tagged articles at the bottom of the dashboard, with a link to the team-filtered archive.
 - Floating sitewide Back to Top button (scroll threshold 500px; respects reduced-motion setting).
 - After deployment, run **Refresh Sleeper player names** workflow to generate `data/player-names.json` with positions; until then flex players may not be properly attributed.
+
+## v20.1 patch
+Fixed positional-ranking metric dropdown becoming unresponsive after the first change. The event handler is now reattached after each render.
+
+## v21: Player Database & top players
+
+A new **Players** navigation tab provides searchable NFL-wide position, team and availability filters, separate season selection, any combination of individual week checkboxes, and cumulative or average points. FLEX / Superflex / IDP FLEX are eligibility-group filters, not extra positions. Rankings are calculated among all eligible NFL players, based on the selected weeks and metric. **My Team > Top Players by Position** uses the same week and metric selection as the Players tab; it also includes bench players.
+
+**Required first-run step:** Open GitHub → Actions → **Refresh NFL-wide fantasy player statistics** → Run workflow. The workflow downloads the NFL player directory, league scoring settings and weekly raw player statistics, generating `data/player-stats-2025.json` and `data/player-stats-2026.json`. This endpoint is undocumented, so it can fail or change. If it fails, the website reports data unavailable rather than claiming points are correct. Check Actions logs and verify a sample of scores in Sleeper before relying on the rankings. The workflow reruns daily. Set Actions workflow permissions to Read and write if the commit is rejected.
+
+Player ownership comes from the selected season's Sleeper rosters; if franchise mapping cannot be identified, it displays roster ID rather than guessing. In 2025 renamed franchises may need historical overrides. Historical roster status represents the latest roster in that season rather than week-specific historical ownership. Raw weekly stat feed is used to calculate custom fantasy points; unusual bonus/conditional scoring may require validation against Sleeper totals. Games played is inferred from game stats and may be imperfect for 0-stat appearances. No fabricated NFL player scores are bundled in this ZIP.

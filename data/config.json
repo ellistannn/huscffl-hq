@@ -44,7 +44,18 @@
       "name": "LALALALA"
     }
   ],
-  "rosterOverrides": {},
+  "rosterOverrides": {
+    "new-york-noodles": 1,
+    "tampa-bay-tyranny": 2,
+    "hou-you-like-that": 3,
+    "good-things-we-okc": 4,
+    "lalalala": 5,
+    "seattle-supersonics": 6,
+    "njz-bunniez": 7,
+    "utah-yetis": 8,
+    "district-of-daebak": 9,
+    "dalla-dalla-dallas": 10
+  },
   "leagueIds": {
     "2025": "1246023611291029504",
     "2026": "1309685082163810304"

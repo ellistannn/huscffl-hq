@@ -4,13 +4,14 @@ const $$ = s => [...document.querySelectorAll(s)];
 const safe = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt = n => typeof n === 'number' && Number.isFinite(n) ? n.toFixed(2) : '—';
 const slug = s => String(s||'').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-const state = {config:null,stories:[],team:'all',week:'all',type:'all',view:'home',rosters:[],users:[],standings:[],historicalStandings:{},standingsSeason:'2026',teamRecordSeason:'2026',coverageSeason:'2026',matchups:[],h2hGames:[],h2hStatus:"loading",h2hSeason:"all",h2hWarnings:[],live:false,article:null,transactions:[],transactionSeason:'2026',transactionType:'all',transactionTeam:'all',transactionStatus:'loading',transactionsLastUpdated:null,transactionNames:{},playerPositions:{},transactionMappings:{},transactionError:'',scoring:{},scoringStatus:'loading',scoringSeason:'2026',playerYear:'2026',playerWeeks:[],playerMetric:'total',playerPosition:'ALL',playerStatus:'all',playerTeam:'all',playerSearch:'',playerPage:0,playerFiles:{},playerRosterMap:{},playerFileState:'loading',topPlayerPosition:'QB',playerYears:['2026'],playerPositionsSelected:[],playerTeamsSelected:[]};
+const state = {config:null,stories:[],team:'all',week:'all',type:'all',view:'home',rosters:[],users:[],standings:[],historicalStandings:{},standingsSeason:'2026',teamRecordSeason:'2026',coverageSeason:'2026',matchups:[],h2hGames:[],h2hStatus:"loading",h2hSeason:"all",h2hWarnings:[],live:false,article:null,transactions:[],transactionSeason:'2026',transactionType:'all',transactionTeam:'all',transactionStatus:'loading',transactionsLastUpdated:null,transactionNames:{},playerPositions:{},transactionMappings:{},transactionError:'',scoring:{},scoringStatus:'loading',scoringSeason:'2026',playerYear:'2026',playerWeeks:[],playerMetric:'total',playerPosition:'ALL',playerStatus:'all',playerTeam:'all',playerSearch:'',playerPage:0,playerFiles:{},playerRosterMap:{},rawPlayerRosters:{},playerFileState:'loading',topPlayerPosition:'QB',playerYears:['2026'],playerPositionsSelected:[],playerTeamsSelected:[]};
 const standingsSort={home:{key:'rank',direction:'asc'},full:{key:'rank',direction:'asc'}};
 const seasonWeeks = season => Number(state.config?.seasonWeeks?.[String(season)] || (String(season)==='2025'?16:17));
 const api = async endpoint => {const res=await fetch(`https://api.sleeper.app/v1/league/${state.config.leagueId}/${endpoint}`);if(!res.ok)throw Error(`Sleeper ${endpoint}: ${res.status}`);return res.json()};
 function urlState(){const p=new URLSearchParams(location.search);state.team=state.config.teams.some(t=>t.id===p.get('team'))?p.get('team'):'all';const s=p.get('season');state.coverageSeason=(s&&state.config.leagueIds?.[s])?s:String(state.config.season);const w=p.get('week');state.week=w&&/^\d{1,2}$/.test(w)?w:'all';state.view=['home','archive','teams','standings','transactions','constitution','scoring','players'].includes(p.get('view'))?p.get('view'):'home';state.article=p.get('article')||null;if(state.article)state.view='article';if(!['teams','archive','home','article'].includes(state.view))state.team='all';if(state.view==='transactions'&&state.config.teams.some(t=>t.id===p.get('transactionTeam')))state.transactionTeam=p.get('transactionTeam');}
 function setUrl(){const p=new URLSearchParams();if(['teams','archive','home'].includes(state.view)&&state.team!=='all')p.set('team',state.team);if(state.view==='transactions'&&state.transactionTeam!=='all')p.set('transactionTeam',state.transactionTeam);if(state.coverageSeason!==String(state.config.season))p.set('season',state.coverageSeason);if(state.week!=='all')p.set('week',state.week);if(state.view!=='home'&&state.view!=='article')p.set('view',state.view);if(state.article)p.set('article',state.article);history.pushState({},'',`${location.pathname}${p.toString()?'?'+p:''}`);}
 function change(){setUrl();render()}
+function pageTop(){window.scrollTo({top:0,behavior:'instant'})}
 function teamName(id){return state.config.teams.find(t=>t.id===id)?.name||id}
 function teamLogoSrc(id){return id?`assets/team-logos/${id}.png`:''}
 function teamLogoMarkup(id,name,cls='team-logo'){
@@ -101,7 +102,7 @@ function seasonStandingsRanks(season){
  const source=season===String(state.config.season)?state.standings:state.historicalStandings[season]||[];
  return new Map(source.map((r,i)=>[r.teamId,i+1]));
 }
-function scoringTeamClick(event,season){const button=event.target.closest('[data-team]');if(!button)return;state.team=button.dataset.team;state.coverageSeason=season;state.week='all';rebuildWeekOptions();state.view='teams';state.article=null;change()}
+function scoringTeamClick(event,season){const button=event.target.closest('[data-team]');if(!button)return;state.team=button.dataset.team;state.coverageSeason=season;state.week='all';rebuildWeekOptions();state.view='teams';state.article=null;change();pageTop()}
 function renderScoring(){
  const area=$('#scoringTable');if(!area)return;
  const season=state.scoringSeason,current=state.scoring[season];$('#scoringSeason').value=season;
@@ -115,7 +116,7 @@ function renderScoring(){
  area.innerHTML=`<table class="scoring-table standings-table"><thead><tr>${headers.map(([key,label])=>`<th><button type="button" class="sort-header" data-scoring-sort="${key}" aria-label="Sort by ${label}">${label}${sort.key===key?(sort.dir===1?' ▲':' ▼'):' ↕'}</button></th>`).join('')}</tr></thead><tbody>${rows.map(t=>`<tr><td>${t.rank??'—'}</td><td><button type="button" class="scoring-team-button" data-team="${safe(t.id)}">${teamLogoMarkup(t.id,t.name,'table-team-logo')}<span>${safe(t.name)}</span></button></td><td>${t.games}</td>${['total','off','def','avg','avgOff','avgDef'].map(k=>`<td>${t.games?fmt(t[k]):'—'}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
  area.onclick=e=>{const target=e.target.closest('[data-scoring-sort]');if(target){const k=target.dataset.scoringSort;state.scoringSort={key:k,dir:sort.key===k?-sort.dir:(k==='rank'||k==='name'?1:-1)};renderScoring();return}scoringTeamClick(e,season)};
  const notes=$('#scoringNote');if(notes)notes.textContent=`${season}: ${current.upto||0} completed weeks checked. ${current.failed?'Some weeks failed to load. ':''}${current.unmapped?'Some rosters could not be mapped. ':''}${current.unclassified?'Some player slots could not be classified. ':''}Averages use weeks with returned starting lineups.`;
- renderComparison();
+ renderComparison();renderLeaguePositionalComparison();
 }
 function renderComparison(){
  const area=$('#offenseDefenseComparison');if(!area)return;
@@ -133,6 +134,25 @@ function renderComparison(){
  const showTip=node=>{const circle=node.querySelector('circle');const px=Number(circle.getAttribute('cx')),py=Number(circle.getAttribute('cy'));const boxX=Math.max(8,Math.min(800-248-8,px+19));const boxY=py>112?py-83:py+18;tip.setAttribute('transform',`translate(${boxX.toFixed(1)} ${boxY.toFixed(1)})`);tipName.textContent=node.dataset.name;tipOff.textContent=`Offense: ${node.dataset.offense} pts/week`;tipDef.textContent=`Defense: ${node.dataset.defense} pts/week`;tip.setAttribute('visibility','visible')};
  const hideTip=()=>tip.setAttribute('visibility','hidden');
  area.querySelectorAll('.comparison-dot').forEach(node=>{const logo=node.querySelector('.scatter-team-logo');if(logo)logo.addEventListener('error',()=>{logo.style.display='none';const fallback=node.querySelector('.scatter-fallback');if(fallback)fallback.style.visibility='visible'});node.addEventListener('pointerenter',()=>showTip(node));node.addEventListener('pointerleave',hideTip);node.addEventListener('focus',()=>showTip(node));node.addEventListener('blur',hideTip);node.addEventListener('click',()=>{state.compareTeam=node.dataset.team;renderComparison()});node.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();state.compareTeam=node.dataset.team;renderComparison()}})});
+}
+function renderLeaguePositionalComparison(){
+ const el=$('#leaguePositionalComparison');if(!el)return;
+ const season=state.scoringSeason;
+ const data=state.scoring[season];
+ if(!data||data.error){el.innerHTML='<p class="muted">Positional rankings load with the selected season scoring data.</p>';return}
+ const positions=['QB','RB','WR','TE','DL','LB','DB'];
+ const selected=positions.includes(state.leaguePositionalPosition)?state.leaguePositionalPosition:'QB';
+ const metric=state.leaguePositionalMetric==='total'?'total':'average';
+ const source=data.rows||{};
+ const teams=state.config.teams.map(t=>{
+  const weeks=source[t.id]||[];
+  const total=weeks.reduce((n,w)=>n+Number(w.positional?.[selected]||0),0);
+  return {id:t.id,name:t.name,total,weeks:weeks.length,average:weeks.length?total/weeks.length:0,unresolved:weeks.reduce((n,w)=>n+(w.unresolvedFlex||0),0)};
+ }).sort((a,b)=>b[metric]-a[metric]||a.name.localeCompare(b.name));
+ const controls=`<div class="player-controls"><label>Position <select id="leaguePositionalPosition">${positions.map(p=>`<option value="${p}" ${selected===p?'selected':''}>${p}</option>`).join('')}</select></label><label>Metric <select id="leaguePositionalMetric"><option value="average" ${metric==='average'?'selected':''}>Points / week</option><option value="total" ${metric==='total'?'selected':''}>Total starter points</option></select></label></div>`;
+ el.innerHTML=controls+`<div class="standings-scroll"><table class="standings-table"><thead><tr><th>Rank</th><th>Franchise</th><th>Weeks</th><th>${metric==='average'?'FP / Week':'Starter FP'}</th></tr></thead><tbody>${teams.map((t,i)=>`<tr><td>${i+1}</td><td>${teamLogoMarkup(t.id,t.name,'table-team-logo')} ${safe(t.name)}</td><td>${t.weeks}</td><td>${t.weeks?fmt(t[metric]):'—'}</td></tr>`).join('')}</tbody></table></div><p class="muted">Points from starting FLEX, Superflex and IDP FLEX slots count toward the player's real position. Bench points excluded.${teams.some(t=>t.unresolved)?' Some flex positions are not identified yet.':''}</p>`;
+ el.querySelector('#leaguePositionalPosition').onchange=e=>{state.leaguePositionalPosition=e.target.value;renderLeaguePositionalComparison()};
+ el.querySelector('#leaguePositionalMetric').onchange=e=>{state.leaguePositionalMetric=e.target.value;renderLeaguePositionalComparison()};
 }
 function renderTeamRankings(){
  const area=$('#teamRankings');if(!area)return;
@@ -174,7 +194,7 @@ function renderTeamScoring(){
  const opp=w.opponent,won=opp?(w.points>opp.score?'Win':w.points<opp.score?'Loss':'Tie'):'Result unavailable';
  el.innerHTML=`<h3>${safe(season)} · Week ${safe(week)}</h3><div class="weekly-matchup">${opp?.id?teamLogoMarkup(opp.id,teamName(opp.id),'transaction-logo'):''}<strong>${opp?`vs ${safe(opp.name)} · ${fmt(w.points)}–${fmt(opp.score)} · ${won}`:'Opponent unavailable'}</strong></div><div class="weekly-stats"><div><small>Offense</small><strong>${fmt(w.offense)}</strong></div><div><small>Defense</small><strong>${fmt(w.defense)}</strong></div><div><small>Combined starters</small><strong>${fmt(w.total)}</strong></div></div><p class="muted">Weekly recap and preview cards are filtered above by your selected team, season, and week. Individual player lineups will require an additional player-name lookup.</p>`;
 }
-async function loadLive(){try{const [rosters,users,league,nflState]=await Promise.all([api('rosters'),api('users'),fetch(`https://api.sleeper.app/v1/league/${state.config.leagueId}`).then(r=>{if(!r.ok)throw Error('league info unavailable');return r.json()}),fetch('https://api.sleeper.app/v1/state/nfl').then(r=>{if(!r.ok)throw Error('NFL state unavailable');return r.json()}).catch(()=>null)]);state.rosters=rosters;state.users=users;mapTeams();deriveStandings();state.live=true;loadHistoricalStandings();$('#dataStatus').textContent='● Live league data via Sleeper';render();loadTransactions();loadScoring();await loadHeadToHead(league,nflState);}catch(err){console.warn(err);state.h2hStatus='error';$('#dataStatus').textContent='Sleeper data unavailable · stories still accessible';render();}}
+async function loadLive(){try{const [rosters,users,league,nflState]=await Promise.all([api('rosters'),api('users'),fetch(`https://api.sleeper.app/v1/league/${state.config.leagueId}`).then(r=>{if(!r.ok)throw Error('league info unavailable');return r.json()}),fetch('https://api.sleeper.app/v1/state/nfl').then(r=>{if(!r.ok)throw Error('NFL state unavailable');return r.json()}).catch(()=>null)]);state.rosters=rosters;state.users=users;mapTeams();reconcilePlayerOwnership();deriveStandings();state.live=true;loadHistoricalStandings();$('#dataStatus').textContent='● Live league data via Sleeper';render();loadTransactions();loadScoring();await loadHeadToHead(league,nflState);}catch(err){console.warn(err);state.h2hStatus='error';$('#dataStatus').textContent='Sleeper data unavailable · stories still accessible';render();}}
 
 async function loadHistoricalStandings(){
   const currentOwners=new Map(state.rosters.filter(r=>r.teamId).map(r=>[String(r.owner_id),r.teamId]));
@@ -282,9 +302,9 @@ function rebuildWeekOptions(){const ws=$('#weekSelect');const max=seasonWeeks(st
 function setupSelectors(){
  const ts=$('#teamSelect'),ws=$('#weekSelect');for(const t of state.config.teams)ts.add(new Option(t.name,t.id));
  rebuildWeekOptions();
- ts.addEventListener('change',e=>{state.team=e.target.value;state.article=null;change()});
+ ts.addEventListener('change',e=>{state.team=e.target.value;state.article=null;change();pageTop()});
  $('#coverageSeason').addEventListener('change',e=>{state.coverageSeason=e.target.value;state.week='all';state.article=null;rebuildWeekOptions();change()});
- ws.addEventListener('change',e=>{state.week=e.target.value;state.article=null;change()});
+ ws.addEventListener('change',e=>{state.week=e.target.value;state.article=null;change();pageTop()});
  $('#resetFilters').addEventListener('click',()=>{state.team='all';state.week='all';state.type='all';state.coverageSeason=String(state.config.season);state.article=null;rebuildWeekOptions();change()});
  $$('[data-view]').forEach(b=>b.onclick=()=>{state.view=b.dataset.view;state.article=null;if(!['teams','archive','home'].includes(state.view))state.team='all';change()});
  $$('[data-go]').forEach(b=>b.onclick=()=>{state.view=b.dataset.go;state.article=null;if(!['teams','archive','home'].includes(state.view))state.team='all';change()});
@@ -292,7 +312,7 @@ function setupSelectors(){
  setupTransactionControls();setupPlayerControls();
  const standingsPicker=$('#standingsSeason');if(standingsPicker)standingsPicker.addEventListener('change',e=>{state.standingsSeason=e.target.value;render()});$('#scoringSeason').onchange=e=>{state.scoringSeason=e.target.value;renderScoring()};
  $('#backToArchive').onclick=()=>{state.view='archive';state.article=null;change()};
- window.addEventListener('popstate',()=>{urlState();rebuildWeekOptions();render()});
+ window.addEventListener('popstate',()=>{urlState();rebuildWeekOptions();render();pageTop()});
 }
 function articleMatches(a){const teamMatch=state.team==='all'||a.teams?.includes('all')||a.teams?.includes(state.team);return teamMatch&&String(a.season)===state.coverageSeason&&(state.week==='all'||String(a.week)===state.week)&&(state.type==='all'||a.type===state.type);}
 function sortedStories(){return state.stories.filter(articleMatches).sort((a,b)=>b.season-a.season||b.week-a.week||String(b.date).localeCompare(String(a.date)))}
@@ -310,7 +330,7 @@ function renderTable(el,limit=Infinity,season=state.standingsSeason){
  const thead=document.createElement('thead'),headerRow=document.createElement('tr');
  for(const [k,label] of headers){const th=document.createElement('th');if(['rank','name','pf','pa','maxpf'].includes(k)){const button=document.createElement('button');button.type='button';button.className='sort-header';button.textContent=label+(sort.key===k?(sort.direction==='asc'?' ▲':' ▼'):' ↕');button.setAttribute('aria-label',`Sort by ${label}`);th.setAttribute('aria-sort',sort.key===k?(sort.direction==='asc'?'ascending':'descending'):'none');button.onclick=()=>{if(sort.key===k)sort.direction=sort.direction==='asc'?'desc':'asc';else{sort.key=k;sort.direction=['pf','pa','maxpf'].includes(k)?'desc':'asc'}renderTable(el,limit,season)};th.appendChild(button)}else th.textContent=label;headerRow.appendChild(th)}thead.appendChild(headerRow);table.appendChild(thead);
  const tbody=document.createElement('tbody');
- rows.forEach(r=>{const tr=document.createElement('tr');const label=r.teamId?teamName(r.teamId):r.displayName;tr.innerHTML=`<td>${r.officialRank}</td><td><div class="team-cell">${r.teamId?teamLogoMarkup(r.teamId,label,'table-team-logo'):''}<button class="teamlink">${safe(label)}</button></div></td><td>${r.wins}</td><td>${r.losses}</td><td>${fmt(r.pf)}</td><td>${fmt(r.pa)}</td><td>${fmt(r.maxpf)}</td>`;tr.querySelector('.teamlink').onclick=()=>{if(r.teamId){state.team=r.teamId;state.view='teams';state.article=null;change()}};tbody.appendChild(tr)});table.appendChild(tbody);el.replaceChildren(table)
+ rows.forEach(r=>{const tr=document.createElement('tr');const label=r.teamId?teamName(r.teamId):r.displayName;tr.innerHTML=`<td>${r.officialRank}</td><td><div class="team-cell">${r.teamId?teamLogoMarkup(r.teamId,label,'table-team-logo'):''}<button class="teamlink">${safe(label)}</button></div></td><td>${r.wins}</td><td>${r.losses}</td><td>${fmt(r.pf)}</td><td>${fmt(r.pa)}</td><td>${fmt(r.maxpf)}</td>`;tr.querySelector('.teamlink').onclick=()=>{if(r.teamId){state.team=r.teamId;state.view='teams';state.article=null;change();pageTop()}};tbody.appendChild(tr)});table.appendChild(tbody);el.replaceChildren(table)
 }
 function renderTeamPanel(){const el=$('#teamPanel');el.hidden=state.team==='all'||!['teams','home'].includes(state.view);if(el.hidden)return;const r=selectedRoster();const match=state.matchups.find(m=>Number(m.roster_id)===Number(r?.roster_id));const opponent=match&&state.matchups.find(m=>m.matchup_id===match.matchup_id&&m.roster_id!==match.roster_id);const oppRoster=opponent&&state.rosters.find(a=>a.roster_id===opponent.roster_id);const season=state.coverageSeason;const rosterRows=season===String(state.config.season)?state.standings:(state.historicalStandings[season]||[]);const s=rosterRows.find(a=>a.teamId===state.team);const record=s?`${s.wins}–${s.losses}${s.ties?'–'+s.ties:''}`:'—';const rank=s?rosterRows.indexOf(s)+1:'—';el.innerHTML=`<div class="eyebrow">FRANCHISE HEADQUARTERS</div><div class="team-hero">${teamLogoMarkup(state.team,teamName(state.team),'team-hero-logo')}<div><h2>${safe(teamName(state.team))}</h2><div class="muted">Season: ${safe(season)} · Use the Season and Week selectors above to explore history.</div><div class="muted">${r?`Manager: ${safe(r.managerName)}`:'Map this team to its Sleeper roster to show its stats.'}</div></div></div><div class="metrics"><div class="metric"><small>Record</small><b>${record}</b></div><div class="metric"><small>League rank</small><b>${rank}${rank==='—'?'':' / '+rosterRows.length}</b></div><div class="metric"><small>Points for</small><b>${s?fmt(s.pf):'—'}</b></div><div class="metric"><small>Points against</small><b>${s?fmt(s.pa):'—'}</b></div><div class="metric"><small>Max PF</small><b>${s?fmt(s.maxpf):'—'}</b></div></div><div class="team-details"><div class="detail"><strong>Current roster</strong>${r?`${r.players?.length||0} players on roster · ${r.starters?.length||0} starter slots`:'Live roster not matched'}<br><span class="muted">Roster/player details can be expanded in the next version.</span></div><div class="detail"><strong>Weekly matchup</strong>${oppRoster?`Vs. ${safe(oppRoster.teamId?teamName(oppRoster.teamId):oppRoster.displayName)} · ${fmt(Number(match.custom_points??match.points))} – ${fmt(Number(opponent.custom_points??opponent.points))}`:'Select a week to view a matchup, if available.'}</div></div><section id="teamScoring" class="panel team-scoring"></section><section class="h2h-section">${renderHeadToHead(r)}</section><section id="teamRankings" class="panel team-scoring"></section><section id="topPlayersPanel" class="panel team-scoring"></section><section class="team-transactions"><h3>Recent transactions</h3><div class="muted">2026 season · auto-updated</div>${renderTransactionCards('2026',state.team,5)}<p><button type="button" id="viewAllTeamTransactions" class="text-button">View All Transactions →</button></p></section><section id="teamRecentArticles" class="team-recent-articles panel"><div class="panel-head"><div><div class="eyebrow">FROM THE ARCHIVE</div><h3>Recent Articles</h3></div><button class="text-button" type="button" id="viewAllTeamArticles">View All Team Articles →</button></div><div id="teamRecentArticleList" class="stories"></div></section>`;const selector=el.querySelector("#h2hSeasonSelect");if(selector)selector.addEventListener("change",e=>{state.h2hSeason=e.target.value;render()});const allTx=$('#viewAllTeamTransactions');if(allTx)allTx.onclick=()=>{state.transactionTeam=state.team;state.view='transactions';change();window.scrollTo(0,0)};}
 function renderTeamArticles(){
@@ -319,7 +339,7 @@ function renderTeamArticles(){
  renderStories(el,articles);
  const link=$('#viewAllTeamArticles');if(link)link.onclick=()=>{state.type='all';state.week='all';state.coverageSeason=String(state.config.season);state.view='archive';state.article=null;rebuildWeekOptions();change();window.scrollTo({top:0,behavior:'instant'})};
 }
-function renderTeams(){const el=$('#teamGrid');el.replaceChildren();state.config.teams.forEach(t=>{const r=state.rosters.find(r=>r.teamId===t.id);const b=document.createElement('button');b.className='team-tile';b.innerHTML=`${teamLogoMarkup(t.id,t.name,'team-tile-logo')}<h3>${safe(t.name)}</h3><p>${r?`${r.settings?.wins||0}–${r.settings?.losses||0} · ${safe(r.managerName)}`:'View franchise dashboard'} →</p>`;b.onclick=()=>{state.team=t.id;state.view='teams';state.article=null;change()};el.appendChild(b)})}
+function renderTeams(){const el=$('#teamGrid');el.replaceChildren();state.config.teams.forEach(t=>{const r=state.rosters.find(r=>r.teamId===t.id);const b=document.createElement('button');b.className='team-tile';b.innerHTML=`${teamLogoMarkup(t.id,t.name,'team-tile-logo')}<h3>${safe(t.name)}</h3><p>${r?`${r.settings?.wins||0}–${r.settings?.losses||0} · ${safe(r.managerName)}`:'View franchise dashboard'} →</p>`;b.onclick=()=>{state.team=t.id;state.view='teams';state.article=null;change();pageTop()};el.appendChild(b)})}
 function renderArticle(){const el=$('#articleBody');const a=state.stories.find(s=>s.id===state.article);if(!a){el.innerHTML='<h1>Article not found</h1><p>Check the link or return to coverage.</p>';return}const ids=articleTeamIds(a);const isMatchup=ids.length===2;const hero=isMatchup?`<section class="matchup-hero"><div class="matchup-team">${teamLogoMarkup(ids[0],teamName(ids[0]),'matchup-hero-logo')}<div class="matchup-team-name">${safe(teamName(ids[0]))}</div></div><div class="matchup-center"><div class="matchup-vs">VS</div><div class="matchup-meta">${safe(a.type)} · WEEK ${safe(a.week)}</div></div><div class="matchup-team">${teamLogoMarkup(ids[1],teamName(ids[1]),'matchup-hero-logo')}<div class="matchup-team-name">${safe(teamName(ids[1]))}</div></div></section>`:(ids.length?`<div class="article-logo-row">${ids.map(id=>`<div class="article-logo-chip">${teamLogoMarkup(id,teamName(id),'article-logo')}<span>${safe(teamName(id))}</span></div>`).join('')}</div>`:'');el.innerHTML=`<div class="eyebrow">${safe(a.type)} · SEASON ${safe(a.season)} · WEEK ${safe(a.week)}</div>${hero}<h1>${safe(a.title)}</h1><p class="lead">${safe(a.summary)}</p><div class="article-content">${a.bodyHtml || (a.paragraphs||[]).map(p=>`<p>${safe(p)}</p>`).join('')}</div>`;document.title=`${a.title} | HUSCFFL`}
 
 function render(){if(!state.config)return;document.title='HUSCFFL | League Headquarters';$('#teamSelect').value=state.team;$('#weekSelect').value=state.week;renderTeamPanel();renderTeamScoring();renderTeamRankings();renderTeamArticles();renderScoring();renderTopPlayers();renderPlayerDatabase();let stories=sortedStories();renderStories($('#featuredStories'),stories.slice(0,9));renderStories($('#archiveStories'),stories);$('#storyCount').textContent=`${stories.length} ${stories.length===1?'story':'stories'}`;renderTable($('#homeStandings'),10,String(state.config.season));renderTable($('#fullStandings'));const standingsPicker=$('#standingsSeason');if(standingsPicker)standingsPicker.value=state.standingsSeason;const toolbar=$('.toolbar');if(toolbar)toolbar.hidden=!['home','archive','teams'].includes(state.view);const leagueSummary=$('.home-league-grid');if(leagueSummary)leagueSummary.hidden=state.team!=='all';renderTeams();$$('[data-type]').forEach(b=>b.classList.toggle('on',b.dataset.type===state.type));$$('.view').forEach(v=>v.hidden=v.id!==`${state.view}View`);$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));if(state.view==='article')renderArticle();renderTransactions();}
@@ -440,6 +460,7 @@ async function loadTransactions(force=false){
    return {season,tx,mapping,partial:fetched.some(r=>r.status==='rejected')};
   }));
   state.transactionMappings=Object.fromEntries(data.map(d=>[d.season,d.mapping]));
+  reconcilePlayerOwnership();
   state.transactions=data.flatMap(d=>d.tx).filter((t,i,arr)=>arr.findIndex(x=>x._season===t._season&&x.transaction_id===t.transaction_id)===i).sort((a,b)=>(b.status_updated||b.created||0)-(a.status_updated||a.created||0));
   state.transactionStatus='ready';state.transactionsLastUpdated=new Date();state.transactionError=data.some(d=>d.partial)?'Some weeks could not be retrieved; history may be incomplete.':'';
   render();
@@ -529,11 +550,26 @@ function setupPlayerControls(){
  root.addEventListener('change',e=>{const c=e.target.dataset.playerControl;if(!c)return;state['player'+c[0].toUpperCase()+c.slice(1)]=e.target.value;state.playerPage=0;renderPlayerRows();renderTopPlayers(false)});
  root.addEventListener('input',e=>{if(e.target.dataset.playerControl==='search'){state.playerSearch=e.target.value;state.playerPage=0;renderPlayerRows();}});
 }
+function rebuildPlayerOwnership(year,rosters){
+ const ownership={};const mapping=state.transactionMappings[year]||{};
+ const current=year===String(state.config.season);
+ const currentRosters=new Map(state.rosters.map(r=>[String(r.roster_id),r]));
+ for(const r of rosters){
+  const rid=String(r.roster_id);
+  const team=mapping[rid]||(current?currentRosters.get(rid)?.teamId:null)||null;
+  const players=[...(r.players||[]),...(r.reserve||[]),...(r.taxi||[])].map(String);
+  const reserves=new Set((r.reserve||[]).map(String)),taxi=new Set((r.taxi||[]).map(String));
+  for(const id of players)ownership[id]={teamId:team,label:team?teamName(team):`Roster ${rid}`,rosterId:rid,status:taxi.has(id)?'Taxi':reserves.has(id)?'IR':'Rostered'};
+ }
+ state.playerRosterMap[year]=ownership;
+ renderPlayerRows();renderTopPlayers();
+}
+function reconcilePlayerOwnership(){for(const [year,rosters] of Object.entries(state.rawPlayerRosters||{}))rebuildPlayerOwnership(year,rosters)}
 async function loadPlayerScores(){
  for(const y of Object.keys(state.config.leagueIds)){
   fetch(`data/player-stats-${y}.json?refresh=${Math.floor(Date.now()/3600000)}`,{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('No player data for '+y);return r.json()}).then(data=>{state.playerFiles[y]=data;renderPlayerDatabase();renderTopPlayers()}).catch(e=>{state.playerFiles[y]={error:String(e)};renderPlayerDatabase();renderTopPlayers()});
   fetch(`https://api.sleeper.app/v1/league/${state.config.leagueIds[y]}/rosters`).then(r=>r.ok?r.json():Promise.reject(Error('roster unavailable'))).then(rosters=>{
-   const ownership={};for(const r of rosters){const team=state.transactionMappings[y]?.[String(r.roster_id)] || (y===String(state.config.season)?state.rosters.find(z=>Number(z.roster_id)===Number(r.roster_id))?.teamId:null);const owner=team||`Roster ${r.roster_id}`;for(const id of [...(r.players||[]),...(r.reserve||[]),...(r.taxi||[])]){ownership[String(id)]={teamId:team||null,label:owner,status:(r.taxi||[]).includes(id)?'Taxi':(r.reserve||[]).includes(id)?'IR':'Rostered'}}}state.playerRosterMap[y]=ownership;renderPlayerDatabase();renderTopPlayers();
+   state.rawPlayerRosters[y]=rosters;rebuildPlayerOwnership(y,rosters);
   }).catch(e=>console.warn('Roster ownership '+y,e));
  }
 }

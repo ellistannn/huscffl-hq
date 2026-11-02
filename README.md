@@ -235,3 +235,11 @@ Player ownership comes from the selected season's Sleeper rosters; if franchise 
 
 ## v22.1 filter update
 Players and My Team roster lists have compact, checkbox-based dropdowns for seasons, scoring weeks, and positions. The Players page also supports selecting multiple franchises. Empty position/team selections mean all. At least one season is required. Combined season scoring sums the selected calendar-numbered weeks in each chosen season; average is based on total games played. Ownership and Available status refer to the latest selected season, not historical ownership. The two 2025/2026 stats JSON exports must already exist in `data/` on GitHub Pages.
+
+
+## v22.2 fixes
+- Reconcile roster ownership when rosters, current franchise mappings or historical mappings load in any order.
+- Reset scroll position when selecting a team or navigating between sections/articles; filter adjustments preserve scroll position.
+- Add positional scoring comparison of all ten teams on the Scoring Statistics page using starting lineup points by actual position.
+
+- 2026 roster-ID overrides populated from the supplied Week 7 facts export; verify if franchises change ownership.

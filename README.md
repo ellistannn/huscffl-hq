@@ -207,3 +207,9 @@ The Offense vs. Defense scatter plot shows a prominent tooltip containing the fr
 - Footer includes a link to Sleeper.
 - Player ID resolution uses a daily generated player-name directory, with live fallback.
 - GitHub Actions workflow `refresh-player-names.yml` must be enabled and granted contents:write.
+
+## v20 changes
+- My Team: QB/RB/WR/TE/DL/LB/DB starter-only positional contribution rankings, including flex position attribution from the daily Sleeper player directory. Rankings include points per completed week and totals.
+- My Team: three most recent tagged articles at the bottom of the dashboard, with a link to the team-filtered archive.
+- Floating sitewide Back to Top button (scroll threshold 500px; respects reduced-motion setting).
+- After deployment, run **Refresh Sleeper player names** workflow to generate `data/player-names.json` with positions; until then flex players may not be properly attributed.

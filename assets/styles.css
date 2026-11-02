@@ -100,3 +100,15 @@
 #teamWeeklySlot .panel,#teamRankingsSlot .panel{margin:0}
 #transactionTeamBack{margin:10px 0}
 @media(max-width:600px){.comparison-svg{min-width:500px}.panel:has(.comparison-svg){overflow-x:auto}}
+
+/* v20 */
+.position-ranks{margin-top:1.7rem;border-top:1px solid var(--line,#dccbd1);padding-top:1.3rem}
+.position-ranks-heading{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
+.position-ranks-heading label{font-size:.82rem}
+.position-ranking-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:.75rem;margin-top:1rem}
+.position-rank{border:1px solid #decbd0;border-radius:12px;padding:.8rem;display:flex;flex-direction:column;gap:.3rem;background:rgba(255,250,247,.65)}
+.position-rank span{font-size:.82rem;color:#805c6e}.position-rank b{font-size:.91rem}
+.team-recent-articles{margin-top:1.5rem}.team-recent-articles .stories{margin-top:1rem}
+.back-to-top{position:fixed;right:max(1.25rem,env(safe-area-inset-right));bottom:calc(1.25rem + env(safe-area-inset-bottom));width:48px;height:48px;border:0;border-radius:50%;background:#bd5670;color:white;font-size:1.6rem;font-weight:bold;box-shadow:0 4px 14px #311b2b45;cursor:pointer;z-index:90}
+.back-to-top[hidden]{display:none!important}.back-to-top:focus-visible{outline:3px solid #311b2b;outline-offset:3px}
+@media(max-width:600px){.back-to-top{right:14px;bottom:calc(14px + env(safe-area-inset-bottom));width:44px;height:44px}}

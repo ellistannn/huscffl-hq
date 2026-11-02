@@ -62,3 +62,15 @@
 .matchup-vs{display:grid;place-items:center;width:72px;height:72px;border-radius:50%;background:#713448;color:#fff7f3;font:800 24px/1 Inter,ui-sans-serif,sans-serif;letter-spacing:1px;box-shadow:0 10px 20px #71344830}
 .matchup-meta{font-size:11px;font-weight:800;letter-spacing:1.1px;color:#a6475d;text-transform:uppercase;white-space:nowrap}
 @media(max-width:760px){.matchup-hero{grid-template-columns:1fr;gap:14px;padding:18px}.matchup-center{order:2}.matchup-team:first-child{order:1}.matchup-team:last-child{order:3}.matchup-hero-logo{width:98px;height:98px;border-radius:22px}.matchup-team-name{font-size:18px}.matchup-vs{width:60px;height:60px;font-size:20px}}
+
+/* v16 sortable tables and 2025 championship insignia */
+.sort-header{font:inherit;color:inherit;letter-spacing:inherit;text-transform:inherit;border:0;background:transparent;padding:4px 0;white-space:nowrap;cursor:pointer;font-weight:800}
+.sort-header:hover,.sort-header:focus-visible{color:#a83a53;text-decoration:underline}
+.standings-table th:nth-child(1),.standings-table td:nth-child(1){text-align:center;white-space:nowrap}
+.standings-table th:nth-child(2),.standings-table td:nth-child(2){text-align:left}
+.standings-table th:nth-child(2){min-width:145px}
+.standings-table td:nth-child(2){min-width:145px}
+.championship-logo{display:inline-flex;position:relative;vertical-align:middle;flex:0 0 auto}
+.championship-badge{position:absolute;right:-7px;bottom:-5px;display:grid;place-items:center;width:23px;height:23px;border-radius:50%;background:#f6d282;border:2px solid #fff8f5;font-size:12px;line-height:1;box-shadow:0 2px 6px #0003;z-index:1}
+.team-hero .championship-badge{width:29px;height:29px;font-size:16px;right:-9px;bottom:-7px}
+@media(max-width:520px){.championship-badge{width:19px;height:19px;font-size:10px}}

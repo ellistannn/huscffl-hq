@@ -173,3 +173,9 @@ This version includes locally hosted franchise logos for all 10 teams under `ass
 ## Matchup article hero
 
 Two-team recap and preview articles now render a prominent versus-style hero at the top of the article with both franchise logos and names. League-wide or multi-team stories keep the standard article header.
+
+## Version 16 updates
+- Fixed navigation by defining the missing `change()` action.
+- Up to nine latest articles on the homepage.
+- Clickable sorting (rank, name, PF, PA, Max PF) on homepage and full standings; W and L remain visible but not sortable. Original league rank is retained.
+- 2025 champion trophy overlay on New York Noodles' logo across the site; original image unchanged.

@@ -224,3 +224,14 @@ A new **Players** navigation tab provides searchable NFL-wide position, team and
 **Required first-run step:** Open GitHub → Actions → **Refresh NFL-wide fantasy player statistics** → Run workflow. The workflow downloads the NFL player directory, league scoring settings and weekly raw player statistics, generating `data/player-stats-2025.json` and `data/player-stats-2026.json`. This endpoint is undocumented, so it can fail or change. If it fails, the website reports data unavailable rather than claiming points are correct. Check Actions logs and verify a sample of scores in Sleeper before relying on the rankings. The workflow reruns daily. Set Actions workflow permissions to Read and write if the commit is rejected.
 
 Player ownership comes from the selected season's Sleeper rosters; if franchise mapping cannot be identified, it displays roster ID rather than guessing. In 2025 renamed franchises may need historical overrides. Historical roster status represents the latest roster in that season rather than week-specific historical ownership. Raw weekly stat feed is used to calculate custom fantasy points; unusual bonus/conditional scoring may require validation against Sleeper totals. Games played is inferred from game stats and may be imperfect for 0-stat appearances. No fabricated NFL player scores are bundled in this ZIP.
+
+
+## v22 updates
+- Available (unrostered) NFL players have pale green rows in the Player Database, including in filtered/paginated views.
+- My Team → Rostered Players by Position now shows all rostered players with scoring data at each position rather than only three; this uses the current league roster (including IR and taxi) even when viewing prior-season scores.
+- Replaces Tampa Bay Tyranny's logo with the new uploaded image.
+- Note: Players absent from the exported NFL scoring dataset are not shown in the scoring rankings; their roster ownership remains available via Sleeper.
+
+
+## v22.1 filter update
+Players and My Team roster lists have compact, checkbox-based dropdowns for seasons, scoring weeks, and positions. The Players page also supports selecting multiple franchises. Empty position/team selections mean all. At least one season is required. Combined season scoring sums the selected calendar-numbered weeks in each chosen season; average is based on total games played. Ownership and Available status refer to the latest selected season, not historical ownership. The two 2025/2026 stats JSON exports must already exist in `data/` on GitHub Pages.

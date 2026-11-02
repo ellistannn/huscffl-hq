@@ -117,7 +117,7 @@ function setupTransactionControls(){
 function txType(t){return t.type==='trade'?'Trade':t.type==='waiver'?'Waiver claim':t.type==='free_agent'?'Free-agent move':(t.type||'Roster move')}
 function txTeamName(s,rid){const tid=state.transactionMappings[s]?.[String(rid)];return tid?teamName(tid):`Roster ${rid}`}
 function txTeams(t){const ids=new Set([...(t.roster_ids||[]),...Object.keys(t.adds||{}).map(k=>t.adds[k]),...Object.keys(t.drops||{}).map(k=>t.drops[k]),...(t.consenter_ids||[])]);return [...ids].map(x=>String(x));}
-function txPlayer(id){return state.transactionNames[id]||`Player ${id}`}
+function txPlayer(id){return state.transactionNames[String(id)]||(/^[A-Z]{2,3}$/.test(String(id))?`${id} D/ST`:`Player ${id}`)}
 function txSummary(t,season){
  const adds=Object.entries(t.adds||{}).map(([player,rid])=>`${txPlayer(player)} → ${txTeamName(season,rid)}`);
  const drops=Object.entries(t.drops||{}).map(([player,rid])=>`${txPlayer(player)} dropped by ${txTeamName(season,rid)}`);
@@ -144,6 +144,38 @@ function renderTransactionCards(season,team='all',max=30,type='all'){
  return `<article class="transaction-card"><div class="transaction-meta">${safe(date)} · WEEK ${safe(t._week)} · ${safe(txType(t))}</div><h3>${safe(txType(t))}</h3><div class="transaction-team">${safe(teams)}</div>${txSummary(t,season).map(line=>`<p>${safe(line)}</p>`).join('')}</article>`;
  }).join('');
 }
+function renderHomeTransactions(){
+ const el=$('#homeTransactionList'),status=$('#homeTransactionStatus');
+ if(!el||!status)return;
+ const season=String(state.config.season);
+ const items=txFiltered(season,state.team,'all');
+ status.textContent=state.transactionStatus==='loading'?'Loading recent moves…':state.transactionStatus==='error'?'Transaction feed unavailable':items.length?`Latest ${Math.min(5,items.length)} completed moves · ${season}`:'No completed transactions found';
+ el.innerHTML=renderTransactionCards(season,state.team,5);
+}
+
+/* Fetch Sleeper's player catalog at most once daily per browser, then keep only names
+   for the transaction players to avoid storing the full multi-megabyte catalog. */
+async function loadPlayerNames(){
+ const key='huscffl-player-names-v1';
+ try{const saved=JSON.parse(localStorage.getItem(key)||'null');if(saved&&saved.names){state.transactionNames=saved.names;render();}}
+ catch(e){console.warn('Player name cache unavailable',e)}
+ if(!state.transactions.length)return;
+ const needed=new Set(state.transactions.flatMap(t=>[...Object.keys(t.adds||{}),...Object.keys(t.drops||{})]));
+ const names=state.transactionNames;
+ const missing=[...needed].filter(id=>!names[id]);
+ if(!missing.length)return;
+ const checkedKey='huscffl-player-catalog-checked';
+ let last=0;try{last=Number(localStorage.getItem(checkedKey)||0)}catch(e){}
+ if(Date.now()-last<86400000)return;
+ try{
+  const response=await fetch('https://api.sleeper.app/v1/players/nfl');
+  if(!response.ok)throw Error(`Sleeper player directory: HTTP ${response.status}`);
+  const players=await response.json();
+  for(const id of needed){const pl=players[id];if(pl){const name=pl.full_name||[pl.first_name,pl.last_name].filter(Boolean).join(' ');if(name)names[id]=name;}}
+  try{localStorage.setItem(key,JSON.stringify({names}));localStorage.setItem(checkedKey,String(Date.now()))}catch(e){console.warn('Could not cache player names',e)}
+  render();
+ }catch(err){console.warn('Could not resolve player names',err)}
+}
 function renderTransactions(){
  if(!state.config||!$('#transactionList'))return;
  $('#transactionSeason').value=state.transactionSeason;
@@ -153,6 +185,7 @@ function renderTransactions(){
  const stamp=state.transactionsLastUpdated?` · Last checked ${state.transactionsLastUpdated.toLocaleTimeString()}`:'';
  $('#transactionStatus').textContent=(state.transactionStatus==='error'?`Sleeper transaction data unavailable: ${state.transactionError}`:state.transactionStatus==='loading'?'Loading Sleeper transaction history…':`${list.length} completed moves shown${stamp}`);
  $('#transactionList').innerHTML=renderTransactionCards(state.transactionSeason,state.transactionTeam,200,state.transactionType);
+ renderHomeTransactions();
 }
 async function loadTransactions(force=false){
  if(!state.config||window.__txBusy)return;
@@ -178,6 +211,7 @@ async function loadTransactions(force=false){
   state.transactions=data.flatMap(d=>d.tx).filter((t,i,arr)=>arr.findIndex(x=>x._season===t._season&&x.transaction_id===t.transaction_id)===i).sort((a,b)=>(b.status_updated||b.created||0)-(a.status_updated||a.created||0));
   state.transactionStatus='ready';state.transactionsLastUpdated=new Date();state.transactionError=data.some(d=>d.partial)?'Some weeks could not be retrieved; history may be incomplete.':'';
   render();
+  await loadPlayerNames();
  }catch(e){console.warn(e);state.transactionStatus='error';state.transactionError=e.message;renderTransactions()}
  finally{window.__txBusy=false}
 }

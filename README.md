@@ -120,3 +120,9 @@ The 2025 data is retrieved in the browser when you load the published site; this
 - Team transaction mapping uses franchise name first, owner ID second, and the manual overrides in `data/config.json` when provided. Verify these associations for historical franchise name/ownership changes.
 - Player IDs appear as numeric Sleeper IDs when no name catalog has been supplied; the tracker intentionally does not invent names. Draft-pick details are abbreviated.
 - The requested logo has not been modified; it is included as provided.
+
+## v6: Player names and home transaction bulletin
+
+The transaction tracker retrieves Sleeper's NFL player dictionary (a multi-megabyte response) only when a transaction player has no saved name. The browser caches the names of relevant players and throttles successful dictionary downloads to once per 24 hours. If Sleeper cannot be reached, the tracker temporarily displays `Player <id>`. The homepage shows the five most recent completed 2026 transactions, respecting the global team selector, with a link to the full tracker. Transactions refresh every five minutes while the site is open.
+
+The cache is browser-local, not a shared server-side database. For consistently fast first loads, a later enhancement could generate a small names JSON file with GitHub Actions.

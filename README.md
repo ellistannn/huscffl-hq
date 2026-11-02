@@ -143,3 +143,17 @@ The league-wide standings and recent-transactions two-column summary is visible 
 - Head-to-head history includes both seasons with its existing All-Time/2025/2026 selector; Transactions can show both seasons with its season selector.
 - Historical results are **requested live from Sleeper when the page is opened**; no 2025 scores have been fabricated or embedded. Sleeper access is required, and any renamed or transferred franchises may need `historicalRosterOverrides`.
 - The weekly recap archive only displays articles you upload; 2025 recap articles have not been generated automatically.
+
+
+## Week 7 (2026) editorial package
+
+This version contains six verified Week 7 recaps based on the user's `week_7_facts(4).json` export: one league-wide roundup (`teams: all`) and five individual matchup stories (each tagged to exactly the two opposing franchises). Selecting a team shows the league roundup plus that team's matchup recap. The full archive shows all six. Each article is editable at `articles/2026-week-7-*.md`. Run `python scripts/build_articles.py` after editing to regenerate `data/stories.json`. Scores and statistics reflect the source export; later Sleeper stat corrections may change them.
+
+
+## v12 updates
+- Header includes TEP: **Dynasty • Superflex • TEP • IDP**.
+- Main coverage toolbar has a season selector, so 2025 shows weeks 1–16 and 2026 shows weeks 1–17. Article filtering is season-aware.
+- Team dashboards have a separate 2025/2026 selector for record, league rank, PF, PA and Max PF; head-to-head history remains separately selectable. Historical data depends on correct franchise mapping.
+- Standings tables, including all ten home-page teams, include Sleeper Max PF (roster settings `ppts` + `ppts_decimal`). If Sleeper has not provided potential points, the API may show zero.
+- Homepage displays five compact transactions; full transaction details remain in Transactions. Desktop: standings left / transactions right; mobile: standings then transactions.
+- Constitution page reads `data/constitution.md`. Replace the placeholder there with approved rules and commit the file. Do not remove `data/constitution.md`.

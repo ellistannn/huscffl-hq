@@ -51,5 +51,9 @@
   },
   "historicalRosterOverrides": {
     "2025": {}
+  },
+  "seasonWeeks": {
+    "2025": 16,
+    "2026": 17
   }
 }

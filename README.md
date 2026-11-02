@@ -126,3 +126,20 @@ The 2025 data is retrieved in the browser when you load the published site; this
 The transaction tracker retrieves Sleeper's NFL player dictionary (a multi-megabyte response) only when a transaction player has no saved name. The browser caches the names of relevant players and throttles successful dictionary downloads to once per 24 hours. If Sleeper cannot be reached, the tracker temporarily displays `Player <id>`. The homepage shows the five most recent completed 2026 transactions, respecting the global team selector, with a link to the full tracker. Transactions refresh every five minutes while the site is open.
 
 The cache is browser-local, not a shared server-side database. For consistently fast first loads, a later enhancement could generate a small names JSON file with GitHub Actions.
+
+## v8: Homepage layout and masthead
+
+The masthead displays **HIGH UP SOCIAL CLUB** on its first line and **FANTASY FOOTBALL LEAGUE** on the second, beside the shield. The homepage now shows all ten teams in the standings beside five latest transactions on desktop. Panels stack on narrow screens; standings can scroll horizontally. Live standings require Sleeper access.
+
+## Homepage team filter behavior (v9)
+
+The league-wide standings and recent-transactions two-column summary is visible only when the global team filter is **All teams**. Selecting a specific franchise hides this league summary while retaining its team-specific recent transactions in My Team. Clicking a team tile opens My Team rather than a filtered homepage. Reset the team filter to All teams to restore the league-wide panels.
+
+## Historical 2025 data and season lengths (v10)
+
+- The 2025 league ID is `1246023611291029504`; 2026 is `1309685082163810304`.
+- 2025 includes **weeks 1–16**; 2026 includes **weeks 1–17**, defined in `data/config.json` under `seasonWeeks`.
+- The **Standings** page now has a season selector to show 2025 or 2026. The homepage standings remain current season (2026).
+- Head-to-head history includes both seasons with its existing All-Time/2025/2026 selector; Transactions can show both seasons with its season selector.
+- Historical results are **requested live from Sleeper when the page is opened**; no 2025 scores have been fabricated or embedded. Sleeper access is required, and any renamed or transferred franchises may need `historicalRosterOverrides`.
+- The weekly recap archive only displays articles you upload; 2025 recap articles have not been generated automatically.

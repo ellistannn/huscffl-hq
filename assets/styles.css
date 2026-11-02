@@ -14,3 +14,24 @@
 .transaction-home-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px}
 .transaction-home-list .transaction-card{margin:0}
 .transaction-home-list .transaction-card p{overflow-wrap:anywhere}
+
+/* Two-line full league name in masthead */
+.masthead .brand span{display:flex;flex-direction:column;min-width:0}
+.masthead .brand strong{font-size:clamp(13px,1.55vw,20px);letter-spacing:1.15px;line-height:1.2;white-space:nowrap}
+.masthead .brand small{font-size:clamp(9px,.9vw,12px);letter-spacing:1.35px;line-height:1.3;margin-top:4px;white-space:nowrap}
+@media(max-width:520px){.masthead .brand{gap:8px}.masthead .brand strong{font-size:clamp(12px,3.7vw,17px);letter-spacing:.4px}.masthead .brand small{font-size:clamp(9px,2.7vw,11px);letter-spacing:.3px}}
+
+/* v8: ten-team standings alongside recent transactions */
+.home-league-grid{display:grid;grid-template-columns:minmax(0,1.28fr) minmax(0,1fr);gap:18px;align-items:start;margin:28px 0 50px}
+.home-league-grid>.panel{min-width:0;height:100%}
+.home-league-grid .panel-head{align-items:start}
+.home-table-scroll{overflow-x:auto}
+.home-standings-panel .standings-table{width:100%;min-width:420px;font-size:12px}
+.home-standings-panel .standings-table td,.home-standings-panel .standings-table th{padding:11px 7px}
+.home-standings-panel .standings-table td:first-child{white-space:nowrap}
+.home-league-grid .home-transactions{margin:0}
+.home-league-grid .transaction-home-list{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.home-league-grid .transaction-card{padding:12px 14px}
+.home-league-grid .transaction-card h3{font-size:15px}
+.home-league-grid .transaction-card p{font-size:12px}
+@media(max-width:900px){.home-league-grid{grid-template-columns:minmax(0,1fr)}.home-league-grid>.panel{height:auto}}

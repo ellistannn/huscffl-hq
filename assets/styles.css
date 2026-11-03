@@ -135,3 +135,28 @@
 .player-pager .player-page-button:focus-visible{outline:3px solid #e38f9e;outline-offset:2px}
 .player-page-summary{font-size:.85rem;color:#806874}
 @media(max-width:540px){.player-page-buttons{gap:4px}.player-pager .player-page-button{min-width:32px;min-height:34px;padding:5px 8px}}
+
+
+/* v23: compact club-crest filters and championship stars */
+.toolbar>.team-logo-filter{flex:1 1 100%;min-width:0}
+.team-selector-label{display:block;font-size:10px;font-weight:850;letter-spacing:1.1px;color:var(--muted);margin-bottom:8px}
+.team-logo-picker{display:flex;flex-wrap:wrap;align-items:center;gap:9px}
+.team-choice{display:grid;place-items:center;position:relative;width:55px;height:55px;border:2px solid #ddd0d2;border-radius:11px;padding:5px;background:#fffaf7;cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s}
+.team-choice img{width:100%;height:100%;object-fit:contain;pointer-events:none}
+.team-choice-all{width:auto;min-width:77px;padding:5px 10px;font-size:11px;font-weight:800;line-height:1.2;color:#543344}
+.team-choice:hover,.team-choice:focus-visible{border-color:#de8e83;background:#fff1e9}
+.team-choice:focus-visible{outline:3px solid #754959;outline-offset:2px}
+.team-choice.is-selected{border-color:#d76c69;background:#ffe9e2;box-shadow:0 0 0 2px #d76c6940}
+/* Stars sit centered and tight to the crest, like football-club title stars. */
+.championship-logo{position:relative;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;line-height:0;overflow:visible}
+.championship-stars{position:absolute;z-index:2;left:50%;top:0;transform:translate(-50%,-68%);display:flex;justify-content:center;align-items:center;gap:1px;white-space:nowrap;pointer-events:none;filter:drop-shadow(0 1px 1px #49303b9c)}
+.championship-star{font-size:12px;line-height:1;color:#efbd49;-webkit-text-stroke:.35px #7a4e19}
+.team-hero .championship-star{font-size:18px}
+.story-logo-row .championship-star{font-size:11px}
+@media(max-width:600px){
+ .team-logo-picker{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+ .team-choice{width:100%;height:48px;min-width:0;padding:5px}
+ .team-choice-all{font-size:9px;min-width:0;padding:4px}
+ .team-hero .championship-star{font-size:16px}
+}
+@media(max-width:380px){.team-logo-picker{gap:5px}.team-choice{height:42px}}

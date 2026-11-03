@@ -1,3 +1,9 @@
+# HUSCFFL Website v23
+
+Built from v22.5. Updates: homepage displays six latest articles instead of nine; the shared **Your Team** dropdown becomes clickable team-logo buttons (ten franchises plus All Teams), with mobile logos wrapping into a compact five-column grid; Season and Week remain dropdown selectors. Championship trophy overlays are replaced with gold soccer-style star(s) centered just above each champion's crest. Championship counts are configured under `championships` in `data/config.json` (New York Noodles: 1).
+
+For a minimal deployment replace `assets/app.js`, `assets/styles.css`, `index.html`, and `data/config.json` (merge any custom overrides in config first). Other files remain identical to v22.5. GitHub Pages deployment can take several minutes after committing.
+
 # HUSCFFL League Headquarters — GitHub Pages
 
 A responsive, static fantasy football league website with team filtering, individual franchise dashboards, current-season head-to-head results, standings from Sleeper, and Markdown recaps and previews.

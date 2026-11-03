@@ -17,7 +17,10 @@ function teamLogoSrc(id){return id?`assets/team-logos/${id}.png`:''}
 function teamLogoMarkup(id,name,cls='team-logo'){
  if(!id)return '';
  const img=`<img class="${safe(cls)}" src="${safe(teamLogoSrc(id))}" alt="${safe(name||teamName(id))} logo" loading="lazy">`;
- return id==='new-york-noodles'?`<span class="championship-logo" title="2025 League Champion">${img}<span class="championship-badge" aria-label="2025 League Champion">🏆</span></span>`:img;
+ const titles=Number(state.config?.championships?.[id] ?? (id==='new-york-noodles'?1:0));
+ if(!Number.isFinite(titles)||titles<=0)return img;
+ const stars=Array.from({length:Math.min(10,Math.floor(titles))},()=>'<span class="championship-star" aria-hidden="true">★</span>').join('');
+ return `<span class="championship-logo" title="${titles} HUSCFFL championship${titles===1?'':'s'}">${img}<span class="championship-stars" role="img" aria-label="${titles} HUSCFFL championship${titles===1?'':'s'}">${stars}</span></span>`;
 }
 function articleTeamIds(a){return (a?.teams||[]).filter(t=>t&&t!=='all'&&state.config.teams.some(team=>team.id===t))}
 function selectedRoster(){return state.rosters.find(r=>r.teamId===state.team)}
@@ -303,7 +306,16 @@ function renderHeadToHead(roster){
 }
 function rebuildWeekOptions(){const ws=$('#weekSelect');const max=seasonWeeks(state.coverageSeason);ws.replaceChildren(new Option('All weeks','all'));for(let w=1;w<=max;w++)ws.add(new Option(`Week ${w}`,String(w)));if(state.week!=='all'&&Number(state.week)>max)state.week='all';ws.value=state.week;$('#coverageSeason').value=state.coverageSeason;}
 function setupSelectors(){
- const ts=$('#teamSelect'),ws=$('#weekSelect');for(const t of state.config.teams)ts.add(new Option(t.name,t.id));
+ const ts=$('#teamSelect'),ws=$('#weekSelect'),picker=$('#teamLogoPicker');
+ for(const t of state.config.teams)ts.add(new Option(t.name,t.id));
+ if(picker){
+  const all=document.createElement('button');all.type='button';all.className='team-choice team-choice-all';all.dataset.teamChoice='all';all.textContent='All Teams';all.title='All Teams';picker.appendChild(all);
+  for(const t of state.config.teams){
+   const btn=document.createElement('button');btn.type='button';btn.className='team-choice';btn.dataset.teamChoice=t.id;btn.title=t.name;btn.setAttribute('aria-label',`Select ${t.name}`);
+   const img=document.createElement('img');img.src=teamLogoSrc(t.id);img.alt='';img.loading='lazy';btn.appendChild(img);picker.appendChild(btn);
+  }
+  picker.addEventListener('click',event=>{const btn=event.target.closest('button[data-team-choice]');if(!btn)return;state.team=btn.dataset.teamChoice;state.article=null;change();pageTop();});
+ }
  rebuildWeekOptions();
  ts.addEventListener('change',e=>{state.team=e.target.value;state.article=null;change();pageTop()});
  $('#coverageSeason').addEventListener('change',e=>{state.coverageSeason=e.target.value;state.week='all';state.article=null;rebuildWeekOptions();change()});
@@ -345,7 +357,9 @@ function renderTeamArticles(){
 function renderTeams(){const el=$('#teamGrid');el.replaceChildren();state.config.teams.forEach(t=>{const r=state.rosters.find(r=>r.teamId===t.id);const b=document.createElement('button');b.className='team-tile';b.innerHTML=`${teamLogoMarkup(t.id,t.name,'team-tile-logo')}<h3>${safe(t.name)}</h3><p>${r?`${r.settings?.wins||0}–${r.settings?.losses||0} · ${safe(r.managerName)}`:'View franchise dashboard'} →</p>`;b.onclick=()=>{state.team=t.id;state.view='teams';state.article=null;change();pageTop()};el.appendChild(b)})}
 function renderArticle(){const el=$('#articleBody');const a=state.stories.find(s=>s.id===state.article);if(!a){el.innerHTML='<h1>Article not found</h1><p>Check the link or return to coverage.</p>';return}const ids=articleTeamIds(a);const isMatchup=ids.length===2;const hero=isMatchup?`<section class="matchup-hero"><div class="matchup-team">${teamLogoMarkup(ids[0],teamName(ids[0]),'matchup-hero-logo')}<div class="matchup-team-name">${safe(teamName(ids[0]))}</div></div><div class="matchup-center"><div class="matchup-vs">VS</div><div class="matchup-meta">${safe(a.type)} · WEEK ${safe(a.week)}</div></div><div class="matchup-team">${teamLogoMarkup(ids[1],teamName(ids[1]),'matchup-hero-logo')}<div class="matchup-team-name">${safe(teamName(ids[1]))}</div></div></section>`:(ids.length?`<div class="article-logo-row">${ids.map(id=>`<div class="article-logo-chip">${teamLogoMarkup(id,teamName(id),'article-logo')}<span>${safe(teamName(id))}</span></div>`).join('')}</div>`:'');el.innerHTML=`<div class="eyebrow">${safe(a.type)} · SEASON ${safe(a.season)} · WEEK ${safe(a.week)}</div>${hero}<h1>${safe(a.title)}</h1><p class="lead">${safe(a.summary)}</p><div class="article-content">${a.bodyHtml || (a.paragraphs||[]).map(p=>`<p>${safe(p)}</p>`).join('')}</div>`;document.title=`${a.title} | HUSCFFL`}
 
-function render(){if(!state.config)return;document.title='HUSCFFL | League Headquarters';$('#teamSelect').value=state.team;$('#weekSelect').value=state.week;renderTeamPanel();renderTeamScoring();renderTeamRankings();renderTeamArticles();renderScoring();renderTopPlayers();renderPlayerDatabase();let stories=sortedStories();renderStories($('#featuredStories'),stories.slice(0,9));renderStories($('#archiveStories'),stories);$('#storyCount').textContent=`${stories.length} ${stories.length===1?'story':'stories'}`;renderTable($('#homeStandings'),10,String(state.config.season));renderTable($('#fullStandings'));const standingsPicker=$('#standingsSeason');if(standingsPicker)standingsPicker.value=state.standingsSeason;const toolbar=$('.toolbar');if(toolbar)toolbar.hidden=!['home','archive','teams'].includes(state.view);const leagueSummary=$('.home-league-grid');if(leagueSummary)leagueSummary.hidden=state.team!=='all';renderTeams();$$('[data-type]').forEach(b=>b.classList.toggle('on',b.dataset.type===state.type));$$('.view').forEach(v=>v.hidden=v.id!==`${state.view}View`);$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));if(state.view==='article')renderArticle();renderTransactions();}
+function render(){if(!state.config)return;document.title='HUSCFFL | League Headquarters';$('#teamSelect').value=state.team;
+ $$('[data-team-choice]').forEach(btn=>{const active=btn.dataset.teamChoice===state.team;btn.classList.toggle('is-selected',active);btn.setAttribute('aria-pressed',String(active));});
+ $('#weekSelect').value=state.week;renderTeamPanel();renderTeamScoring();renderTeamRankings();renderTeamArticles();renderScoring();renderTopPlayers();renderPlayerDatabase();let stories=sortedStories();renderStories($('#featuredStories'),stories.slice(0,6));renderStories($('#archiveStories'),stories);$('#storyCount').textContent=`${stories.length} ${stories.length===1?'story':'stories'}`;renderTable($('#homeStandings'),10,String(state.config.season));renderTable($('#fullStandings'));const standingsPicker=$('#standingsSeason');if(standingsPicker)standingsPicker.value=state.standingsSeason;const toolbar=$('.toolbar');if(toolbar)toolbar.hidden=!['home','archive','teams'].includes(state.view);const leagueSummary=$('.home-league-grid');if(leagueSummary)leagueSummary.hidden=state.team!=='all';renderTeams();$$('[data-type]').forEach(b=>b.classList.toggle('on',b.dataset.type===state.type));$$('.view').forEach(v=>v.hidden=v.id!==`${state.view}View`);$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));if(state.view==='article')renderArticle();renderTransactions();}
 
 /* Sleeper transaction history, read-only. Weekly transactions may contain pending / failed records. */
 function setupTransactionControls(){

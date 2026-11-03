@@ -66,5 +66,8 @@
   "seasonWeeks": {
     "2025": 16,
     "2026": 17
+  },
+  "championships": {
+    "new-york-noodles": 1
   }
 }

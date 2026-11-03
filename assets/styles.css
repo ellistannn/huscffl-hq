@@ -160,3 +160,26 @@
  .team-hero .championship-star{font-size:16px}
 }
 @media(max-width:380px){.team-logo-picker{gap:5px}.team-choice{height:42px}}
+
+/* v23.1: circular team-logo selectors, with a wrapped mobile grid. */
+.team-choice:not(.team-choice-all){border-radius:50%;overflow:hidden;padding:5px;aspect-ratio:1/1;flex:none}
+.team-choice:not(.team-choice-all) img{object-fit:contain;border-radius:50%}
+/* All Teams remains a readable reset chip rather than a compressed text circle. */
+.team-choice-all{border-radius:999px}
+/* Live Sleeper status below every toolbar control, aligned left. */
+.toolbar #dataStatus{flex:0 0 100%;width:100%;order:99;text-align:left;align-self:auto;margin:0;padding-top:2px}
+/* Roster and player-database position filters: final control, multi-select buttons. */
+.player-position-filter{margin:13px 0 19px;min-width:0}
+.player-position-label{display:block;font-size:11px;font-weight:800;letter-spacing:.7px;color:#674556;margin-bottom:9px}
+.player-position-label .muted{font-weight:400;letter-spacing:normal}
+.player-position-buttons{display:flex;flex-wrap:wrap;gap:8px}
+.player-position-button{min-width:43px;border:1px solid #d8bbc4;border-radius:999px;background:#fffaf8;color:#593648;font-size:12px;font-weight:700;padding:9px 13px;line-height:1.2;cursor:pointer;transition:background .15s,border-color .15s}
+.player-position-button:hover{background:#fff0eb;border-color:#cf7777}
+.player-position-button.is-selected{background:#bd5870;color:#fff;border-color:#bd5870;box-shadow:0 0 0 2px #bd587022}
+.player-position-button:focus-visible{outline:3px solid #754959;outline-offset:2px}
+@media(max-width:600px){
+ .team-choice:not(.team-choice-all){width:min(100%,43px);height:auto;justify-self:center;aspect-ratio:1/1;padding:4px}
+ .team-choice-all{height:43px;border-radius:999px}
+ .player-position-buttons{gap:6px}
+ .player-position-button{padding:8px 11px;font-size:11px;min-width:39px}
+}

@@ -514,13 +514,16 @@ function multiDropdown(key,label,choices,selected){
 function filterDropdowns(onlyRoster=false){
  const years=[['2025','2025'],['2026','2026']];
  const weekOpts=Array.from({length:maxPlayerWeeks()},(_,i)=>[String(i+1),`Week ${i+1}`]);
- const positionOpts=Object.keys(playerEligible).filter(p=>p!=='ALL').map(p=>[p,p==='SFLEX'?'Superflex':p==='IDPFLEX'?'IDP FLEX':p]);
  const teamOpts=state.config.teams.map(t=>[t.id,t.name]);
- return `<div class="player-multi-grid">${multiDropdown('years','Seasons',years,state.playerYears)}${multiDropdown('weeks','Scoring Weeks',weekOpts,state.playerWeeks)}${multiDropdown('positions','Positions',positionOpts,state.playerPositionsSelected)}${onlyRoster?'':multiDropdown('teams','Fantasy Teams',teamOpts,state.playerTeamsSelected)}</div>`;
+ return `<div class="player-multi-grid">${multiDropdown('years','Seasons',years,state.playerYears)}${multiDropdown('weeks','Scoring Weeks',weekOpts,state.playerWeeks)}${onlyRoster?'':multiDropdown('teams','Fantasy Teams',teamOpts,state.playerTeamsSelected)}</div>`;
+}
+function playerPositionButtons(){
+ const choices=Object.keys(playerEligible).filter(p=>p!=='ALL');
+ return `<div class="player-position-filter" role="group" aria-label="Positions"><div class="player-position-label">POSITIONS <span class="muted">(select multiple; none means all)</span></div><div class="player-position-buttons">${choices.map(p=>`<button type="button" class="player-position-button ${state.playerPositionsSelected.includes(p)?'is-selected':''}" data-position-choice="${p}" aria-pressed="${state.playerPositionsSelected.includes(p)}">${p==='SFLEX'?'SFLEX':p==='IDPFLEX'?'IDP FLEX':p}</button>`).join('')}</div></div>`;
 }
 function playerControlsHTML(){
  const opt=(value,text,current)=>`<option value="${safe(value)}" ${String(current)===String(value)?'selected':''}>${safe(text)}</option>`;
- return `${filterDropdowns()}<div class="player-controls"><label>Roster status <select data-player-control="status">${[['all','All players'],['available','Available only'],['rostered','Rostered only']].map(([v,t])=>opt(v,t,state.playerStatus)).join('')}</select></label><label>Player name <input data-player-control="search" value="${safe(state.playerSearch)}" placeholder="Search players"></label><label>Metric <select data-player-control="metric">${opt('total','Total fantasy points',state.playerMetric)}${opt('average','Average per game',state.playerMetric)}</select></label></div>`;
+ return `${filterDropdowns()}<div class="player-controls"><label>Roster status <select data-player-control="status">${[['all','All players'],['available','Available only'],['rostered','Rostered only']].map(([v,t])=>opt(v,t,state.playerStatus)).join('')}</select></label><label>Player name <input data-player-control="search" value="${safe(state.playerSearch)}" placeholder="Search players"></label><label>Metric <select data-player-control="metric">${opt('total','Total fantasy points',state.playerMetric)}${opt('average','Average per game',state.playerMetric)}</select></label></div>${playerPositionButtons()}`;
 }
 function applyMultiChange(key,val,checked){
  const prop={years:'playerYears',weeks:'playerWeeks',positions:'playerPositionsSelected',teams:'playerTeamsSelected'}[key];if(!prop)return;
@@ -545,6 +548,16 @@ function attachMultiEvents(root){
   renderPlayerRows();renderTopPlayers(false);
  });
  root.addEventListener('click',e=>{
+  const position=e.target.closest('[data-position-choice]');
+  if(position){
+   const key=position.dataset.positionChoice;
+   state.playerPositionsSelected=state.playerPositionsSelected.includes(key)?state.playerPositionsSelected.filter(x=>x!==key):[...state.playerPositionsSelected,key];
+   position.classList.toggle('is-selected',state.playerPositionsSelected.includes(key));
+   position.setAttribute('aria-pressed',String(state.playerPositionsSelected.includes(key)));
+   state.playerPage=0;
+   renderPlayerRows();renderTopPlayers(false);
+   return;
+  }
   const btn=e.target.closest('[data-multi-action]');if(!btn)return;
   const key=btn.dataset.key,details=btn.closest('details');const values=[...details.querySelectorAll('[data-multi-key]')].map(x=>x.value);
   const selection=btn.dataset.multiAction==='all'?values:[];
@@ -672,7 +685,7 @@ function renderTopPlayers(rebuild=true){
  const mine=rows.filter(p=>eligible.includes(p.pos)&&ownMap[p.id]?.teamId===id);const diag=state.playerOwnershipDiagnostics?.[rosterYear()];
  const missing=selectedYears().filter(y=>!state.playerFiles[y]?.players);
  if(rebuild||!el.querySelector('#rosterPlayerData')){
-  el.innerHTML=`<div class="panel-head"><div><div class="eyebrow">THE ROSTER</div><h3>Rostered Players by Position</h3></div><button type="button" class="text-button" id="openPlayerDatabase">Full player database →</button></div>${filterDropdowns(true)}<div class="player-controls"><label>Metric <select id="topPlayerMetric"><option value="total" ${state.playerMetric==='total'?'selected':''}>Total fantasy points</option><option value="average" ${state.playerMetric==='average'?'selected':''}>Average per game</option></select></label></div><p class="muted">All current rostered players (including bench, IR, and taxi). Scoring combines checked weeks from selected seasons; ownership reflects ${rosterYear()}.</p><div id="rosterPlayerData"></div>`;
+  el.innerHTML=`<div class="panel-head"><div><div class="eyebrow">THE ROSTER</div><h3>Rostered Players by Position</h3></div><button type="button" class="text-button" id="openPlayerDatabase">Full player database →</button></div>${filterDropdowns(true)}<div class="player-controls"><label>Metric <select id="topPlayerMetric"><option value="total" ${state.playerMetric==='total'?'selected':''}>Total fantasy points</option><option value="average" ${state.playerMetric==='average'?'selected':''}>Average per game</option></select></label></div>${playerPositionButtons()}<p class="muted">All current rostered players (including bench, IR, and taxi). Scoring combines checked weeks from selected seasons; ownership reflects ${rosterYear()}.</p><div id="rosterPlayerData"></div>`;
   attachMultiEvents(el);
   el.querySelector('#topPlayerMetric').onchange=e=>{state.playerMetric=e.target.value;renderTopPlayers(false);renderPlayerRows()};
   el.querySelector('#openPlayerDatabase').onclick=()=>{state.view='players';state.playerTeamsSelected=[id];state.article=null;change();window.scrollTo(0,0)};

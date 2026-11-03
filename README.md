@@ -262,3 +262,13 @@ Roster ownership now uses explicit configured roster IDs before transaction mapp
 ## v22.5 player pagination
 
 The Players page shows up to **50 players per page**, after all sorting and filters. Numbered page buttons display a moving window of up to five pages, with first/previous/next/last controls and accessible labels. Changing player filters resets pagination to the first page. Navigating to another results page scrolls to the top of the player section. All v22.4 ownership-mapping diagnostics remain intact.
+
+
+## v23.1 changes
+
+- Replaces Tampa Bay Tyranny's logo with the latest provided silver TB mark (600 × 600 PNG).
+- Changes ten franchise selection buttons into circular logo buttons, with a compact mobile grid.
+- Places live Sleeper status at the bottom-left of the global filter toolbar.
+- Replaces the Positions dropdown with multiple-select position buttons, appearing last in the Players page filters and My Team roster-position filters. Empty selection means all positions.
+
+For an incremental deployment, replace `assets/app.js`, `assets/styles.css`, and `assets/team-logos/tampa-bay-tyranny.png`.

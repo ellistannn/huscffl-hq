@@ -183,3 +183,22 @@
  .player-position-buttons{gap:6px}
  .player-position-button{padding:8px 11px;font-size:11px;min-width:39px}
 }
+
+/* v23.2: clearer Franchise Headquarters star clearance and slightly larger heading. */
+.team-panel .franchise-heading{font-size:14px;line-height:1.3;letter-spacing:1.1px;margin-bottom:23px}
+.team-panel .team-hero{margin-top:0}
+@media(max-width:600px){.team-panel .franchise-heading{font-size:13px;margin-bottom:20px}}
+/* Franchise head-to-head records precede the weekly offense/defense chart. */
+.team-panel .h2h-section{margin-top:23px}
+/* Reuse the club-crest buttons on Transactions and Players, retaining legacy select in DOM. */
+.transaction-controls>.transaction-team-filter{flex:1 1 100%;min-width:0;margin-top:5px}
+.transaction-team-filter .team-logo-picker,.player-team-filter .team-logo-picker{gap:9px}
+.player-team-filter{margin:0 0 17px;min-width:0}
+.player-team-filter .team-selector-label .muted{font-weight:400;letter-spacing:normal}
+.transaction-team-filter .team-choice,.player-team-filter .team-choice{width:52px;height:52px}
+.transaction-team-filter .team-choice-all,.player-team-filter .team-choice-all{width:auto;min-width:77px}
+@media(max-width:600px){
+ .transaction-team-filter .team-logo-picker,.player-team-filter .team-logo-picker{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+ .transaction-team-filter .team-choice:not(.team-choice-all),.player-team-filter .team-choice:not(.team-choice-all){width:min(100%,43px);height:auto;aspect-ratio:1/1;justify-self:center;padding:4px}
+ .transaction-team-filter .team-choice-all,.player-team-filter .team-choice-all{width:100%;min-width:0;height:43px;font-size:9px}
+}

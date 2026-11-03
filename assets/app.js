@@ -22,6 +22,14 @@ function teamLogoMarkup(id,name,cls='team-logo'){
  const stars=Array.from({length:Math.min(10,Math.floor(titles))},()=>'<span class="championship-star" aria-hidden="true">★</span>').join('');
  return `<span class="championship-logo" title="${titles} HUSCFFL championship${titles===1?'':'s'}">${img}<span class="championship-stars" role="img" aria-label="${titles} HUSCFFL championship${titles===1?'':'s'}">${stars}</span></span>`;
 }
+function teamFilterLogoButtons(selected, mode='single'){
+ const allActive=mode==='multi'?!selected.length:selected==='all';
+ const all=`<button type="button" class="team-choice team-choice-all ${allActive?'is-selected':''}" data-filter-team="all" aria-pressed="${allActive}" title="All Teams">All Teams</button>`;
+ return all+state.config.teams.map(t=>{
+  const active=mode==='multi'?selected.includes(t.id):selected===t.id;
+  return `<button type="button" class="team-choice ${active?'is-selected':''}" data-filter-team="${safe(t.id)}" title="${safe(t.name)}" aria-label="${safe(t.name)}" aria-pressed="${active}"><img src="${safe(teamLogoSrc(t.id))}" alt="" loading="lazy"></button>`;
+ }).join('');
+}
 function articleTeamIds(a){return (a?.teams||[]).filter(t=>t&&t!=='all'&&state.config.teams.some(team=>team.id===t))}
 function selectedRoster(){return state.rosters.find(r=>r.teamId===state.team)}
 function mapTeams(){const teams=state.config.teams;const overrides=state.config.rosterOverrides||{};for(const roster of state.rosters){const owner=state.users.find(u=>String(u.user_id)===String(roster.owner_id));const sleeperName=owner?.metadata?.team_name||owner?.display_name||'';const custom=Object.entries(overrides).find(([,rid])=>Number(rid)===Number(roster.roster_id))?.[0];roster.teamId=custom || teams.find(t=>slug(t.name)===slug(sleeperName))?.id || null;roster.displayName=owner?.metadata?.team_name||owner?.display_name||`Roster ${roster.roster_id}`;roster.managerName=owner?.display_name||'Unknown manager';}
@@ -347,7 +355,7 @@ function renderTable(el,limit=Infinity,season=state.standingsSeason){
  const tbody=document.createElement('tbody');
  rows.forEach(r=>{const tr=document.createElement('tr');const label=r.teamId?teamName(r.teamId):r.displayName;tr.innerHTML=`<td>${r.officialRank}</td><td><div class="team-cell">${r.teamId?teamLogoMarkup(r.teamId,label,'table-team-logo'):''}<button class="teamlink">${safe(label)}</button></div></td><td>${r.wins}</td><td>${r.losses}</td><td>${fmt(r.pf)}</td><td>${fmt(r.pa)}</td><td>${fmt(r.maxpf)}</td>`;tr.querySelector('.teamlink').onclick=()=>{if(r.teamId){state.team=r.teamId;state.view='teams';state.article=null;change();pageTop()}};tbody.appendChild(tr)});table.appendChild(tbody);el.replaceChildren(table)
 }
-function renderTeamPanel(){const el=$('#teamPanel');el.hidden=state.team==='all'||!['teams','home'].includes(state.view);if(el.hidden)return;const r=selectedRoster();const match=state.matchups.find(m=>Number(m.roster_id)===Number(r?.roster_id));const opponent=match&&state.matchups.find(m=>m.matchup_id===match.matchup_id&&m.roster_id!==match.roster_id);const oppRoster=opponent&&state.rosters.find(a=>a.roster_id===opponent.roster_id);const season=state.coverageSeason;const rosterRows=season===String(state.config.season)?state.standings:(state.historicalStandings[season]||[]);const s=rosterRows.find(a=>a.teamId===state.team);const record=s?`${s.wins}–${s.losses}${s.ties?'–'+s.ties:''}`:'—';const rank=s?rosterRows.indexOf(s)+1:'—';el.innerHTML=`<div class="eyebrow">FRANCHISE HEADQUARTERS</div><div class="team-hero">${teamLogoMarkup(state.team,teamName(state.team),'team-hero-logo')}<div><h2>${safe(teamName(state.team))}</h2><div class="muted">Season: ${safe(season)} · Use the Season and Week selectors above to explore history.</div><div class="muted">${r?`Manager: ${safe(r.managerName)}`:'Map this team to its Sleeper roster to show its stats.'}</div></div></div><div class="metrics"><div class="metric"><small>Record</small><b>${record}</b></div><div class="metric"><small>League rank</small><b>${rank}${rank==='—'?'':' / '+rosterRows.length}</b></div><div class="metric"><small>Points for</small><b>${s?fmt(s.pf):'—'}</b></div><div class="metric"><small>Points against</small><b>${s?fmt(s.pa):'—'}</b></div><div class="metric"><small>Max PF</small><b>${s?fmt(s.maxpf):'—'}</b></div></div><div class="team-details"><div class="detail"><strong>Current roster</strong>${r?`${r.players?.length||0} players on roster · ${r.starters?.length||0} starter slots`:'Live roster not matched'}<br><span class="muted">Roster/player details can be expanded in the next version.</span></div><div class="detail"><strong>Weekly matchup</strong>${oppRoster?`Vs. ${safe(oppRoster.teamId?teamName(oppRoster.teamId):oppRoster.displayName)} · ${fmt(Number(match.custom_points??match.points))} – ${fmt(Number(opponent.custom_points??opponent.points))}`:'Select a week to view a matchup, if available.'}</div></div><section id="teamScoring" class="panel team-scoring"></section><section class="h2h-section">${renderHeadToHead(r)}</section><section id="teamRankings" class="panel team-scoring"></section><section id="topPlayersPanel" class="panel team-scoring"></section><section class="team-transactions"><h3>Recent transactions</h3><div class="muted">2026 season · auto-updated</div>${renderTransactionCards('2026',state.team,5)}<p><button type="button" id="viewAllTeamTransactions" class="text-button">View All Transactions →</button></p></section><section id="teamRecentArticles" class="team-recent-articles panel"><div class="panel-head"><div><div class="eyebrow">FROM THE ARCHIVE</div><h3>Recent Articles</h3></div><button class="text-button" type="button" id="viewAllTeamArticles">View All Team Articles →</button></div><div id="teamRecentArticleList" class="stories"></div></section>`;const selector=el.querySelector("#h2hSeasonSelect");if(selector)selector.addEventListener("change",e=>{state.h2hSeason=e.target.value;render()});const allTx=$('#viewAllTeamTransactions');if(allTx)allTx.onclick=()=>{state.transactionTeam=state.team;state.view='transactions';change();window.scrollTo(0,0)};}
+function renderTeamPanel(){const el=$('#teamPanel');el.hidden=state.team==='all'||!['teams','home'].includes(state.view);if(el.hidden)return;const r=selectedRoster();const match=state.matchups.find(m=>Number(m.roster_id)===Number(r?.roster_id));const opponent=match&&state.matchups.find(m=>m.matchup_id===match.matchup_id&&m.roster_id!==match.roster_id);const oppRoster=opponent&&state.rosters.find(a=>a.roster_id===opponent.roster_id);const season=state.coverageSeason;const rosterRows=season===String(state.config.season)?state.standings:(state.historicalStandings[season]||[]);const s=rosterRows.find(a=>a.teamId===state.team);const record=s?`${s.wins}–${s.losses}${s.ties?'–'+s.ties:''}`:'—';const rank=s?rosterRows.indexOf(s)+1:'—';el.innerHTML=`<div class="eyebrow franchise-heading">FRANCHISE HEADQUARTERS</div><div class="team-hero">${teamLogoMarkup(state.team,teamName(state.team),'team-hero-logo')}<div><h2>${safe(teamName(state.team))}</h2><div class="muted">Season: ${safe(season)} · Use the Season and Week selectors above to explore history.</div><div class="muted">${r?`Manager: ${safe(r.managerName)}`:'Map this team to its Sleeper roster to show its stats.'}</div></div></div><div class="metrics"><div class="metric"><small>Record</small><b>${record}</b></div><div class="metric"><small>League rank</small><b>${rank}${rank==='—'?'':' / '+rosterRows.length}</b></div><div class="metric"><small>Points for</small><b>${s?fmt(s.pf):'—'}</b></div><div class="metric"><small>Points against</small><b>${s?fmt(s.pa):'—'}</b></div><div class="metric"><small>Max PF</small><b>${s?fmt(s.maxpf):'—'}</b></div></div><div class="team-details"><div class="detail"><strong>Current roster</strong>${r?`${r.players?.length||0} players on roster · ${r.starters?.length||0} starter slots`:'Live roster not matched'}<br><span class="muted">Roster/player details can be expanded in the next version.</span></div><div class="detail"><strong>Weekly matchup</strong>${oppRoster?`Vs. ${safe(oppRoster.teamId?teamName(oppRoster.teamId):oppRoster.displayName)} · ${fmt(Number(match.custom_points??match.points))} – ${fmt(Number(opponent.custom_points??opponent.points))}`:'Select a week to view a matchup, if available.'}</div></div><section class="h2h-section">${renderHeadToHead(r)}</section><section id="teamScoring" class="panel team-scoring"></section><section id="teamRankings" class="panel team-scoring"></section><section id="topPlayersPanel" class="panel team-scoring"></section><section class="team-transactions"><h3>Recent transactions</h3><div class="muted">2026 season · auto-updated</div>${renderTransactionCards('2026',state.team,5)}<p><button type="button" id="viewAllTeamTransactions" class="text-button">View All Transactions →</button></p></section><section id="teamRecentArticles" class="team-recent-articles panel"><div class="panel-head"><div><div class="eyebrow">FROM THE ARCHIVE</div><h3>Recent Articles</h3></div><button class="text-button" type="button" id="viewAllTeamArticles">View All Team Articles →</button></div><div id="teamRecentArticleList" class="stories"></div></section>`;const selector=el.querySelector("#h2hSeasonSelect");if(selector)selector.addEventListener("change",e=>{state.h2hSeason=e.target.value;render()});const allTx=$('#viewAllTeamTransactions');if(allTx)allTx.onclick=()=>{state.transactionTeam=state.team;state.view='transactions';change();window.scrollTo(0,0)};}
 function renderTeamArticles(){
  const el=$('#teamRecentArticleList');if(!el||state.team==='all')return;
  const articles=state.stories.filter(a=>a.teams?.includes(state.team)||a.teams?.includes('all')).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||Number(b.season)-Number(a.season)||Number(b.week)-Number(a.week)).slice(0,3);
@@ -368,6 +376,12 @@ function setupTransactionControls(){
   $('#transactionSeason').onchange=e=>{state.transactionSeason=e.target.value;renderTransactions()};
   $('#transactionType').onchange=e=>{state.transactionType=e.target.value;renderTransactions()};
   team.onchange=e=>{state.transactionTeam=e.target.value;setUrl();renderTransactions()};
+  const picker=$('#transactionLogoPicker');
+  picker.addEventListener('click',event=>{
+   const button=event.target.closest('button[data-filter-team]');if(!button)return;
+   state.transactionTeam=button.dataset.filterTeam;
+   setUrl();renderTransactions();
+  });
   $('#refreshTransactions').onclick=()=>loadTransactions(true);
 }
 function txType(t){return t.type==='trade'?'Trade':t.type==='waiver'?'Waiver claim':t.type==='free_agent'?'Free-agent move':(t.type||'Roster move')}
@@ -450,6 +464,7 @@ function renderTransactions(){
  $('#transactionSeason').value=state.transactionSeason;
  $('#transactionType').value=state.transactionType;
  $('#transactionTeam').value=state.transactionTeam;
+ $('#transactionLogoPicker').innerHTML=teamFilterLogoButtons(state.transactionTeam);
  const list=txFiltered(state.transactionSeason,state.transactionTeam,state.transactionType);
  const backlink=$('#transactionTeamBack');if(backlink){backlink.hidden=state.transactionTeam==='all';backlink.onclick=()=>{state.team=state.transactionTeam;state.view='teams';change()}}const stamp=state.transactionsLastUpdated?` · Last checked ${state.transactionsLastUpdated.toLocaleTimeString()}`:'';
  $('#transactionStatus').textContent=(state.transactionStatus==='error'?`Sleeper transaction data unavailable: ${state.transactionError}`:state.transactionStatus==='loading'?'Loading Sleeper transaction history…':`${list.length} completed moves shown${stamp}`);
@@ -514,8 +529,7 @@ function multiDropdown(key,label,choices,selected){
 function filterDropdowns(onlyRoster=false){
  const years=[['2025','2025'],['2026','2026']];
  const weekOpts=Array.from({length:maxPlayerWeeks()},(_,i)=>[String(i+1),`Week ${i+1}`]);
- const teamOpts=state.config.teams.map(t=>[t.id,t.name]);
- return `<div class="player-multi-grid">${multiDropdown('years','Seasons',years,state.playerYears)}${multiDropdown('weeks','Scoring Weeks',weekOpts,state.playerWeeks)}${onlyRoster?'':multiDropdown('teams','Fantasy Teams',teamOpts,state.playerTeamsSelected)}</div>`;
+ return `<div class="player-multi-grid">${multiDropdown('years','Seasons',years,state.playerYears)}${multiDropdown('weeks','Scoring Weeks',weekOpts,state.playerWeeks)}</div>${onlyRoster?'':`<div class="player-team-filter"><span class="team-selector-label" id="playerTeamLogoLabel">FANTASY TEAMS <span class="muted">(select multiple; none means all)</span></span><div class="team-logo-picker" role="group" aria-labelledby="playerTeamLogoLabel">${teamFilterLogoButtons(state.playerTeamsSelected,'multi')}</div></div>`}`;
 }
 function playerPositionButtons(){
  const choices=Object.keys(playerEligible).filter(p=>p!=='ALL');
@@ -548,6 +562,14 @@ function attachMultiEvents(root){
   renderPlayerRows();renderTopPlayers(false);
  });
  root.addEventListener('click',e=>{
+  const teamButton=e.target.closest('.player-team-filter button[data-filter-team]');
+  if(teamButton){
+   const id=teamButton.dataset.filterTeam;
+   state.playerTeamsSelected=id==='all'?[]:(state.playerTeamsSelected.includes(id)?state.playerTeamsSelected.filter(t=>t!==id):[...state.playerTeamsSelected,id]);
+   const picker=teamButton.closest('.player-team-filter').querySelector('.team-logo-picker');
+   picker.innerHTML=teamFilterLogoButtons(state.playerTeamsSelected,'multi');
+   state.playerPage=0;renderPlayerRows();return;
+  }
   const position=e.target.closest('[data-position-choice]');
   if(position){
    const key=position.dataset.positionChoice;

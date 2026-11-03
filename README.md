@@ -272,3 +272,13 @@ The Players page shows up to **50 players per page**, after all sorting and filt
 - Replaces the Positions dropdown with multiple-select position buttons, appearing last in the Players page filters and My Team roster-position filters. Empty selection means all positions.
 
 For an incremental deployment, replace `assets/app.js`, `assets/styles.css`, and `assets/team-logos/tampa-bay-tyranny.png`.
+
+
+## v23.2 changes
+- Increased Franchise Headquarters heading prominence and star-to-heading clearance.
+- Moved Head-to-Head Records before the weekly Offense/Defense scoring graph on My Team.
+- Transactions Tracker: Teams filter replaced with circular franchise-logo buttons; All Teams reset remains.
+- Players Database: Fantasy Teams multi-select dropdown replaced with multi-select circular franchise-logo buttons, preserving all other filters.
+- Existing statistics, articles, team rosters, configuration, and workflows retained.
+
+For an incremental update from v23.1 replace `index.html`, `assets/app.js`, and `assets/styles.css`.

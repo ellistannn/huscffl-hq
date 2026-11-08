@@ -1,3 +1,19 @@
+# HUSCFFL Website v23.3
+
+Built on the complete v23.2 website. Changes:
+
+- Scoring Statistics → Positional Scoring Comparison: Position (QB, RB, WR, TE, DL, LB, DB) and Metric (Points / week, Total starter points) are now compact selectable button groups. Both retain the previous single-select behavior, computation, and ranking order.
+- Every team-reset button formerly labeled “All Teams” now displays “All”; its descriptive tooltip and behavior remain intact.
+- The 11 latest editorial articles (five Week 8 game recaps, one Week 8 league roundup, four Week 9 previews, and a District of Daebak vs. LALALALA feature) have been added to `articles/`, and `data/stories.json` has been regenerated with the website's existing article compiler. This lets the complete package display the coverage on first load.
+
+**Minimal update from v23.2:** replace `assets/app.js`, `assets/styles.css`, and `data/stories.json`; upload the 11 new Markdown article files to `articles/`. Existing player stats, team logos, configuration, and GitHub Actions are not replaced.
+
+**Complete install:** upload all contents of this ZIP into the root of your `huscffl-hq` GitHub repository (including the hidden `.github` directory). Do not overwrite any newer live player stats exports or personal changes with older copies from this archive.
+
+**Deployment:** ZIP creation does not deploy to GitHub. Test on desktop/mobile following upload.
+
+---
+
 # HUSCFFL Website v23
 
 Built from v22.5. Updates: homepage displays six latest articles instead of nine; the shared **Your Team** dropdown becomes clickable team-logo buttons (ten franchises plus All Teams), with mobile logos wrapping into a compact five-column grid; Season and Week remain dropdown selectors. Championship trophy overlays are replaced with gold soccer-style star(s) centered just above each champion's crest. Championship counts are configured under `championships` in `data/config.json` (New York Noodles: 1).

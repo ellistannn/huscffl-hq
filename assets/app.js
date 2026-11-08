@@ -24,7 +24,7 @@ function teamLogoMarkup(id,name,cls='team-logo'){
 }
 function teamFilterLogoButtons(selected, mode='single'){
  const allActive=mode==='multi'?!selected.length:selected==='all';
- const all=`<button type="button" class="team-choice team-choice-all ${allActive?'is-selected':''}" data-filter-team="all" aria-pressed="${allActive}" title="All Teams">All Teams</button>`;
+ const all=`<button type="button" class="team-choice team-choice-all ${allActive?'is-selected':''}" data-filter-team="all" aria-pressed="${allActive}" title="All Teams">All</button>`;
  return all+state.config.teams.map(t=>{
   const active=mode==='multi'?selected.includes(t.id):selected===t.id;
   return `<button type="button" class="team-choice ${active?'is-selected':''}" data-filter-team="${safe(t.id)}" title="${safe(t.name)}" aria-label="${safe(t.name)}" aria-pressed="${active}"><img src="${safe(teamLogoSrc(t.id))}" alt="" loading="lazy"></button>`;
@@ -163,10 +163,17 @@ function renderLeaguePositionalComparison(){
   const total=weeks.reduce((n,w)=>n+Number(w.positional?.[selected]||0),0);
   return {id:t.id,name:t.name,total,weeks:weeks.length,average:weeks.length?total/weeks.length:0,unresolved:weeks.reduce((n,w)=>n+(w.unresolvedFlex||0),0)};
  }).sort((a,b)=>b[metric]-a[metric]||a.name.localeCompare(b.name));
- const controls=`<div class="player-controls"><label>Position <select id="leaguePositionalPosition">${positions.map(p=>`<option value="${p}" ${selected===p?'selected':''}>${p}</option>`).join('')}</select></label><label>Metric <select id="leaguePositionalMetric"><option value="average" ${metric==='average'?'selected':''}>Points / week</option><option value="total" ${metric==='total'?'selected':''}>Total starter points</option></select></label></div>`;
+ const controls=`<div class="league-positional-controls" aria-label="Positional scoring comparison filters">
+  <div class="league-positional-filter-group" role="group" aria-label="Position"><span class="league-positional-label">Position</span><div class="league-positional-buttons">${positions.map(p=>`<button type="button" class="league-positional-button ${selected===p?'is-selected':''}" data-league-position="${p}" aria-pressed="${selected===p}">${p}</button>`).join('')}</div></div>
+  <div class="league-positional-filter-group" role="group" aria-label="Metric"><span class="league-positional-label">Metric</span><div class="league-positional-buttons">${[['average','Points / week'],['total','Total starter points']].map(([key,label])=>`<button type="button" class="league-positional-button ${metric===key?'is-selected':''}" data-league-metric="${key}" aria-pressed="${metric===key}">${label}</button>`).join('')}</div></div>
+ </div>`;
  el.innerHTML=controls+`<div class="standings-scroll"><table class="standings-table"><thead><tr><th>Rank</th><th>Franchise</th><th>Weeks</th><th>${metric==='average'?'FP / Week':'Starter FP'}</th></tr></thead><tbody>${teams.map((t,i)=>`<tr><td>${i+1}</td><td>${teamLogoMarkup(t.id,t.name,'table-team-logo')} ${safe(t.name)}</td><td>${t.weeks}</td><td>${t.weeks?fmt(t[metric]):'—'}</td></tr>`).join('')}</tbody></table></div><p class="muted">Points from starting FLEX, Superflex and IDP FLEX slots count toward the player's real position. Bench points excluded.${teams.some(t=>t.unresolved)?' Some flex positions are not identified yet.':''}</p>`;
- el.querySelector('#leaguePositionalPosition').onchange=e=>{state.leaguePositionalPosition=e.target.value;renderLeaguePositionalComparison()};
- el.querySelector('#leaguePositionalMetric').onchange=e=>{state.leaguePositionalMetric=e.target.value;renderLeaguePositionalComparison()};
+ el.querySelector('.league-positional-controls').addEventListener('click',e=>{
+  const position=e.target.closest('button[data-league-position]');
+  if(position){state.leaguePositionalPosition=position.dataset.leaguePosition;renderLeaguePositionalComparison();return}
+  const metricButton=e.target.closest('button[data-league-metric]');
+  if(metricButton){state.leaguePositionalMetric=metricButton.dataset.leagueMetric;renderLeaguePositionalComparison()}
+ });
 }
 function renderTeamRankings(){
  const area=$('#teamRankings');if(!area)return;
@@ -317,7 +324,7 @@ function setupSelectors(){
  const ts=$('#teamSelect'),ws=$('#weekSelect'),picker=$('#teamLogoPicker');
  for(const t of state.config.teams)ts.add(new Option(t.name,t.id));
  if(picker){
-  const all=document.createElement('button');all.type='button';all.className='team-choice team-choice-all';all.dataset.teamChoice='all';all.textContent='All Teams';all.title='All Teams';picker.appendChild(all);
+  const all=document.createElement('button');all.type='button';all.className='team-choice team-choice-all';all.dataset.teamChoice='all';all.textContent='All';all.title='All Teams';picker.appendChild(all);
   for(const t of state.config.teams){
    const btn=document.createElement('button');btn.type='button';btn.className='team-choice';btn.dataset.teamChoice=t.id;btn.title=t.name;btn.setAttribute('aria-label',`Select ${t.name}`);
    const img=document.createElement('img');img.src=teamLogoSrc(t.id);img.alt='';img.loading='lazy';btn.appendChild(img);picker.appendChild(btn);

@@ -202,3 +202,14 @@
  .transaction-team-filter .team-choice:not(.team-choice-all),.player-team-filter .team-choice:not(.team-choice-all){width:min(100%,43px);height:auto;aspect-ratio:1/1;justify-self:center;padding:4px}
  .transaction-team-filter .team-choice-all,.player-team-filter .team-choice-all{width:100%;min-width:0;height:43px;font-size:9px}
 }
+
+/* v23.3: button-only controls for Positional Scoring Comparison. */
+.league-positional-controls{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-start;margin:13px 0 18px}
+.league-positional-filter-group{display:flex;flex-direction:column;gap:7px;min-width:0}
+.league-positional-label{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#674556}
+.league-positional-buttons{display:flex;flex-wrap:wrap;gap:7px}
+.league-positional-button{border:1px solid #d8bbc4;border-radius:999px;background:#fffaf8;color:#593648;font-size:12px;font-weight:700;line-height:1.2;padding:9px 13px;cursor:pointer;transition:background .15s,border-color .15s,box-shadow .15s}
+.league-positional-button:hover{background:#fff0eb;border-color:#cf7777}
+.league-positional-button.is-selected{background:#bd5870;color:white;border-color:#bd5870;box-shadow:0 0 0 2px #bd587022}
+.league-positional-button:focus-visible{outline:3px solid #754959;outline-offset:2px}
+@media(max-width:600px){.league-positional-controls{gap:12px}.league-positional-filter-group{width:100%}.league-positional-buttons{gap:6px}.league-positional-button{padding:8px 11px;font-size:11px}}

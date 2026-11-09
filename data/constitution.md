@@ -252,6 +252,7 @@ o   Set lineups to maintain competitive fairness
 o   Initiate a replacement search immediately
 o   Lock the team from making further moves
 
+
 ## XI. Season Records & Team Directory
 
 ### 11.1 Annual Manager Directory This section tracks the team names and managers for each season, preserving league history and promoting continuity.
@@ -259,29 +260,29 @@ o   Lock the team from making further moves
 ### 📅 2025 Season
 
 | Manager Name | Team Name |
-| --- | --- |
-| Ellis Tan | New York Noodles 🍜 |
-| Nathan Taylor | Tampa Bay Tyranny ☠️ |
-| Allen Ragasa | HOU You Like That |
-| Justin Le | 🏆 Good Things We OKC! |
-| Jacob Chan | LALALALA 🍒 |
-| Brian Zhu | Seattle Supersonics |
-| Jundy Kyle Lacuata | NJz Bunniez |
-| Paul Bacera | Utah Yetis |
-| Ricardo Lagunas | District of Daebak |
-| Alex Su | Dalla Dalla Dallas (formerly Texas Rangers) |
+| ---: | :--- |
+| Ellis T. | New York Noodles 🍜 |
+| Nathan T. | Tampa Bay Tyranny ☠️ |
+| Allen R. | HOU You Like That |
+| Justin L. | 🏆 Good Things We OKC! |
+| Jacob C. | LALALALA 🍒 |
+| Brian Z. | Seattle Supersonics |
+| Jundy L. | NJz Bunniez |
+| Paul B. | Utah Yetis |
+| Ricardo L. | District of Daebak |
+| Alex S. | Dalla Dalla Dallas (formerly Texas Rangers) |
 
 ### 📅 2026 Season
 
 | Manager Name | Team Name |
-| --- | --- |
-| Ellis Tan | New York Noodles 🍜 |
-| Nathan Taylor | Tampa Bay Tyranny ☠️ |
-| Allen Ragasa | HOU You Like That |
-| Justin Le | Good Things We OKC! |
-| Jacob Chan | LALALALA 🍒 |
-| Brian Zhu | Seattle Supersonics |
-| Jundy Kyle Lacuata | NJz Bunniez |
-| Paul Bacera | Utah Yetis |
-| Ricardo Lagunas | District of Daebak |
-| Alex Su | Dalla Dalla Dallas |
+| ---: | :--- |
+| Ellis T. | New York Noodles 🍜 |
+| Nathan T. | Tampa Bay Tyranny ☠️ |
+| Allen R. | HOU You Like That |
+| Justin L. | Good Things We OKC! |
+| Jacob C. | LALALALA 🍒 |
+| Brian Z. | Seattle Supersonics |
+| Jundy L. | NJz Bunniez |
+| Paul B. | Utah Yetis |
+| Ricardo L. | District of Daebak |
+| Alex S. | Dalla Dalla Dallas |

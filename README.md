@@ -1,3 +1,20 @@
+# HUSCFFL Website v23.4
+
+Built from the complete v23.3 website. Updates:
+
+- All team-filter reset buttons are now the same perfectly circular dimensions as adjacent team-logo selectors (55px in the global selector, 52px in Transactions/Players; 43px mobile).
+- Replaced the placeholder Constitution with the original 11-section HUSCFFL Constitution v1.1, displayed continuously with sticky desktop navigation, active-section highlighting, and a collapsible mobile contents menu.
+- Converted the source DOCX tables (offensive scoring, IDP scoring, prize payouts, 2025/2026 team directories) into responsive tables.
+- Applied ONLY the user-approved content changes: last updated July 31, 2026; replacement Section 2.4 schedule for 17-week season; removed Good Things We OKC!'s 2026 trophy indicator while retaining 2025 indicator. All other wording is transcribed without editorial revisions.
+
+**Minimal update from v23.3:** replace `index.html`, `assets/app.js`, `assets/styles.css`, `data/constitution.md`, and add `data/constitution.html`. Keep other data files (especially newer player statistics) untouched.
+
+**Full install:** upload the contents of this ZIP to the root of `huscffl-hq`. Do not overwrite any more recently updated player statistics or customized files.
+
+**Publishing:** this package has NOT been uploaded to GitHub. Once the files are committed, GitHub Pages can deploy them.
+
+---
+
 # HUSCFFL Website v23.3
 
 Built on the complete v23.2 website. Changes:

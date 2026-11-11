@@ -12,6 +12,9 @@ function urlState(){const p=new URLSearchParams(location.search);state.team=stat
 function setUrl(){const p=new URLSearchParams();if(['teams','archive','home'].includes(state.view)&&state.team!=='all')p.set('team',state.team);if(state.view==='transactions'&&state.transactionTeam!=='all')p.set('transactionTeam',state.transactionTeam);if(state.coverageSeason!==String(state.config.season))p.set('season',state.coverageSeason);if(state.week!=='all')p.set('week',state.week);if(state.view!=='home'&&state.view!=='article')p.set('view',state.view);if(state.article)p.set('article',state.article);history.pushState({},'',`${location.pathname}${p.toString()?'?'+p:''}`);}
 function change(){setUrl();render()}
 function pageTop(){window.scrollTo({top:0,behavior:'instant'})}
+state.teamTab='overview';
+try{state.teamTab=sessionStorage.getItem('huscffl-team-tab')==='analysis'?'analysis':'overview'}catch(e){}
+state.comparisonOther='';state.comparisonAvailable=true;state.comparisonPositions=['WR'];state.comparisonMetric='average';
 function teamName(id){return state.config.teams.find(t=>t.id===id)?.name||id}
 function teamLogoSrc(id){return id?`assets/team-logos/${id}.png`:''}
 function teamLogoMarkup(id,name,cls='team-logo'){
@@ -362,7 +365,7 @@ function renderTable(el,limit=Infinity,season=state.standingsSeason){
  const tbody=document.createElement('tbody');
  rows.forEach(r=>{const tr=document.createElement('tr');const label=r.teamId?teamName(r.teamId):r.displayName;tr.innerHTML=`<td>${r.officialRank}</td><td><div class="team-cell">${r.teamId?teamLogoMarkup(r.teamId,label,'table-team-logo'):''}<button class="teamlink">${safe(label)}</button></div></td><td>${r.wins}</td><td>${r.losses}</td><td>${fmt(r.pf)}</td><td>${fmt(r.pa)}</td><td>${fmt(r.maxpf)}</td>`;tr.querySelector('.teamlink').onclick=()=>{if(r.teamId){state.team=r.teamId;state.view='teams';state.article=null;change();pageTop()}};tbody.appendChild(tr)});table.appendChild(tbody);el.replaceChildren(table)
 }
-function renderTeamPanel(){const el=$('#teamPanel');el.hidden=state.team==='all'||!['teams','home'].includes(state.view);if(el.hidden)return;const r=selectedRoster();const match=state.matchups.find(m=>Number(m.roster_id)===Number(r?.roster_id));const opponent=match&&state.matchups.find(m=>m.matchup_id===match.matchup_id&&m.roster_id!==match.roster_id);const oppRoster=opponent&&state.rosters.find(a=>a.roster_id===opponent.roster_id);const season=state.coverageSeason;const rosterRows=season===String(state.config.season)?state.standings:(state.historicalStandings[season]||[]);const s=rosterRows.find(a=>a.teamId===state.team);const record=s?`${s.wins}–${s.losses}${s.ties?'–'+s.ties:''}`:'—';const rank=s?rosterRows.indexOf(s)+1:'—';el.innerHTML=`<div class="eyebrow franchise-heading">FRANCHISE HEADQUARTERS</div><div class="team-hero">${teamLogoMarkup(state.team,teamName(state.team),'team-hero-logo')}<div><h2>${safe(teamName(state.team))}</h2><div class="muted">Season: ${safe(season)} · Use the Season and Week selectors above to explore history.</div><div class="muted">${r?`Manager: ${safe(r.managerName)}`:'Map this team to its Sleeper roster to show its stats.'}</div></div></div><div class="metrics"><div class="metric"><small>Record</small><b>${record}</b></div><div class="metric"><small>League rank</small><b>${rank}${rank==='—'?'':' / '+rosterRows.length}</b></div><div class="metric"><small>Points for</small><b>${s?fmt(s.pf):'—'}</b></div><div class="metric"><small>Points against</small><b>${s?fmt(s.pa):'—'}</b></div><div class="metric"><small>Max PF</small><b>${s?fmt(s.maxpf):'—'}</b></div></div><div class="team-details"><div class="detail"><strong>Current roster</strong>${r?`${r.players?.length||0} players on roster · ${r.starters?.length||0} starter slots`:'Live roster not matched'}<br><span class="muted">Roster/player details can be expanded in the next version.</span></div><div class="detail"><strong>Weekly matchup</strong>${oppRoster?`Vs. ${safe(oppRoster.teamId?teamName(oppRoster.teamId):oppRoster.displayName)} · ${fmt(Number(match.custom_points??match.points))} – ${fmt(Number(opponent.custom_points??opponent.points))}`:'Select a week to view a matchup, if available.'}</div></div><section class="h2h-section">${renderHeadToHead(r)}</section><section id="teamScoring" class="panel team-scoring"></section><section id="teamRankings" class="panel team-scoring"></section><section id="topPlayersPanel" class="panel team-scoring"></section><section class="team-transactions"><h3>Recent transactions</h3><div class="muted">2026 season · auto-updated</div>${renderTransactionCards('2026',state.team,5)}<p><button type="button" id="viewAllTeamTransactions" class="text-button">View All Transactions →</button></p></section><section id="teamRecentArticles" class="team-recent-articles panel"><div class="panel-head"><div><div class="eyebrow">FROM THE ARCHIVE</div><h3>Recent Articles</h3></div><button class="text-button" type="button" id="viewAllTeamArticles">View All Team Articles →</button></div><div id="teamRecentArticleList" class="stories"></div></section>`;const selector=el.querySelector("#h2hSeasonSelect");if(selector)selector.addEventListener("change",e=>{state.h2hSeason=e.target.value;render()});const allTx=$('#viewAllTeamTransactions');if(allTx)allTx.onclick=()=>{state.transactionTeam=state.team;state.view='transactions';change();window.scrollTo(0,0)};}
+function renderTeamPanel(){const el=$('#teamPanel');el.hidden=state.team==='all'||!['teams','home'].includes(state.view);if(el.hidden)return;const r=selectedRoster();const match=state.matchups.find(m=>Number(m.roster_id)===Number(r?.roster_id));const opponent=match&&state.matchups.find(m=>m.matchup_id===match.matchup_id&&m.roster_id!==match.roster_id);const oppRoster=opponent&&state.rosters.find(a=>a.roster_id===opponent.roster_id);const season=state.coverageSeason;const rosterRows=season===String(state.config.season)?state.standings:(state.historicalStandings[season]||[]);const s=rosterRows.find(a=>a.teamId===state.team);const record=s?`${s.wins}–${s.losses}${s.ties?'–'+s.ties:''}`:'—';const rank=s?rosterRows.indexOf(s)+1:'—';el.innerHTML=`<div class="eyebrow franchise-heading">FRANCHISE HEADQUARTERS</div><div class="team-hero">${teamLogoMarkup(state.team,teamName(state.team),'team-hero-logo')}<div><h2>${safe(teamName(state.team))}</h2><div class="muted">Season: ${safe(season)} · Use the Season and Week selectors above to explore history.</div><div class="muted">${r?`Manager: ${safe(r.managerName)}`:'Map this team to its Sleeper roster to show its stats.'}</div></div></div><div class="metrics"><div class="metric"><small>Record</small><b>${record}</b></div><div class="metric"><small>League rank</small><b>${rank}${rank==='—'?'':' / '+rosterRows.length}</b></div><div class="metric"><small>Power rank</small><b id="teamPowerRank">—</b><small id="teamPowerMovement"></small></div><div class="metric"><small>Points for</small><b>${s?fmt(s.pf):'—'}</b></div><div class="metric"><small>Points against</small><b>${s?fmt(s.pa):'—'}</b></div><div class="metric"><small>Max PF</small><b>${s?fmt(s.maxpf):'—'}</b></div></div><div class="team-details"><div class="detail"><strong>Current roster</strong>${r?`${r.players?.length||0} players on roster · ${r.starters?.length||0} starter slots`:'Live roster not matched'}<br><span class="muted">Roster/player details can be expanded in the next version.</span></div><div class="detail"><strong>Weekly matchup</strong>${oppRoster?`Vs. ${safe(oppRoster.teamId?teamName(oppRoster.teamId):oppRoster.displayName)} · ${fmt(Number(match.custom_points??match.points))} – ${fmt(Number(opponent.custom_points??opponent.points))}`:'Select a week to view a matchup, if available.'}</div></div><section class="h2h-section">${renderHeadToHead(r)}</section><section id="teamScoring" class="panel team-scoring"></section><section id="teamRankings" class="panel team-scoring"></section><section id="topPlayersPanel" class="panel team-scoring"></section><section class="team-transactions"><h3>Recent transactions</h3><div class="muted">2026 season · auto-updated</div>${renderTransactionCards('2026',state.team,5)}<p><button type="button" id="viewAllTeamTransactions" class="text-button">View All Transactions →</button></p></section><section id="teamRecentArticles" class="team-recent-articles panel"><div class="panel-head"><div><div class="eyebrow">FROM THE ARCHIVE</div><h3>Recent Articles</h3></div><button class="text-button" type="button" id="viewAllTeamArticles">View All Team Articles →</button></div><div id="teamRecentArticleList" class="stories"></div></section>`;const selector=el.querySelector("#h2hSeasonSelect");if(selector)selector.addEventListener("change",e=>{state.h2hSeason=e.target.value;render()});const allTx=$('#viewAllTeamTransactions');if(allTx)allTx.onclick=()=>{state.transactionTeam=state.team;state.view='transactions';change();window.scrollTo(0,0)};}
 function renderTeamArticles(){
  const el=$('#teamRecentArticleList');if(!el||state.team==='all')return;
  const articles=state.stories.filter(a=>a.teams?.includes(state.team)||a.teams?.includes('all')).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||Number(b.season)-Number(a.season)||Number(b.week)-Number(a.week)).slice(0,3);
@@ -374,7 +377,7 @@ function renderArticle(){const el=$('#articleBody');const a=state.stories.find(s
 
 function render(){if(!state.config)return;document.title='HUSCFFL | League Headquarters';$('#teamSelect').value=state.team;
  $$('[data-team-choice]').forEach(btn=>{const active=btn.dataset.teamChoice===state.team;btn.classList.toggle('is-selected',active);btn.setAttribute('aria-pressed',String(active));});
- $('#weekSelect').value=state.week;renderTeamPanel();renderTeamScoring();renderTeamRankings();renderTeamArticles();renderScoring();renderTopPlayers();renderPlayerDatabase();let stories=sortedStories();renderStories($('#featuredStories'),stories.slice(0,6));renderStories($('#archiveStories'),stories);$('#storyCount').textContent=`${stories.length} ${stories.length===1?'story':'stories'}`;renderTable($('#homeStandings'),10,String(state.config.season));renderTable($('#fullStandings'));const standingsPicker=$('#standingsSeason');if(standingsPicker)standingsPicker.value=state.standingsSeason;const toolbar=$('.toolbar');if(toolbar)toolbar.hidden=!['home','archive','teams'].includes(state.view);const leagueSummary=$('.home-league-grid');if(leagueSummary)leagueSummary.hidden=state.team!=='all';renderTeams();$$('[data-type]').forEach(b=>b.classList.toggle('on',b.dataset.type===state.type));$$('.view').forEach(v=>v.hidden=v.id!==`${state.view}View`);$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));if(state.view==='article')renderArticle();renderTransactions();}
+ $('#weekSelect').value=state.week;renderTeamPanel();renderTeamScoring();renderTeamRankings();renderTeamArticles();renderScoring();renderTopPlayers();renderPlayerDatabase();setupTeamTabs();renderPowerAndTools();let stories=sortedStories();renderStories($('#featuredStories'),stories.slice(0,6));renderStories($('#archiveStories'),stories);$('#storyCount').textContent=`${stories.length} ${stories.length===1?'story':'stories'}`;renderTable($('#homeStandings'),10,String(state.config.season));renderTable($('#fullStandings'));const standingsPicker=$('#standingsSeason');if(standingsPicker)standingsPicker.value=state.standingsSeason;const toolbar=$('.toolbar');if(toolbar)toolbar.hidden=!['home','archive','teams'].includes(state.view);const leagueSummary=$('.home-league-grid');if(leagueSummary)leagueSummary.hidden=state.team!=='all';renderTeams();$$('[data-type]').forEach(b=>b.classList.toggle('on',b.dataset.type===state.type));$$('.view').forEach(v=>v.hidden=v.id!==`${state.view}View`);$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===state.view));if(state.view==='article')renderArticle();renderTransactions();}
 
 /* Sleeper transaction history, read-only. Weekly transactions may contain pending / failed records. */
 function setupTransactionControls(){
@@ -519,7 +522,12 @@ async function loadConstitution(){
   if(window.matchMedia('(max-width:900px)').matches)toc.open=false;
   nav.addEventListener('click',event=>{
    const a=event.target.closest('a[data-constitution-anchor]');if(!a)return;
+   event.preventDefault();
+   const target=document.getElementById(a.dataset.constitutionAnchor);
+   if(!target)return;
    if(window.matchMedia('(max-width:900px)').matches)toc.open=false;
+   history.replaceState(null,'',location.pathname+location.search+'#'+encodeURIComponent(target.id));
+   requestAnimationFrame(()=>requestAnimationFrame(()=>target.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})));
   });
   const links=[...nav.querySelectorAll('a')];
   const update=()=>{
@@ -644,12 +652,12 @@ function rebuildPlayerOwnership(year,rosters){
  state.playerRosterMap[year]=ownership;
  state.playerOwnershipDiagnostics=state.playerOwnershipDiagnostics||{};
  state.playerOwnershipDiagnostics[year]={rosters:rosters.length,mappedRosters,missingRosters,players:Object.keys(ownership).length};
- renderPlayerRows();renderTopPlayers();
+ renderPlayerRows();renderTopPlayers();renderPowerAndTools();
 }
 function reconcilePlayerOwnership(){for(const [year,rosters] of Object.entries(state.rawPlayerRosters||{}))rebuildPlayerOwnership(year,rosters)}
 async function loadPlayerScores(){
  for(const y of Object.keys(state.config.leagueIds)){
-  fetch(`data/player-stats-${y}.json?refresh=${Math.floor(Date.now()/3600000)}`,{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('No player data for '+y);return r.json()}).then(data=>{state.playerFiles[y]=data;renderPlayerDatabase();renderTopPlayers()}).catch(e=>{state.playerFiles[y]={error:String(e)};renderPlayerDatabase();renderTopPlayers()});
+  fetch(`data/player-stats-${y}.json?refresh=${Math.floor(Date.now()/3600000)}`,{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('No player data for '+y);return r.json()}).then(data=>{state.playerFiles[y]=data;renderPlayerDatabase();renderTopPlayers();renderPowerAndTools()}).catch(e=>{state.playerFiles[y]={error:String(e)};renderPlayerDatabase();renderTopPlayers();renderPowerAndTools()});
   fetch(`https://api.sleeper.app/v1/league/${state.config.leagueIds[y]}/rosters`).then(r=>r.ok?r.json():Promise.reject(Error('roster unavailable'))).then(rosters=>{
    state.rawPlayerRosters[y]=rosters;rebuildPlayerOwnership(y,rosters);
   }).catch(e=>console.warn('Roster ownership '+y,e));
@@ -680,7 +688,7 @@ function playerRows(options={}){
  return list.sort((a,b)=>b.metric-a.metric||b.points-a.points||a.name.localeCompare(b.name));
 }
 function rankedPlayerRows(){
- const pool=playerRows({unfiltered:true});let prev=null,rank=0;const ranks=new Map();pool.forEach((p,i)=>{if(prev===null||Math.abs(prev-p.metric)>0.00001)rank=i+1;prev=p.metric;ranks.set(p.id,rank)});return ranks;
+ const pool=playerRows({unfiltered:true,allPositions:true});const ranks=new Map();for(const pos of playerPositions){let rank=0,prev=null;pool.filter(p=>p.pos===pos).forEach((p,i)=>{if(prev===null||Math.abs(prev-p.metric)>0.00001)rank=i+1;prev=p.metric;ranks.set(p.id,rank)})}return ranks;
 }
 function playerRankLabel(p,ranks){return p.pos+(ranks.get(p.id)||'—')}
 function renderPlayerRows(){const el=$('#playerDatabaseTable');if(!el)return;const status=$('#playerDatabaseStatus');const missing=selectedYears().filter(y=>!state.playerFiles[y]?.players);
@@ -719,7 +727,7 @@ function renderTopPlayers(rebuild=true){
  const el=$('#topPlayersPanel');if(!el)return;const id=state.team;if(id==='all'){el.innerHTML='';return}
  const ownMap=state.playerRosterMap[rosterYear()]||{};
  const eligible=eligibleSelectedPositions();
- const rows=playerRows({unfiltered:true});
+ const rows=playerRows({unfiltered:true,allPositions:true});
  const rankByPosition={};for(const pos of playerPositions){const list=rows.filter(p=>p.pos===pos);let rank=0,prev=null;rankByPosition[pos]=new Map();list.forEach((p,i)=>{if(prev===null||Math.abs(p.metric-prev)>0.00001)rank=i+1;prev=p.metric;rankByPosition[pos].set(p.id,rank)})}
  const mine=rows.filter(p=>eligible.includes(p.pos)&&ownMap[p.id]?.teamId===id);const diag=state.playerOwnershipDiagnostics?.[rosterYear()];
  const missing=selectedYears().filter(y=>!state.playerFiles[y]?.players);
@@ -731,6 +739,161 @@ function renderTopPlayers(rebuild=true){
  }
  const body=el.querySelector('#rosterPlayerData');if(!body)return;
  body.innerHTML=missing.length?`<p class="muted">Missing player statistics for ${missing.join(', ')}.</p>`:!state.playerWeeks.length?'<p class="muted">Select at least one scoring week.</p>':`<div class="standings-scroll"><table class="standings-table"><thead><tr><th>Player</th><th>Rank</th><th>GP</th><th>Total FP</th><th>FP/G</th></tr></thead><tbody>${mine.map(p=>`<tr><td>${safe(p.name)}</td><td>${safe(p.pos)}${rankByPosition[p.pos]?.get(p.id)||'—'}</td><td>${p.gp}</td><td>${fmt(p.points)}</td><td>${p.gp?fmt(p.average):'—'}</td></tr>`).join('')||`<tr><td colspan="5">${!diag?'Loading Sleeper roster ownership…':diag.missingRosters.length?'Some Sleeper rosters are not mapped; check config.json roster IDs.':`No scored rostered players found for ${safe(teamName(id))}. Verify season and week filters.`}</td></tr>`}</tbody></table></div>`;
+}
+
+
+/* HUSCFFL v24: power indices and decision tools. Computed from completed weekly scoring only. */
+const HPI_POS=['QB','RB','WR','TE','DL','LB','DB'];
+const HPI_MIN_GP=2;
+function hpiPct(values,value){if(!values.length)return 0;return 100*values.filter(x=>x<=value).length/values.length}
+function hpiClamp(v){return Math.max(0,Math.min(100,v))}
+function hpiMedian(values){const s=[...values].sort((a,b)=>a-b);return s.length?s[Math.floor((s.length-1)/2)]:0}
+function hpiPlayerData(){
+ const season=String(state.config?.season||'2026'), file=state.playerFiles[season];
+ if(!file?.players||!Number(file.weeks))return null;
+ if(hpiPlayerData._file===file)return hpiPlayerData._cache;
+ const players=[];
+ for(const [id,p] of Object.entries(file.players)){
+  const pos=normalizePlayerPosition(p.position);if(!pos)continue;
+  const weeks=Object.entries(p.weeks||{}).filter(([w,x])=>Number(w)<=Number(file.weeks)&&x?.played).sort((a,b)=>Number(a[0])-Number(b[0]));
+  const scores=weeks.map(([,x])=>Number(x.points||0)).filter(Number.isFinite);
+  const gp=scores.length;if(!gp)continue;
+  const average=scores.reduce((a,b)=>a+b,0)/gp;
+  players.push({id,name:p.name||state.transactionNames[id]||id,pos,gp,average,total:scores.reduce((a,b)=>a+b,0),scores,nflTeam:p.team||'FA'});
+ }
+ const byPos={};HPI_POS.forEach(pos=>{byPos[pos]=players.filter(p=>p.pos===pos&&p.gp>=HPI_MIN_GP).sort((a,b)=>b.average-a.average)});
+ const replacement={QB:20,RB:30,WR:45,TE:15,DL:40,LB:40,DB:40};
+ for(const player of players){
+  const peers=byPos[player.pos], averages=peers.map(x=>x.average);
+  const baseline=peers[Math.min((replacement[player.pos]||30)-1,Math.max(0,peers.length-1))]?.average;
+  if(player.gp<HPI_MIN_GP||!peers.length||baseline===undefined){player.hpi=null;continue}
+  const shrink=Math.min(1,player.gp/4);const adjusted=shrink*player.average+(1-shrink)*baseline;
+  const production=hpiPct(averages,adjusted),vor=hpiPct(peers.map(x=>x.average-baseline),adjusted-baseline);
+  const sortedScores=[...player.scores].sort((a,b)=>a-b),floor=sortedScores[Math.floor((sortedScores.length-1)*.25)];
+  const consistency=hpiClamp(50+50*(Math.max(0,floor)/Math.max(1,player.average)));
+  const recent=player.scores.slice(-3),recentAvg=recent.reduce((a,b)=>a+b,0)/recent.length;
+  const form=hpiClamp(50+50*(recentAvg-adjusted)/Math.max(1,adjusted));
+  const reliable=hpiClamp(100*player.gp/Math.max(4,Number(file.weeks)));
+  player.components={production,vor,consistency,form,reliable};
+  player.hpi=Number((.40*production+.30*vor+.15*consistency+.10*form+.05*reliable).toFixed(1));
+ }
+ const positionRanks=new Map();for(const pos of HPI_POS){let prev=null,rank=0;byPos[pos].forEach((q,i)=>{if(prev===null||Math.abs(q.average-prev)>0.00001)rank=i+1;prev=q.average;positionRanks.set(q.id,pos+rank)})}
+ const byId=new Map(players.map(x=>[x.id,x]));const result={players,byId,positionRanks,season,weeks:Number(file.weeks),updated:file.updated};hpiPlayerData._file=file;hpiPlayerData._cache=result;return result;
+}
+function hpiBestLineup(players){
+ // Maximum-weight one-to-one assignment: 20 actual league starting slots,
+ // eligibility restrictions for FLEX/SFLEX/IDP FLEX, no player double counted.
+ const slots=['QB','RB','RB','WR','WR','WR','TE','FLEX','FLEX','SFLEX',
+              'DL','DL','DL','LB','LB','LB','DB','DB','DB','IDP_FLEX'];
+ const eligible={QB:['QB'],RB:['RB'],WR:['WR'],TE:['TE'],FLEX:['RB','WR','TE'],
+                 SFLEX:['QB','RB','WR','TE'],DL:['DL'],LB:['LB'],DB:['DB'],IDP_FLEX:['DL','LB','DB']};
+ const roster=players.filter(p=>Number.isFinite(p.hpi));
+ const n=slots.length,m=Math.max(n,roster.length);
+ // Hungarian assignment (minimization of negative player ratings). Dummy
+ // columns represent vacancies; ineligible real-player slots are prohibitively costly.
+ const cost=(i,j)=>{
+  if(j>roster.length)return 0;
+  const p=roster[j-1];return eligible[slots[i-1]].includes(p.pos)?-p.hpi:1000000;
+ };
+ const u=Array(n+1).fill(0),v=Array(m+1).fill(0),assignment=Array(m+1).fill(0),way=Array(m+1).fill(0);
+ for(let i=1;i<=n;i++){
+  assignment[0]=i;let j0=0;const minv=Array(m+1).fill(Infinity),used=Array(m+1).fill(false);
+  do{
+   used[j0]=true;const i0=assignment[j0];let delta=Infinity,j1=0;
+   for(let j=1;j<=m;j++){if(used[j])continue;
+    const cur=cost(i0,j)-u[i0]-v[j];if(cur<minv[j]){minv[j]=cur;way[j]=j0}
+    if(minv[j]<delta){delta=minv[j];j1=j}
+   }
+   for(let j=0;j<=m;j++){if(used[j]){u[assignment[j]]+=delta;v[j]-=delta}else minv[j]-=delta}
+   j0=j1;
+  }while(assignment[j0]!==0);
+  do{const j1=way[j0];assignment[j0]=assignment[j1];j0=j1}while(j0!==0);
+ }
+ const starters=[],used=new Set();
+ for(let j=1;j<=m;j++){
+  const i=assignment[j];if(!i||j>roster.length)continue;
+  const p=roster[j-1];if(!eligible[slots[i-1]].includes(p.pos))continue;
+  starters.push(p);used.add(p.id);
+ }
+ return {starters,used};
+}
+function hpiFranchiseData(pd){
+ if(!pd)return null;const owners=state.playerRosterMap[pd.season];if(!owners||state.playerOwnershipDiagnostics?.[pd.season]?.missingRosters?.length)return null;
+ const league=state.scoring[pd.season];if(!league||league.error||league.failed||league.unmapped)return null;
+ if(hpiFranchiseData._pd===pd&&hpiFranchiseData._owners===owners&&hpiFranchiseData._league===league)return hpiFranchiseData._cache;
+ const out=[];
+ for(const t of state.config.teams){const own=pd.players.filter(p=>owners[p.id]?.teamId===t.id);if(!own.length)return null;
+  const line=hpiBestLineup(own),bench=own.filter(p=>!line.used.has(p.id)&&p.hpi!=null).sort((a,b)=>b.hpi-a.hpi);
+  const starter=(line.starters.reduce((sum,p)=>sum+p.hpi,0))/20;
+  const depth=bench.length?bench.slice(0,10).reduce((sum,p)=>sum+p.hpi,0)/10:0;
+  const weekly=league.rows?.[t.id]||[];if(!weekly.length)return null;
+  const avg=weekly.reduce((sum,w)=>sum+Number(w.total||0),0)/weekly.length;
+  const recent=weekly.slice(-3).reduce((sum,w)=>sum+Number(w.total||0),0)/Math.min(3,weekly.length);
+  out.push({id:t.id,name:t.name,starter,depth,avg,recent,starterCount:line.starters.length,players:own,bench});
+ }
+ // Fixed scoring reference for within-season analysis; do not claim these are external projections.
+ const scoredAvg=out.map(t=>t.avg),recentVals=out.map(t=>t.recent);
+ for(const t of out){const seasonPerf=hpiPct(scoredAvg,t.avg),form=hpiPct(recentVals,t.recent);
+   t.rating=Number((.45*t.starter+.25*t.depth+.20*seasonPerf+.10*form).toFixed(1));
+ }
+ out.sort((a,b)=>b.rating-a.rating||b.avg-a.avg);out.forEach((t,i)=>t.rank=i+1);
+ hpiFranchiseData._pd=pd;hpiFranchiseData._owners=owners;hpiFranchiseData._league=league;hpiFranchiseData._cache=out;return out;
+}
+function setupTeamTabs(){
+ const panel=$('#teamPanel');if(!panel||panel.hidden)return;
+ // Freshly rendered teamPanel: arrange sections in stable, broad-to-specific order.
+ const heading=panel.querySelector('.franchise-heading');if(!heading)return;
+ const tabs=document.createElement('div');tabs.className='team-tabs';tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','Franchise headquarters sections');
+ tabs.innerHTML='<button type="button" role="tab" id="teamTabOverview" data-team-tab="overview">Overview</button><button type="button" role="tab" id="teamTabAnalysis" data-team-tab="analysis">Roster &amp; Analysis</button>';
+ heading.after(tabs);
+ const overview=document.createElement('div'),analysis=document.createElement('div');overview.id='teamOverview';analysis.id='teamAnalysis';overview.className='team-tab-panel';analysis.className='team-tab-panel';
+ overview.setAttribute('role','tabpanel');analysis.setAttribute('role','tabpanel');overview.setAttribute('aria-labelledby','teamTabOverview');analysis.setAttribute('aria-labelledby','teamTabAnalysis');
+ const move=(selector,dest)=>{const node=panel.querySelector(selector);if(node)dest.appendChild(node)};
+ ['.team-hero','.metrics','.team-details','.h2h-section','.team-transactions','.team-recent-articles'].forEach(sel=>move(sel,overview));
+ ['#teamScoring','#teamRankings'].forEach(sel=>move(sel,analysis));
+ const quick=document.createElement('nav');quick.className='analysis-quicklinks';quick.setAttribute('aria-label','Roster and analysis sections');
+ quick.innerHTML='<a href="#teamScoring">Offense / Defense</a><a href="#teamRankings">Positions</a><a href="#rosterNeeds">Roster Needs</a><a href="#topPlayersPanel">Roster</a><a href="#playerComparisonPanel">Player Comparison</a><a href="#tradePartnerPanel">Trade Partners</a>';
+ analysis.prepend(quick);
+ for(const [id,title] of [['rosterNeeds','Roster Needs Analyzer'],['playerComparisonPanel','Player Comparison'],['tradePartnerPanel','Trade Partner Finder']]){
+  const el=document.createElement('section');el.id=id;el.className='panel team-scoring';el.innerHTML='<h3>'+title+'</h3><p class="muted">Loading player analytics…</p>';
+  if(id==='rosterNeeds')analysis.appendChild(el);
+  if(id==='playerComparisonPanel')analysis.appendChild(el);
+  if(id==='tradePartnerPanel')analysis.appendChild(el);
+ }
+ const roster=panel.querySelector('#topPlayersPanel');if(roster){analysis.insertBefore(roster,analysis.querySelector('#playerComparisonPanel'));analysis.insertBefore(analysis.querySelector('#rosterNeeds'),roster)}
+ panel.append(overview,analysis);
+ const selectTab=()=>{const which=state.teamTab==='analysis'?'analysis':'overview';overview.hidden=which!=='overview';analysis.hidden=which!=='analysis';tabs.querySelectorAll('button').forEach(b=>{const active=b.dataset.teamTab===which;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active));b.tabIndex=active?0:-1;});};
+ tabs.addEventListener('click',e=>{const btn=e.target.closest('[data-team-tab]');if(!btn)return;state.teamTab=btn.dataset.teamTab;try{sessionStorage.setItem('huscffl-team-tab',state.teamTab)}catch(err){}selectTab()});selectTab();
+ quick.addEventListener('click',e=>{const a=e.target.closest('a');if(!a)return;const target=panel.querySelector(a.getAttribute('href'));if(target){e.preventDefault();target.scrollIntoView({behavior:'smooth',block:'start'});}});
+}
+function renderPowerAndTools(){
+ if(!state.config)return;
+ const pd=hpiPlayerData(),teams=hpiFranchiseData(pd),panel=$('#franchisePowerPanel');
+ const placeholder='Ratings unavailable until the NFL-wide player statistics export, current roster ownership, and completed matchup scores are available and validated.';
+ if(panel){if(!teams){panel.innerHTML='<h3>Franchise Power Rankings · HPI-F</h3><p class="muted">'+placeholder+'</p>'}
+ else {const current=teams[0]?.id;panel.innerHTML='<h3>Franchise Power Rankings · HPI-F</h3><p class="muted">Competitive-strength estimate: 45% optimized starters, 25% bench depth, 20% season scoring, 10% last-three-week form. Updated from completed data; not official standings or a game prediction.</p><div class="standings-scroll"><table class="standings-table"><thead><tr><th>Power Rank</th><th>Franchise</th><th>HPI-F</th><th>Record</th><th>Lineup</th><th>Depth</th></tr></thead><tbody>'+teams.map(t=>{const roster=state.standings.find(r=>r.teamId===t.id);return '<tr><td>'+t.rank+'</td><td>'+teamLogoMarkup(t.id,t.name,'table-team-logo')+' '+safe(t.name)+'</td><td><b>'+t.rating.toFixed(1)+'</b></td><td>'+(roster?roster.wins+'–'+roster.losses:'—')+'</td><td>'+t.starter.toFixed(1)+'</td><td>'+t.depth.toFixed(1)+'</td></tr>'}).join('')+'</tbody></table></div><p class="muted">Historical week-to-week movement becomes available after the first saved weekly HPI-F snapshot.</p>';}}
+ const rank=$('#teamPowerRank');if(rank)rank.textContent=teams?.find(t=>t.id===state.team)?.rank?('#'+teams.find(t=>t.id===state.team).rank+' / 10'):'—';
+ const movement=$('#teamPowerMovement');if(movement)movement.textContent='';
+ const needs=$('#rosterNeeds'),comparison=$('#playerComparisonPanel'),partner=$('#tradePartnerPanel');if(!needs&&!comparison&&!partner)return;
+ if(!teams||!pd){for(const el of [needs,comparison,partner])if(el)el.innerHTML='<h3>'+safe(el===needs?'Roster Needs Analyzer':el===comparison?'Player Comparison':'Trade Partner Finder')+'</h3><p class="muted">'+placeholder+'</p>';return}
+ const own=teams.find(t=>t.id===state.team);if(!own)return;
+ const positionStats=(fr,pos)=>{const arr=fr.players.filter(p=>p.pos===pos).sort((a,b)=>b.hpi-a.hpi);return {pos,starters:arr.slice(0,{QB:2,RB:3,WR:4,TE:2,DL:4,LB:4,DB:4}[pos]).reduce((sum,p)=>sum+(p.hpi||0),0)/({QB:2,RB:3,WR:4,TE:2,DL:4,LB:4,DB:4}[pos]),depth:arr.slice({QB:2,RB:3,WR:4,TE:2,DL:4,LB:4,DB:4}[pos],{QB:4,RB:6,WR:7,TE:4,DL:7,LB:7,DB:7}[pos]).reduce((a,p)=>a+(p.hpi||0),0)/Math.max(1,{QB:2,RB:3,WR:3,TE:2,DL:3,LB:3,DB:3}[pos]),count:arr.length};};
+ const stats=HPI_POS.map(p=>positionStats(own,p));const rankings=stats.map(x=>({...x,league:teams.map(t=>positionStats(t,x.pos).starters)}));
+ const deficits=rankings.map(x=>({...x,leagueMedian:hpiMedian(x.league),gap:x.starters-hpiMedian(x.league)})).sort((a,b)=>a.gap-b.gap);
+ if(needs)needs.innerHTML='<h3>Roster Needs Analyzer</h3><p class="muted">Starting strength is compared with the ten-team median; depth is shown separately. All scores are model estimates, not dynasty values.</p><div class="standings-scroll"><table class="standings-table"><thead><tr><th>Position</th><th>Starting strength</th><th>League median</th><th>Gap</th><th>Bench depth</th><th>Players</th></tr></thead><tbody>'+deficits.map(x=>'<tr><td><b>'+x.pos+'</b></td><td>'+x.starters.toFixed(1)+'</td><td>'+x.leagueMedian.toFixed(1)+'</td><td class="'+(x.gap<0?'hpi-need':'')+'">'+(x.gap>=0?'+':'')+x.gap.toFixed(1)+'</td><td>'+x.depth.toFixed(1)+'</td><td>'+x.count+'</td></tr>').join('')+'</tbody></table></div><p class="muted">Priority positions: '+deficits.slice(0,3).map(x=>x.pos).join(', ')+'.</p>';
+ if(comparison){const otherChoices=teams.filter(t=>t.id!==state.team);if(!state.comparisonOther||state.comparisonOther===state.team)state.comparisonOther=otherChoices[0]?.id||'';
+  const options=otherChoices.map(t=>'<option value="'+safe(t.id)+'" '+(state.comparisonOther===t.id?'selected':'')+'>'+safe(t.name)+'</option>').join('');
+  comparison.innerHTML='<h3>Player Comparison · HPI-P</h3><p class="muted">Single ranked list. Blue = your roster, orange = selected franchise, green = unrostered. All ranks are NFL-wide within actual positions.</p><div class="player-controls"><label>Other franchise <select id="comparisonOther">'+options+'</select></label><label>Sort by <select id="comparisonMetric"><option value="average" '+(state.comparisonMetric==='average'?'selected':'')+'>Average PPG</option><option value="total" '+(state.comparisonMetric==='total'?'selected':'')+'>Total FP</option><option value="hpi" '+(state.comparisonMetric==='hpi'?'selected':'')+'>HPI-P</option></select></label><label><input type="checkbox" id="comparisonAvailable" '+(state.comparisonAvailable?'checked':'')+'> Include available players</label></div><div class="hpi-position-filters">'+HPI_POS.map(pos=>'<button type="button" data-hpi-pos="'+pos+'" class="chip '+(state.comparisonPositions.includes(pos)?'on':'')+'">'+pos+'</button>').join('')+'</div><div id="comparisonResults" class="standings-scroll"></div>';
+  comparison.querySelector('#comparisonOther').onchange=e=>{state.comparisonOther=e.target.value;renderPowerAndTools()};comparison.querySelector('#comparisonMetric').onchange=e=>{state.comparisonMetric=e.target.value;renderPowerAndTools()};comparison.querySelector('#comparisonAvailable').onchange=e=>{state.comparisonAvailable=e.target.checked;renderPowerAndTools()};
+  comparison.querySelectorAll('[data-hpi-pos]').forEach(button=>button.onclick=()=>{const pos=button.dataset.hpiPos;state.comparisonPositions=state.comparisonPositions.includes(pos)?state.comparisonPositions.filter(x=>x!==pos):[...state.comparisonPositions,pos];renderPowerAndTools()});
+  const owners=state.playerRosterMap[pd.season]||{},selected=state.comparisonPositions;
+  const listing=pd.players.filter(p=>p.hpi!==null&&(!selected.length||selected.includes(p.pos))).map(p=>({...p,category:owners[p.id]?.teamId===state.team?'own':owners[p.id]?.teamId===state.comparisonOther?'other':!owners[p.id]&&state.comparisonAvailable?'available':'hidden'})).filter(p=>p.category!=='hidden').sort((a,b)=>b[state.comparisonMetric]-a[state.comparisonMetric]||a.name.localeCompare(b.name)).slice(0,250);
+  comparison.querySelector('#comparisonResults').innerHTML='<table class="standings-table"><thead><tr><th>Player</th><th>Owner</th><th>Position</th><th>Pos rank (PPG)</th><th>HPI-P</th><th>GP</th><th>Total FP</th><th>FP/G</th></tr></thead><tbody>'+listing.map(p=>'<tr class="hpi-'+p.category+'"><td><b>'+safe(p.name)+'</b></td><td>'+safe(p.category==='own'?'My Team':p.category==='other'?teamName(state.comparisonOther):'Available')+'</td><td>'+p.pos+'</td><td>'+safe(pd.positionRanks.get(p.id)||'—')+'</td><td>'+p.hpi.toFixed(1)+'</td><td>'+p.gp+'</td><td>'+fmt(p.total)+'</td><td>'+fmt(p.average)+'</td></tr>').join('')+'</tbody></table><p class="muted">Showing '+listing.length+' matching players sorted by selected metric (maximum 250); minimum two played games for reliable positional ranking.</p>';
+ }
+ if(partner){const partnerRows=teams.filter(t=>t.id!==state.team).map(t=>{const theirs=HPI_POS.map(p=>positionStats(t,p));const matches=deficits.filter(d=>d.gap<0).map(d=>{const their=theirs.find(x=>x.pos===d.pos);return {pos:d.pos,advantage:their.starters-d.starters}}).filter(x=>x.advantage>0).sort((a,b)=>b.advantage-a.advantage);const reverse=theirs.filter(x=>x.starters<positionStats(own,x.pos).starters).map(x=>x.pos);return {...t,matches,reverse,fit:matches.slice(0,3).reduce((a,b)=>a+b.advantage,0)}}).sort((a,b)=>b.fit-a.fit);
+  partner.innerHTML='<h3>Trade Partner Finder</h3><p class="muted">Potential complementary roster strengths, not offers or fairness/market-value estimates. Identify candidates to review with Player Comparison.</p><div class="hpi-partner-grid">'+partnerRows.map(t=>'<div class="detail"><strong>'+safe(t.name)+'</strong><p>May help you at: '+(t.matches.slice(0,3).map(x=>x.pos).join(', ')||'No clear positional match')+'</p><p>Potential reciprocal need: '+(t.reverse.slice(0,3).join(', ')||'Not evident')+'</p><p>Players to review: '+(t.matches.slice(0,2).flatMap(m=>t.players.filter(p=>p.pos===m.pos&&p.hpi!==null).sort((a,b)=>b.hpi-a.hpi).slice(0,2)).map(p=>safe(p.name)+' ('+p.pos+')').join(', ')||'No candidates identified')+'</p><button class="text-button" type="button" data-partner="'+safe(t.id)+'">Compare roster →</button></div>').join('')+'</div>';
+  partner.querySelectorAll('[data-partner]').forEach(b=>b.onclick=()=>{state.comparisonOther=b.dataset.partner;renderPowerAndTools();comparison.scrollIntoView({behavior:'smooth',block:'start'})});
+ }
 }
 
 async function init(){try{const [config,stories]=await Promise.all([fetch('data/config.json').then(r=>{if(!r.ok)throw Error('config.json missing');return r.json()}),fetch('data/stories.json').then(r=>{if(!r.ok)throw Error('stories.json missing');return r.json()})]);state.config=config;state.stories=stories;state.playerYears=[state.playerYear];state.playerWeeks=Array.from({length:seasonWeeks(state.playerYear)},(_,i)=>i+1);urlState();setupSelectors();render();loadConstitution();loadLive();setInterval(loadTransactions,300000);loadPlayerScores();}catch(err){console.error(err);$('#dataStatus').textContent='Unable to load site files. Use GitHub Pages or a local server.'}}

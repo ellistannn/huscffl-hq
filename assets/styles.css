@@ -264,3 +264,28 @@
  .constitution-section{scroll-margin-top:12px}
 }
 @media(max-width:440px){#constitutionNav{grid-template-columns:1fr}}
+
+
+/* v24: constitution historical managers and responsive headquarters. */
+.hpi-manager-table{width:100%;table-layout:fixed;border-collapse:collapse}
+.hpi-manager-table th,.hpi-manager-table td{width:50%;box-sizing:border-box;padding:10px 18px}
+.hpi-manager-table th:first-child,.hpi-manager-table td:first-child{text-align:right}
+.hpi-manager-table th:nth-child(2),.hpi-manager-table td:nth-child(2){text-align:left;overflow-wrap:anywhere}
+@media(max-width:600px){.hpi-manager-table th,.hpi-manager-table td{padding:9px 10px}}
+.team-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:16px 0 22px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.team-tabs button{border:1px solid #d6b4c1;border-radius:999px;background:#fffaf8;color:#633d50;padding:10px 17px;font-weight:800;cursor:pointer}
+.team-tabs button.active{background:#b85b72;border-color:#b85b72;color:#fff}
+.team-tab-panel[hidden]{display:none!important}
+.team-tab-panel{display:flex;flex-direction:column;gap:19px;min-width:0}
+.team-tab-panel .panel{margin:0}
+.analysis-quicklinks{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:7px}
+.analysis-quicklinks a{font-size:12px;background:#fff8f4;border:1px solid #e1cbd2;border-radius:999px;padding:8px 10px;color:#603c4f;text-decoration:none}
+.team-tab-panel section{scroll-margin-top:24px}
+.hpi-standings{margin-top:20px}
+.hpi-position-filters{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 15px}
+.hpi-own{background:#e4f0fc!important}.hpi-other{background:#fff0df!important}.hpi-available{background:#e4f6eb!important}
+.hpi-need{color:#a14d39;font-weight:800}
+.hpi-partner-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.hpi-partner-grid .detail{margin:0}
+.hpi-partner-grid p{font-size:13px}
+@media(max-width:600px){.team-tabs{display:grid;grid-template-columns:1fr 1fr}.team-tabs button{font-size:12px;padding:10px 7px}.analysis-quicklinks a{font-size:11px}.hpi-manager-table{font-size:12px}}

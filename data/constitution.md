@@ -252,7 +252,6 @@ o   Set lineups to maintain competitive fairness
 o   Initiate a replacement search immediately
 o   Lock the team from making further moves
 
-
 ## XI. Season Records & Team Directory
 
 ### 11.1 Annual Manager Directory This section tracks the team names and managers for each season, preserving league history and promoting continuity.
@@ -260,7 +259,7 @@ o   Lock the team from making further moves
 ### 📅 2025 Season
 
 | Manager Name | Team Name |
-| ---: | :--- |
+| --- | --- |
 | Ellis T. | New York Noodles 🍜 |
 | Nathan T. | Tampa Bay Tyranny ☠️ |
 | Allen R. | HOU You Like That |
@@ -275,7 +274,7 @@ o   Lock the team from making further moves
 ### 📅 2026 Season
 
 | Manager Name | Team Name |
-| ---: | :--- |
+| --- | --- |
 | Ellis T. | New York Noodles 🍜 |
 | Nathan T. | Tampa Bay Tyranny ☠️ |
 | Allen R. | HOU You Like That |

@@ -41,6 +41,24 @@ def markdown_to_html(text):
                 graph.append(f'<div class="wk9-chart-row"><span class="wk9-chart-name">{html.escape(name)}</span><span class="wk9-chart-track"><span class="wk9-chart-fill" style="width:{width:.2f}%"></span></span><strong class="wk9-chart-value">{value:.2f}</strong></div>')
             graph.append('</div>')
             out.append(''.join(graph))
+        elif line == '{{week9_top3_offenses_chart}}':
+            flush()
+            bars = [('NJz Bunniez',143.04),('Utah Yetis',139.64),('Seattle Supersonics',131.14)]
+            graph = ['<div class="wk9-chart" role="img" aria-label="Week 9 top three offensive starter totals"><div class="wk9-chart-title">WEEK 9 · TOP 3 OFFENSES</div>']
+            for name, value in bars:
+                width = 100*value/150
+                graph.append(f'<div class="wk9-chart-row"><span class="wk9-chart-name">{html.escape(name)}</span><span class="wk9-chart-track"><span class="wk9-chart-fill" style="width:{width:.2f}%"></span></span><strong class="wk9-chart-value">{value:.2f}</strong></div>')
+            graph.append('</div>')
+            out.append(''.join(graph))
+        elif line == '{{week9_top3_defenses_chart}}':
+            flush()
+            bars = [('New York Noodles',181.15),('LALALALA',169.35),('Tampa Bay Tyranny',147.70)]
+            graph = ['<div class="wk9-chart" role="img" aria-label="Week 9 top three defensive starter totals"><div class="wk9-chart-title">WEEK 9 · TOP 3 DEFENSES</div>']
+            for name, value in bars:
+                width = 100*value/190
+                graph.append(f'<div class="wk9-chart-row"><span class="wk9-chart-name">{html.escape(name)}</span><span class="wk9-chart-track"><span class="wk9-chart-fill" style="width:{width:.2f}%"></span></span><strong class="wk9-chart-value">{value:.2f}</strong></div>')
+            graph.append('</div>')
+            out.append(''.join(graph))
         elif line.startswith('> '):
             flush(); out.append('<blockquote>'+inline(line[2:])+'</blockquote>')
         elif line in {'---','***'}:

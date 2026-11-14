@@ -32,6 +32,15 @@ def markdown_to_html(text):
         elif line.startswith('- ') or line.startswith('* '):
             if paragraph: flush()
             list_items.append(line[2:])
+        elif line == '{{week9_scoring_chart}}':
+            flush()
+            bars = [('New York Noodles',302.25),('NJz Bunniez',281.69),('LALALALA',280.81),('Seattle Supersonics',274.74),('Tampa Bay Tyranny',263.10),('Utah Yetis',248.34),('District of Daebak',223.85),('Dalla Dalla Dallas',202.64),('Good Things We OKC!',199.80),('HOU You Like That',198.74)]
+            graph = ['<div class="wk9-chart" role="img" aria-label="Week 9 fantasy points scored by each franchise, sorted descending"><div class="wk9-chart-title">WEEK 9 · SCORING RANKINGS</div>']
+            for name, value in bars:
+                width = 100*value/310
+                graph.append(f'<div class="wk9-chart-row"><span class="wk9-chart-name">{html.escape(name)}</span><span class="wk9-chart-track"><span class="wk9-chart-fill" style="width:{width:.2f}%"></span></span><strong class="wk9-chart-value">{value:.2f}</strong></div>')
+            graph.append('</div>')
+            out.append(''.join(graph))
         elif line.startswith('> '):
             flush(); out.append('<blockquote>'+inline(line[2:])+'</blockquote>')
         elif line in {'---','***'}:

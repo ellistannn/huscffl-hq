@@ -289,3 +289,10 @@
 .hpi-partner-grid .detail{margin:0}
 .hpi-partner-grid p{font-size:13px}
 @media(max-width:600px){.team-tabs{display:grid;grid-template-columns:1fr 1fr}.team-tabs button{font-size:12px;padding:10px 7px}.analysis-quicklinks a{font-size:11px}.hpi-manager-table{font-size:12px}}
+
+/* Week 9 editorial scoring chart */
+.wk9-chart{margin:25px 0 30px;padding:22px 20px;border:1px solid #e8d8db;border-radius:12px;background:linear-gradient(135deg,#fffafa,#fff4f4)}
+.wk9-chart-title{font-weight:850;letter-spacing:1.3px;font-size:11px;color:#9c3851;margin-bottom:15px}
+.wk9-chart-row{display:grid;grid-template-columns:minmax(120px,170px) minmax(0,1fr) 58px;align-items:center;gap:12px;margin:10px 0;font-size:12px;line-height:1.2}
+.wk9-chart-name{font-weight:650}.wk9-chart-track{height:13px;border-radius:8px;background:#eadfe4;overflow:hidden}.wk9-chart-fill{display:block;height:100%;background:linear-gradient(90deg,#a63c58,#ee8794);border-radius:8px}.wk9-chart-value{text-align:right;font-variant-numeric:tabular-nums}
+@media(max-width:520px){.wk9-chart{padding:17px 12px}.wk9-chart-row{grid-template-columns:95px minmax(0,1fr) 45px;gap:6px;font-size:10px}}

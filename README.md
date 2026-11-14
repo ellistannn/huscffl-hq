@@ -38,3 +38,7 @@ Your existing `.github/workflows/refresh-player-stats.yml` automatically invokes
 ## Calculating the indices
 
 The ratings recalculate in the browser when refreshed stat exports and current franchise rosters are loaded. Static results are not inserted into the HTML at build time. The current status of player exports is therefore essential. Models use historical fantasy scoring, not external dynasty market values.
+
+## Week 9 Recap Update (November 13, 2026)
+
+Added a complete Week 9 roundup under Articles > Recaps, featuring all five final matchups, manager efficiency awards, lineup regrets and a responsive scoring chart. Rebuilt data/stories.json using scripts/build_articles.py. Existing v24 functionality and all prior articles retained.

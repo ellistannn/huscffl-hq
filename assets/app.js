@@ -834,6 +834,7 @@ function hpiFranchiseData(pd){
  // Fixed scoring reference for within-season analysis; do not claim these are external projections.
  const scoredAvg=out.map(t=>t.avg),recentVals=out.map(t=>t.recent);
  for(const t of out){const seasonPerf=hpiPct(scoredAvg,t.avg),form=hpiPct(recentVals,t.recent);
+   t.seasonPerf=seasonPerf;t.form=form;
    t.rating=Number((.45*t.starter+.25*t.depth+.20*seasonPerf+.10*form).toFixed(1));
  }
  out.sort((a,b)=>b.rating-a.rating||b.avg-a.avg);out.forEach((t,i)=>t.rank=i+1);
@@ -871,7 +872,19 @@ function renderPowerAndTools(){
  const pd=hpiPlayerData(),teams=hpiFranchiseData(pd),panel=$('#franchisePowerPanel');
  const placeholder='Ratings unavailable until the NFL-wide player statistics export, current roster ownership, and completed matchup scores are available and validated.';
  if(panel){if(!teams){panel.innerHTML='<h3>Franchise Power Rankings · HPI-F</h3><p class="muted">'+placeholder+'</p>'}
- else {const current=teams[0]?.id;panel.innerHTML='<h3>Franchise Power Rankings · HPI-F</h3><p class="muted">Competitive-strength estimate: 45% optimized starters, 25% bench depth, 20% season scoring, 10% last-three-week form. Updated from completed data; not official standings or a game prediction.</p><div class="standings-scroll"><table class="standings-table"><thead><tr><th>Power Rank</th><th>Franchise</th><th>HPI-F</th><th>Record</th><th>Lineup</th><th>Depth</th></tr></thead><tbody>'+teams.map(t=>{const roster=state.standings.find(r=>r.teamId===t.id);return '<tr><td>'+t.rank+'</td><td>'+teamLogoMarkup(t.id,t.name,'table-team-logo')+' '+safe(t.name)+'</td><td><b>'+t.rating.toFixed(1)+'</b></td><td>'+(roster?roster.wins+'–'+roster.losses:'—')+'</td><td>'+t.starter.toFixed(1)+'</td><td>'+t.depth.toFixed(1)+'</td></tr>'}).join('')+'</tbody></table></div><p class="muted">Historical week-to-week movement becomes available after the first saved weekly HPI-F snapshot.</p>';}}
+ else {
+  panel.innerHTML='<h3>Franchise Power Rankings · HPI-F</h3>'+
+   '<p class="muted">Competitive-strength estimate: 45% optimized starters, 25% bench depth, 20% season scoring, 10% last-three-week form. Updated from completed data; not official standings or a game prediction.</p>'+
+   '<div class="standings-scroll" role="region" aria-label="Franchise power rankings and component grades" tabindex="0"><table class="standings-table hpi-power-table"><thead><tr><th>Power Rank</th><th>Franchise</th><th>HPI-F</th><th>Record</th><th>Lineup</th><th>Depth</th><th>Season Scoring</th><th>Last 3 Weeks</th></tr></thead><tbody>'+
+   teams.map(t=>{const roster=state.standings.find(r=>r.teamId===t.id);
+    return '<tr><td>'+t.rank+'</td><td><div class="team-cell">'+teamLogoMarkup(t.id,t.name,'table-team-logo')+'<button type="button" class="teamlink" data-power-team="'+safe(t.id)+'">'+safe(t.name)+'</button></div></td><td><b>'+t.rating.toFixed(1)+'</b></td><td>'+(roster?roster.wins+'–'+roster.losses:'—')+'</td><td>'+t.starter.toFixed(1)+'</td><td>'+t.depth.toFixed(1)+'</td><td>'+t.seasonPerf.toFixed(1)+'</td><td>'+t.form.toFixed(1)+'</td></tr>';
+   }).join('')+'</tbody></table></div><p class="muted">All four component grades use a 0–100 scale. Historical week-to-week movement becomes available after the first saved weekly HPI-F snapshot.</p>';
+  panel.querySelectorAll('[data-power-team]').forEach(button=>button.addEventListener('click',()=>{
+   const teamId=button.dataset.powerTeam;
+   if(!state.config.teams.some(t=>t.id===teamId))return;
+   state.team=teamId;state.view='teams';state.article=null;change();pageTop();
+  }));
+ } }
  const rank=$('#teamPowerRank');if(rank)rank.textContent=teams?.find(t=>t.id===state.team)?.rank?('#'+teams.find(t=>t.id===state.team).rank+' / 10'):'—';
  const movement=$('#teamPowerMovement');if(movement)movement.textContent='';
  const needs=$('#rosterNeeds'),comparison=$('#playerComparisonPanel'),partner=$('#tradePartnerPanel');if(!needs&&!comparison&&!partner)return;

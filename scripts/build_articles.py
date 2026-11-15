@@ -15,6 +15,44 @@ def inline(text):
     s = re.sub(r'`([^`\n]+)`', r'<code>\1</code>', s)
     return s
 
+
+WEEK10_STATS = json.loads((ROOT/'data/week10_preview_visuals.json').read_text(encoding='utf-8'))
+
+def week10_chart_html(team_a, team_b):
+    """Responsive, accessible historical charts using only validated export data."""
+    a, b = WEEK10_STATS[team_a], WEEK10_STATS[team_b]
+    tnames = [a['name'], b['name']]
+    def bars(entries, maxvalue, kind):
+        result = []
+        for idx, (label, value) in enumerate(entries):
+            width = max(0, min(100, 100 * float(value) / maxvalue))
+            cls = "w10-team-a" if idx == 0 else "w10-team-b"
+            result.append(
+                f'<div class="w10-barrow"><span class="w10-barname">{html.escape(label)}</span>'
+                f'<span class="w10-bartrack"><span class="w10-barfill {cls}" style="width:{width:.2f}%"></span></span>'
+                f'<strong class="w10-barvalue">{value:.2f}</strong></div>'
+            )
+        return ''.join(result)
+    trend = []
+    for week in (7, 8, 9):
+        trend.append(f'<div class="w10-subhead">Week {week}</div>')
+        trend.append(bars([(tnames[0], a['weekly'][str(week)]), (tnames[1], b['weekly'][str(week)])], 360, 'trend'))
+    splits = []
+    for label, metric in (("Offensive starters", "offense"), ("Defensive starters", "defense")):
+        splits.append(f'<div class="w10-subhead">{label}</div>')
+        splits.append(bars([(tnames[0], a[metric]), (tnames[1], b[metric])], 200, metric))
+    return (
+        '<section class="w10-visuals" aria-label="Week 10 matchup historical scoring visualizations">'
+        '<div class="w10-chart"><h4>Recent Scoring Form</h4>'
+        '<p class="w10-chart-caption">Fantasy points scored in Weeks 7–9</p>'
+        + ''.join(trend) + '</div>'
+        '<div class="w10-chart"><h4>Week 9: Offense vs. Defense</h4>'
+        '<p class="w10-chart-caption">Points from the 10 offensive and 10 defensive starters</p>'
+        + ''.join(splits) + '</div>'
+        '<p class="w10-footnote">Historical results only; these are not Week 10 projections.</p>'
+        '</section>'
+    )
+
 def markdown_to_html(text):
     out, paragraph, list_items = [], [], []
     def flush():
@@ -59,6 +97,12 @@ def markdown_to_html(text):
                 graph.append(f'<div class="wk9-chart-row"><span class="wk9-chart-name">{html.escape(name)}</span><span class="wk9-chart-track"><span class="wk9-chart-fill" style="width:{width:.2f}%"></span></span><strong class="wk9-chart-value">{value:.2f}</strong></div>')
             graph.append('</div>')
             out.append(''.join(graph))
+        elif line.startswith('{{week10_matchup_visual:') and line.endswith('}}'):
+            flush()
+            team_a, team_b = line[len('{{week10_matchup_visual:'):-2].split(':')
+            if team_a not in WEEK10_STATS or team_b not in WEEK10_STATS:
+                raise ValueError("Unknown team in Week 10 visual")
+            out.append(week10_chart_html(team_a, team_b))
         elif line.startswith('> '):
             flush(); out.append('<blockquote>'+inline(line[2:])+'</blockquote>')
         elif line in {'---','***'}:

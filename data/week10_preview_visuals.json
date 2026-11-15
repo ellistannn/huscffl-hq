@@ -1,0 +1,112 @@
+{
+  "1": {
+    "name": "New York Noodles",
+    "weekly": {
+      "7": 277.67,
+      "8": 291.77,
+      "9": 302.25
+    },
+    "season_average": 302.01,
+    "offense": 121.1,
+    "defense": 181.15
+  },
+  "2": {
+    "name": "Tampa Bay Tyranny",
+    "weekly": {
+      "7": 192.6,
+      "8": 241.15,
+      "9": 263.1
+    },
+    "season_average": 241.5,
+    "offense": 115.4,
+    "defense": 147.7
+  },
+  "3": {
+    "name": "HOU You Like That",
+    "weekly": {
+      "7": 296.81,
+      "8": 314.23,
+      "9": 198.74
+    },
+    "season_average": 246.06,
+    "offense": 106.74,
+    "defense": 92.0
+  },
+  "4": {
+    "name": "Good Things We OKC!",
+    "weekly": {
+      "7": 252.06,
+      "8": 253.66,
+      "9": 199.8
+    },
+    "season_average": 250.54,
+    "offense": 95.1,
+    "defense": 104.7
+  },
+  "5": {
+    "name": "LALALALA",
+    "weekly": {
+      "7": 233.99,
+      "8": 234.73,
+      "9": 280.81
+    },
+    "season_average": 258.06,
+    "offense": 111.46,
+    "defense": 169.35
+  },
+  "6": {
+    "name": "Seattle Supersonics",
+    "weekly": {
+      "7": 214.57,
+      "8": 202.37,
+      "9": 274.74
+    },
+    "season_average": 248.07,
+    "offense": 131.14,
+    "defense": 143.6
+  },
+  "7": {
+    "name": "NJz Bunniez",
+    "weekly": {
+      "7": 234.97,
+      "8": 217.55,
+      "9": 281.69
+    },
+    "season_average": 266.79,
+    "offense": 143.04,
+    "defense": 138.65
+  },
+  "8": {
+    "name": "Utah Yetis",
+    "weekly": {
+      "7": 175.28,
+      "8": 231.16,
+      "9": 248.34
+    },
+    "season_average": 214.01,
+    "offense": 139.64,
+    "defense": 108.7
+  },
+  "9": {
+    "name": "District of Daebak",
+    "weekly": {
+      "7": 225.66,
+      "8": 200.55,
+      "9": 223.85
+    },
+    "season_average": 240.3,
+    "offense": 108.5,
+    "defense": 115.35
+  },
+  "10": {
+    "name": "Dalla Dalla Dallas",
+    "weekly": {
+      "7": 223.15,
+      "8": 195.06,
+      "9": 202.64
+    },
+    "season_average": 217.31,
+    "offense": 121.14,
+    "defense": 81.5
+  }
+}

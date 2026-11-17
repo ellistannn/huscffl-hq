@@ -1,1 +1,418 @@
-{"schema":1,"seasons":{}}
+{
+  "schema": 1,
+  "seasons": {
+    "2026": {
+      "weeks": {
+        "1": {
+          "standings": {
+            "hou-you-like-that": 1,
+            "new-york-noodles": 2,
+            "good-things-we-okc": 3,
+            "njz-bunniez": 4,
+            "utah-yetis": 5,
+            "seattle-supersonics": 6,
+            "lalalala": 7,
+            "district-of-daebak": 8,
+            "dalla-dalla-dallas": 9,
+            "tampa-bay-tyranny": 10
+          }
+        },
+        "2": {
+          "standings": {
+            "new-york-noodles": 1,
+            "good-things-we-okc": 2,
+            "njz-bunniez": 3,
+            "utah-yetis": 4,
+            "hou-you-like-that": 5,
+            "lalalala": 6,
+            "district-of-daebak": 7,
+            "seattle-supersonics": 8,
+            "tampa-bay-tyranny": 9,
+            "dalla-dalla-dallas": 10
+          }
+        },
+        "3": {
+          "standings": {
+            "new-york-noodles": 1,
+            "good-things-we-okc": 2,
+            "njz-bunniez": 3,
+            "lalalala": 4,
+            "utah-yetis": 5,
+            "seattle-supersonics": 6,
+            "hou-you-like-that": 7,
+            "dalla-dalla-dallas": 8,
+            "district-of-daebak": 9,
+            "tampa-bay-tyranny": 10
+          }
+        },
+        "4": {
+          "standings": {
+            "new-york-noodles": 1,
+            "good-things-we-okc": 2,
+            "njz-bunniez": 3,
+            "seattle-supersonics": 4,
+            "lalalala": 5,
+            "utah-yetis": 6,
+            "hou-you-like-that": 7,
+            "district-of-daebak": 8,
+            "dalla-dalla-dallas": 9,
+            "tampa-bay-tyranny": 10
+          }
+        },
+        "5": {
+          "standings": {
+            "new-york-noodles": 1,
+            "njz-bunniez": 2,
+            "good-things-we-okc": 3,
+            "seattle-supersonics": 4,
+            "lalalala": 5,
+            "dalla-dalla-dallas": 6,
+            "utah-yetis": 7,
+            "district-of-daebak": 8,
+            "hou-you-like-that": 9,
+            "tampa-bay-tyranny": 10
+          }
+        },
+        "6": {
+          "standings": {
+            "new-york-noodles": 1,
+            "njz-bunniez": 2,
+            "good-things-we-okc": 3,
+            "seattle-supersonics": 4,
+            "lalalala": 5,
+            "district-of-daebak": 6,
+            "dalla-dalla-dallas": 7,
+            "utah-yetis": 8,
+            "tampa-bay-tyranny": 9,
+            "hou-you-like-that": 10
+          }
+        },
+        "7": {
+          "standings": {
+            "new-york-noodles": 1,
+            "njz-bunniez": 2,
+            "good-things-we-okc": 3,
+            "seattle-supersonics": 4,
+            "lalalala": 5,
+            "district-of-daebak": 6,
+            "hou-you-like-that": 7,
+            "dalla-dalla-dallas": 8,
+            "utah-yetis": 9,
+            "tampa-bay-tyranny": 10
+          },
+          "power": {
+            "new-york-noodles": 1,
+            "njz-bunniez": 2,
+            "lalalala": 3,
+            "good-things-we-okc": 4,
+            "seattle-supersonics": 5,
+            "district-of-daebak": 6,
+            "hou-you-like-that": 7,
+            "dalla-dalla-dallas": 8,
+            "tampa-bay-tyranny": 9,
+            "utah-yetis": 10
+          },
+          "power_provenance": {
+            "kind": "reconstructed_estimate",
+            "model": "HPI-F 45% lineup / 25% depth / 20% season scoring / 10% recent scoring",
+            "player_pool": "Archived Week 5–7 HUSCFFL starters and bench only; NOT complete NFL-wide player pool",
+            "roster_source": "Week 7 matchup starters and bench (excludes absent IR/taxi)",
+            "scoring_source": "2026 season summary completed weekly matchup scores",
+            "known_limitations": "Weeks 1–4 player scoring missing; zero-point starters assumed played; unrostered NFL players not available; rankings are NOT official captured HPI-F",
+            "eligible_players_with_scoring": 378,
+            "players_in_scoring_pool": 462
+          },
+          "power_estimated_component_grades": {
+            "new-york-noodles": {
+              "hpi_f": 74.6,
+              "lineup": 71.62,
+              "depth": 49.48,
+              "season_scoring": 100,
+              "last_three_weeks": 100
+            },
+            "njz-bunniez": {
+              "hpi_f": 70.2,
+              "lineup": 67.19,
+              "depth": 51.68,
+              "season_scoring": 90,
+              "last_three_weeks": 90
+            },
+            "lalalala": {
+              "hpi_f": 64.4,
+              "lineup": 66.27,
+              "depth": 42.31,
+              "season_scoring": 80,
+              "last_three_weeks": 80
+            },
+            "good-things-we-okc": {
+              "hpi_f": 61.4,
+              "lineup": 64.56,
+              "depth": 49.31,
+              "season_scoring": 70,
+              "last_three_weeks": 60
+            },
+            "seattle-supersonics": {
+              "hpi_f": 57,
+              "lineup": 62.63,
+              "depth": 47.12,
+              "season_scoring": 60,
+              "last_three_weeks": 50
+            },
+            "district-of-daebak": {
+              "hpi_f": 56.7,
+              "lineup": 60.64,
+              "depth": 49.52,
+              "season_scoring": 50,
+              "last_three_weeks": 70
+            },
+            "hou-you-like-that": {
+              "hpi_f": 50,
+              "lineup": 64.31,
+              "depth": 40.39,
+              "season_scoring": 40,
+              "last_three_weeks": 30
+            },
+            "dalla-dalla-dallas": {
+              "hpi_f": 45.3,
+              "lineup": 61.93,
+              "depth": 45.79,
+              "season_scoring": 20,
+              "last_three_weeks": 20
+            },
+            "tampa-bay-tyranny": {
+              "hpi_f": 41.4,
+              "lineup": 50.21,
+              "depth": 35.24,
+              "season_scoring": 30,
+              "last_three_weeks": 40
+            },
+            "utah-yetis": {
+              "hpi_f": 37.2,
+              "lineup": 56.37,
+              "depth": 35.15,
+              "season_scoring": 10,
+              "last_three_weeks": 10
+            }
+          }
+        },
+        "8": {
+          "standings": {
+            "new-york-noodles": 1,
+            "njz-bunniez": 2,
+            "good-things-we-okc": 3,
+            "lalalala": 4,
+            "seattle-supersonics": 5,
+            "hou-you-like-that": 6,
+            "district-of-daebak": 7,
+            "utah-yetis": 8,
+            "dalla-dalla-dallas": 9,
+            "tampa-bay-tyranny": 10
+          },
+          "power": {
+            "new-york-noodles": 1,
+            "njz-bunniez": 2,
+            "good-things-we-okc": 3,
+            "hou-you-like-that": 4,
+            "lalalala": 5,
+            "district-of-daebak": 6,
+            "seattle-supersonics": 7,
+            "dalla-dalla-dallas": 8,
+            "tampa-bay-tyranny": 9,
+            "utah-yetis": 10
+          },
+          "power_provenance": {
+            "kind": "reconstructed_estimate",
+            "model": "HPI-F 45% lineup / 25% depth / 20% season scoring / 10% recent scoring",
+            "player_pool": "Archived Week 5–8 HUSCFFL starters and bench only; NOT complete NFL-wide player pool",
+            "roster_source": "Week 8 matchup starters and bench (excludes absent IR/taxi)",
+            "scoring_source": "2026 season summary completed weekly matchup scores",
+            "known_limitations": "Weeks 1–4 player scoring missing; zero-point starters assumed played; unrostered NFL players not available; rankings are NOT official captured HPI-F",
+            "eligible_players_with_scoring": 419,
+            "players_in_scoring_pool": 483
+          },
+          "power_estimated_component_grades": {
+            "new-york-noodles": {
+              "hpi_f": 79.5,
+              "lineup": 77.68,
+              "depth": 58.13,
+              "season_scoring": 100,
+              "last_three_weeks": 100
+            },
+            "njz-bunniez": {
+              "hpi_f": 70.3,
+              "lineup": 71.92,
+              "depth": 55.67,
+              "season_scoring": 90,
+              "last_three_weeks": 60
+            },
+            "good-things-we-okc": {
+              "hpi_f": 67.6,
+              "lineup": 68.73,
+              "depth": 50.7,
+              "season_scoring": 80,
+              "last_three_weeks": 80
+            },
+            "hou-you-like-that": {
+              "hpi_f": 65.4,
+              "lineup": 69.47,
+              "depth": 52.63,
+              "season_scoring": 60,
+              "last_three_weeks": 90
+            },
+            "lalalala": {
+              "hpi_f": 64.6,
+              "lineup": 69.97,
+              "depth": 48.65,
+              "season_scoring": 70,
+              "last_three_weeks": 70
+            },
+            "district-of-daebak": {
+              "hpi_f": 57.3,
+              "lineup": 67.85,
+              "depth": 55.22,
+              "season_scoring": 40,
+              "last_three_weeks": 50
+            },
+            "seattle-supersonics": {
+              "hpi_f": 52.4,
+              "lineup": 62.5,
+              "depth": 45.06,
+              "season_scoring": 50,
+              "last_three_weeks": 30
+            },
+            "dalla-dalla-dallas": {
+              "hpi_f": 47.9,
+              "lineup": 67.11,
+              "depth": 46.7,
+              "season_scoring": 20,
+              "last_three_weeks": 20
+            },
+            "tampa-bay-tyranny": {
+              "hpi_f": 46.1,
+              "lineup": 57.8,
+              "depth": 40.27,
+              "season_scoring": 30,
+              "last_three_weeks": 40
+            },
+            "utah-yetis": {
+              "hpi_f": 40.9,
+              "lineup": 62.6,
+              "depth": 38.96,
+              "season_scoring": 10,
+              "last_three_weeks": 10
+            }
+          }
+        },
+        "9": {
+          "standings": {
+            "new-york-noodles": 1,
+            "njz-bunniez": 2,
+            "good-things-we-okc": 3,
+            "lalalala": 4,
+            "seattle-supersonics": 5,
+            "utah-yetis": 6,
+            "hou-you-like-that": 7,
+            "district-of-daebak": 8,
+            "dalla-dalla-dallas": 9,
+            "tampa-bay-tyranny": 10
+          },
+          "power": {
+            "new-york-noodles": 1,
+            "njz-bunniez": 2,
+            "lalalala": 3,
+            "hou-you-like-that": 4,
+            "good-things-we-okc": 5,
+            "seattle-supersonics": 6,
+            "district-of-daebak": 7,
+            "tampa-bay-tyranny": 8,
+            "dalla-dalla-dallas": 9,
+            "utah-yetis": 10
+          },
+          "power_provenance": {
+            "kind": "reconstructed_estimate",
+            "model": "HPI-F 45% lineup / 25% depth / 20% season scoring / 10% recent scoring",
+            "player_pool": "Archived Week 5–9 HUSCFFL starters and bench only; NOT complete NFL-wide player pool",
+            "roster_source": "Week 9 matchup starters and bench (excludes absent IR/taxi)",
+            "scoring_source": "2026 season summary completed weekly matchup scores",
+            "known_limitations": "Weeks 1–4 player scoring missing; zero-point starters assumed played; unrostered NFL players not available; rankings are NOT official captured HPI-F",
+            "eligible_players_with_scoring": 442,
+            "players_in_scoring_pool": 502
+          },
+          "power_estimated_component_grades": {
+            "new-york-noodles": {
+              "hpi_f": 80,
+              "lineup": 78.28,
+              "depth": 59.26,
+              "season_scoring": 100,
+              "last_three_weeks": 100
+            },
+            "njz-bunniez": {
+              "hpi_f": 72.3,
+              "lineup": 73.1,
+              "depth": 57.61,
+              "season_scoring": 90,
+              "last_three_weeks": 70
+            },
+            "lalalala": {
+              "hpi_f": 71.7,
+              "lineup": 75.29,
+              "depth": 55.22,
+              "season_scoring": 80,
+              "last_three_weeks": 80
+            },
+            "hou-you-like-that": {
+              "hpi_f": 64.1,
+              "lineup": 70.86,
+              "depth": 52.76,
+              "season_scoring": 50,
+              "last_three_weeks": 90
+            },
+            "good-things-we-okc": {
+              "hpi_f": 64,
+              "lineup": 71.45,
+              "depth": 47.32,
+              "season_scoring": 70,
+              "last_three_weeks": 60
+            },
+            "seattle-supersonics": {
+              "hpi_f": 58.4,
+              "lineup": 67.91,
+              "depth": 47.3,
+              "season_scoring": 60,
+              "last_three_weeks": 40
+            },
+            "district-of-daebak": {
+              "hpi_f": 53.6,
+              "lineup": 70.32,
+              "depth": 55.7,
+              "season_scoring": 30,
+              "last_three_weeks": 20
+            },
+            "tampa-bay-tyranny": {
+              "hpi_f": 53.1,
+              "lineup": 65.56,
+              "depth": 42.36,
+              "season_scoring": 40,
+              "last_three_weeks": 50
+            },
+            "dalla-dalla-dallas": {
+              "hpi_f": 46.5,
+              "lineup": 67.47,
+              "depth": 44.49,
+              "season_scoring": 20,
+              "last_three_weeks": 10
+            },
+            "utah-yetis": {
+              "hpi_f": 46.1,
+              "lineup": 67.3,
+              "depth": 43.11,
+              "season_scoring": 10,
+              "last_three_weeks": 30
+            }
+          }
+        }
+      }
+    }
+  },
+  "power_reconstruction_note": "Weeks 7–9 power ranks are retrospective estimates from archived HUSCFFL rostered-player scoring (Weeks 5–9). They are NOT captured exact historical HPI-F; player statistics prior to Week 5 and NFL-wide unrostered players are not in the source data. Do not assume direct comparability to complete NFL-wide live power snapshots."
+}

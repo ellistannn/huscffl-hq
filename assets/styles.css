@@ -295,3 +295,13 @@
 .hpi-power-table td:nth-child(2){white-space:nowrap;}
 .hpi-power-table .teamlink{cursor:pointer;}
 .hpi-power-table td:nth-child(n+3),.hpi-power-table th:nth-child(n+3){text-align:center;white-space:nowrap;}
+
+/* v24.2: compact week-over-week movement placed beside each rank. */
+.rank-with-movement{display:inline-flex;align-items:center;gap:.45rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.rank-with-movement strong{min-width:1ch}
+.rank-move{font-size:.72rem;font-weight:700;letter-spacing:-.02em;white-space:nowrap}
+.rank-move-up{color:#218454}
+.rank-move-down{color:#d35454}
+.rank-move-flat,.rank-move-na{color:var(--muted,#88909a)}
+.rank-move-na{font-size:.65rem;font-weight:500}
+@media(max-width:600px){.rank-with-movement{gap:.25rem}.rank-move{font-size:.68rem}}

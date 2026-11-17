@@ -1,8 +1,18 @@
-# HUSCFFL Website v24
+# HUSCFFL Website v24.1
 
-Latest full release, based on v23.4. Upload the package contents to the root of your GitHub Pages repository. All articles, existing media, and the article publishing workflow are retained.
+Incremental release based on v24. Upload the package contents to the root of your GitHub Pages repository. All articles, existing media, and the article publishing workflow are retained.
 
-## What's changed
+## Changes in v24.1
+
+- Franchise Power Rankings team cells now match the League Standings logo/name formatting, including linked team names that open the selected franchise on My Team.
+- Added 0–100 **Season Scoring** and **Last 3 Weeks** component grades alongside Lineup and Depth, using the same components already included in HPI-F. No weighting or rating calculations changed.
+- Expanded power-ranking table scrolls horizontally on narrower screens.
+
+### Updating from v24
+
+Replace `index.html`, `assets/app.js`, and `assets/styles.css`. Leave generated player stats, articles, and GitHub Actions files unchanged.
+
+## Existing v24 features
 
 - My Team page now has two responsive tabs: **Overview** (default on the first visit) and **Roster & Analysis**. Tab state is retained within the browser session; changing franchises preserves the tab. The existing site-wide Back to Top button remains available.
 - Overview retains franchise identity, championship stars, official league rank, record, new HPI-F power rank, weekly matchup, head-to-head history, recent transactions and team articles.
@@ -39,6 +49,15 @@ Your existing `.github/workflows/refresh-player-stats.yml` automatically invokes
 
 The ratings recalculate in the browser when refreshed stat exports and current franchise rosters are loaded. Static results are not inserted into the HTML at build time. The current status of player exports is therefore essential. Models use historical fantasy scoring, not external dynasty market values.
 
-## Week 9 Recap Update (November 13, 2026)
+## v24.2 — Weekly standings movement
 
-Added a complete Week 9 roundup under Articles > Recaps, featuring all five final matchups, manager efficiency awards, lineup regrets and a responsive scoring chart. Rebuilt data/stories.json using scripts/build_articles.py. Existing v24 functionality and all prior articles retained.
+- On Standings, the League Standings and Franchise Power Rankings tables show a compact `▲2`, `▼1`, or `—` beside each numerical rank. Green indicates a climb and red a drop.
+- `N/A` means a prior verified completed-week snapshot is not available, the latest snapshot does not match the currently displayed week, or the scoring data cannot be verified.
+- New `data/rank-history.json` holds permanent season/week ranking snapshots. The initial file is empty by design; do **not** invent prior weeks' HPI-F ranks based on today's roster.
+- A new GitHub Actions workflow `.github/workflows/refresh-rank-history.yml` runs after the **successful** player-statistics export workflow and can be run manually. It executes `scripts/build_rank_history.js`, compares official standings with matchup history, and uses the site's exact HPI-F formulas to record the current completed week's power ranks.
+- Previous League Standings ranks can be reconstructed from completed weekly Sleeper matchup records. HPI-F ranks need at least **two successful weekly captures** before movement can appear, because old rosters and HPI-F snapshots weren't previously preserved.
+- This workflow does not install dependencies beyond Node.js 22. It fails without modifying the rank history if the player export is missing/incomplete, the Sleeper API is unavailable, roster mapping doesn't match, or the ratings cannot be calculated.
+- If `scripts/build_player_stats.py` continues failing to fetch the unofficial NFL-wide stats feed, rank snapshot automation will not run. Fix/verify that export first.
+
+### Minimal upgrade from v24.1
+Replace `assets/app.js`, `assets/styles.css` and `README.md` (optional), and **add** `data/rank-history.json`, `scripts/build_rank_history.js`, `.github/workflows/refresh-rank-history.yml`. Keep your newer `player-stats-*.json` files and articles. The new workflow requires GitHub Actions **Read and write permissions** for repository contents.

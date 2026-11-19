@@ -61,3 +61,10 @@ The ratings recalculate in the browser when refreshed stat exports and current f
 
 ### Minimal upgrade from v24.1
 Replace `assets/app.js`, `assets/styles.css` and `README.md` (optional), and **add** `data/rank-history.json`, `scripts/build_rank_history.js`, `.github/workflows/refresh-rank-history.yml`. Keep your newer `player-stats-*.json` files and articles. The new workflow requires GitHub Actions **Read and write permissions** for repository contents.
+
+
+## Week 10 recap + v24.2 safe merge (November 19, 2026)
+
+This build is derived from **HUSCFFL-Website-v24.2.zip**, not the older v24 content baseline. Original `assets/app.js`, rank history script, rank history workflow, `data/rank-history.json`, and ranking styles are preserved. Added Week 9 roundup with visualizations, Week 10 previews with their comparative charts, Week 10 recap and five matchup writeups with scoring charts. The `scripts/build_articles.py` compiler supports these article chart macros and `data/stories.json` has been regenerated.
+
+To deploy: replace files in the repository with the extracted contents of this ZIP, retaining the folder structure. Do not upload the older Week10-Recaps-Complete ZIP after this one. Rank movement appears only for documented historical snapshots; where unavailable it displays N/A.

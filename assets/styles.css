@@ -290,6 +290,23 @@
 .hpi-partner-grid p{font-size:13px}
 @media(max-width:600px){.team-tabs{display:grid;grid-template-columns:1fr 1fr}.team-tabs button{font-size:12px;padding:10px 7px}.analysis-quicklinks a{font-size:11px}.hpi-manager-table{font-size:12px}}
 
+/* v24.1 — power ranking franchise identity and expanded grades */
+.hpi-power-table{min-width:860px;}
+.hpi-power-table td:nth-child(2){white-space:nowrap;}
+.hpi-power-table .teamlink{cursor:pointer;}
+.hpi-power-table td:nth-child(n+3),.hpi-power-table th:nth-child(n+3){text-align:center;white-space:nowrap;}
+
+/* v24.2: compact week-over-week movement placed beside each rank. */
+.rank-with-movement{display:inline-flex;align-items:center;gap:.45rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.rank-with-movement strong{min-width:1ch}
+.rank-move{font-size:.72rem;font-weight:700;letter-spacing:-.02em;white-space:nowrap}
+.rank-move-up{color:#218454}
+.rank-move-down{color:#d35454}
+.rank-move-flat,.rank-move-na{color:var(--muted,#88909a)}
+.rank-move-na{font-size:.65rem;font-weight:500}
+@media(max-width:600px){.rank-with-movement{gap:.25rem}.rank-move{font-size:.68rem}}
+
+
 /* Week 9 editorial scoring chart */
 .wk9-chart{margin:25px 0 30px;padding:22px 20px;border:1px solid #e8d8db;border-radius:12px;background:linear-gradient(135deg,#fffafa,#fff4f4)}
 .wk9-chart-title{font-weight:850;letter-spacing:1.3px;font-size:11px;color:#9c3851;margin-bottom:15px}

@@ -5,7 +5,6 @@ const safe = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 const fmt = n => typeof n === 'number' && Number.isFinite(n) ? n.toFixed(2) : '—';
 const slug = s => String(s||'').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 const state = {config:null,stories:[],team:'all',week:'all',type:'all',view:'home',rosters:[],users:[],standings:[],historicalStandings:{},standingsSeason:'2026',teamRecordSeason:'2026',coverageSeason:'2026',matchups:[],h2hGames:[],h2hStatus:"loading",h2hSeason:"all",h2hWarnings:[],live:false,article:null,transactions:[],transactionSeason:'2026',transactionType:'all',transactionTeam:'all',transactionStatus:'loading',transactionsLastUpdated:null,transactionNames:{},playerPositions:{},transactionMappings:{},transactionError:'',scoring:{},scoringStatus:'loading',scoringSeason:'2026',playerYear:'2026',playerWeeks:[],playerMetric:'total',playerPosition:'ALL',playerStatus:'all',playerTeam:'all',playerSearch:'',playerPage:0,playerFiles:{},playerRosterMap:{},rawPlayerRosters:{},playerFileState:'loading',topPlayerPosition:'QB',playerYears:['2026'],playerPositionsSelected:[],playerTeamsSelected:[]};
-const rankHistory={schema:1,seasons:{}};
 const standingsSort={home:{key:'rank',direction:'asc'},full:{key:'rank',direction:'asc'}};
 const seasonWeeks = season => Number(state.config?.seasonWeeks?.[String(season)] || (String(season)==='2025'?16:17));
 const api = async endpoint => {const res=await fetch(`https://api.sleeper.app/v1/league/${state.config.leagueId}/${endpoint}`);if(!res.ok)throw Error(`Sleeper ${endpoint}: ${res.status}`);return res.json()};
@@ -352,36 +351,6 @@ function articleMatches(a){const teamMatch=state.team==='all'||a.teams?.includes
 function sortedStories(){return state.stories.filter(articleMatches).sort((a,b)=>b.season-a.season||b.week-a.week||String(b.date).localeCompare(String(a.date)))}
 function storyCard(a){const art=document.createElement('article');art.className='story';const ids=articleTeamIds(a);const hero=ids.length?`<div class="story-logo-row">${ids.slice(0,2).map(id=>teamLogoMarkup(id,teamName(id),'story-logo')).join(ids.length===2?'<span class="story-versus">VS</span>':'')}</div>`:`<div class="story-mark">${a.type==='preview'?'VS':a.type==='recap'?'W':'H'}</div>`;art.innerHTML=`<div class="story-image" aria-hidden="true">${hero}</div><div class="story-body"><span class="tag">${safe(a.type)} · ${safe(a.season)} · WEEK ${safe(a.week)}</span><h3>${safe(a.title)}</h3><p>${safe(a.summary)}</p><button type="button">Read story →</button></div>`;art.querySelector('button').onclick=()=>{state.article=a.id;state.view='article';change()};return art;}
 function renderStories(el,stories){el.replaceChildren();if(!stories.length){el.innerHTML='<div class="empty">No coverage matches these filters yet. Upload a recap or preview Markdown file to the articles folder.</div>';return}stories.forEach(a=>el.appendChild(storyCard(a)))}
-// Rank movement is shown only when the displayed ranking matches a saved
-// completed-week snapshot. Historical comparisons are never inferred from live totals.
-function rankMoveMarkup(teamId,rank,season,kind){
- const history=rankHistory.seasons?.[String(season)]?.weeks||{};
- const weeks=Object.keys(history).map(Number).filter(Number.isInteger).sort((a,b)=>b-a);
- const currentWeek=weeks[0];
- const latest=history[currentWeek];
- // A matching rank alone does not prove the live table is from that week.
- // Withhold movement if the current season has advanced past the saved snapshot.
- const scoring=state.scoring?.[String(season)];
- const currentExport=state.playerFiles?.[String(season)];
- const correctWeek=Number(scoring?.upto)===currentWeek && !scoring.failed && !scoring.unmapped &&
-  (kind!=='power'||Number(currentExport?.weeks)===currentWeek);
- if(!correctWeek||!teamId||!latest||Number(latest[kind]?.[teamId])!==Number(rank))return '<span class="rank-move rank-move-na" title="Weekly movement unavailable or awaiting snapshot">N/A</span>';
- const previous=history[currentWeek-1];
- if(!previous||!Number.isInteger(Number(previous[kind]?.[teamId]))||!previous[kind]?.[teamId])return '<span class="rank-move rank-move-na" title="Previous weekly snapshot unavailable">N/A</span>';
- const change=Number(previous[kind][teamId])-Number(rank);
- if(!change)return '<span class="rank-move rank-move-flat" title="Unchanged from previous week">—</span>';
- const up=change>0;
- return `<span class="rank-move ${up?'rank-move-up':'rank-move-down'}" title="${up?'Up':'Down'} ${Math.abs(change)} place${Math.abs(change)===1?'':'s'} since week ${currentWeek-1}" aria-label="${up?'Up':'Down'} ${Math.abs(change)} places">${up?'▲':'▼'}${Math.abs(change)}</span>`;
-}
-function rankCell(rank,teamId,season,kind){
- return `<span class="rank-with-movement"><strong>${safe(rank)}</strong>${rankMoveMarkup(teamId,rank,season,kind)}</span>`;
-}
-async function loadRankHistory(){
- try{const res=await fetch('data/rank-history.json',{cache:'no-store'});if(!res.ok)throw Error('Rank history not published');
- const data=await res.json();if(data?.schema!==1||typeof data.seasons!=='object')throw Error('Unrecognized rank history');
- rankHistory.seasons=data.seasons;renderTable($('#fullStandings'));renderPowerAndTools();
- }catch(err){console.info('Historical rank movement unavailable:',err.message)}
-}
 function renderTable(el,limit=Infinity,season=state.standingsSeason){
  const raw=(season===String(state.config.season)?state.standings:state.historicalStandings[season]||[]).slice(0,limit);
  if(!raw.length){el.innerHTML='<p class="muted">Standings will appear when Sleeper data becomes available.</p>';return}
@@ -394,7 +363,7 @@ function renderTable(el,limit=Infinity,season=state.standingsSeason){
  const thead=document.createElement('thead'),headerRow=document.createElement('tr');
  for(const [k,label] of headers){const th=document.createElement('th');if(['rank','name','pf','pa','maxpf'].includes(k)){const button=document.createElement('button');button.type='button';button.className='sort-header';button.textContent=label+(sort.key===k?(sort.direction==='asc'?' ▲':' ▼'):' ↕');button.setAttribute('aria-label',`Sort by ${label}`);th.setAttribute('aria-sort',sort.key===k?(sort.direction==='asc'?'ascending':'descending'):'none');button.onclick=()=>{if(sort.key===k)sort.direction=sort.direction==='asc'?'desc':'asc';else{sort.key=k;sort.direction=['pf','pa','maxpf'].includes(k)?'desc':'asc'}renderTable(el,limit,season)};th.appendChild(button)}else th.textContent=label;headerRow.appendChild(th)}thead.appendChild(headerRow);table.appendChild(thead);
  const tbody=document.createElement('tbody');
- rows.forEach(r=>{const tr=document.createElement('tr');const label=r.teamId?teamName(r.teamId):r.displayName;tr.innerHTML=`<td>${rankCell(r.officialRank,r.teamId,season,'standings')}</td><td><div class="team-cell">${r.teamId?teamLogoMarkup(r.teamId,label,'table-team-logo'):''}<button class="teamlink">${safe(label)}</button></div></td><td>${r.wins}</td><td>${r.losses}</td><td>${fmt(r.pf)}</td><td>${fmt(r.pa)}</td><td>${fmt(r.maxpf)}</td>`;tr.querySelector('.teamlink').onclick=()=>{if(r.teamId){state.team=r.teamId;state.view='teams';state.article=null;change();pageTop()}};tbody.appendChild(tr)});table.appendChild(tbody);el.replaceChildren(table)
+ rows.forEach(r=>{const tr=document.createElement('tr');const label=r.teamId?teamName(r.teamId):r.displayName;tr.innerHTML=`<td>${r.officialRank}</td><td><div class="team-cell">${r.teamId?teamLogoMarkup(r.teamId,label,'table-team-logo'):''}<button class="teamlink">${safe(label)}</button></div></td><td>${r.wins}</td><td>${r.losses}</td><td>${fmt(r.pf)}</td><td>${fmt(r.pa)}</td><td>${fmt(r.maxpf)}</td>`;tr.querySelector('.teamlink').onclick=()=>{if(r.teamId){state.team=r.teamId;state.view='teams';state.article=null;change();pageTop()}};tbody.appendChild(tr)});table.appendChild(tbody);el.replaceChildren(table)
 }
 function renderTeamPanel(){const el=$('#teamPanel');el.hidden=state.team==='all'||!['teams','home'].includes(state.view);if(el.hidden)return;const r=selectedRoster();const match=state.matchups.find(m=>Number(m.roster_id)===Number(r?.roster_id));const opponent=match&&state.matchups.find(m=>m.matchup_id===match.matchup_id&&m.roster_id!==match.roster_id);const oppRoster=opponent&&state.rosters.find(a=>a.roster_id===opponent.roster_id);const season=state.coverageSeason;const rosterRows=season===String(state.config.season)?state.standings:(state.historicalStandings[season]||[]);const s=rosterRows.find(a=>a.teamId===state.team);const record=s?`${s.wins}–${s.losses}${s.ties?'–'+s.ties:''}`:'—';const rank=s?rosterRows.indexOf(s)+1:'—';el.innerHTML=`<div class="eyebrow franchise-heading">FRANCHISE HEADQUARTERS</div><div class="team-hero">${teamLogoMarkup(state.team,teamName(state.team),'team-hero-logo')}<div><h2>${safe(teamName(state.team))}</h2><div class="muted">Season: ${safe(season)} · Use the Season and Week selectors above to explore history.</div><div class="muted">${r?`Manager: ${safe(r.managerName)}`:'Map this team to its Sleeper roster to show its stats.'}</div></div></div><div class="metrics"><div class="metric"><small>Record</small><b>${record}</b></div><div class="metric"><small>League rank</small><b>${rank}${rank==='—'?'':' / '+rosterRows.length}</b></div><div class="metric"><small>Power rank</small><b id="teamPowerRank">—</b><small id="teamPowerMovement"></small></div><div class="metric"><small>Points for</small><b>${s?fmt(s.pf):'—'}</b></div><div class="metric"><small>Points against</small><b>${s?fmt(s.pa):'—'}</b></div><div class="metric"><small>Max PF</small><b>${s?fmt(s.maxpf):'—'}</b></div></div><div class="team-details"><div class="detail"><strong>Current roster</strong>${r?`${r.players?.length||0} players on roster · ${r.starters?.length||0} starter slots`:'Live roster not matched'}<br><span class="muted">Roster/player details can be expanded in the next version.</span></div><div class="detail"><strong>Weekly matchup</strong>${oppRoster?`Vs. ${safe(oppRoster.teamId?teamName(oppRoster.teamId):oppRoster.displayName)} · ${fmt(Number(match.custom_points??match.points))} – ${fmt(Number(opponent.custom_points??opponent.points))}`:'Select a week to view a matchup, if available.'}</div></div><section class="h2h-section">${renderHeadToHead(r)}</section><section id="teamScoring" class="panel team-scoring"></section><section id="teamRankings" class="panel team-scoring"></section><section id="topPlayersPanel" class="panel team-scoring"></section><section class="team-transactions"><h3>Recent transactions</h3><div class="muted">2026 season · auto-updated</div>${renderTransactionCards('2026',state.team,5)}<p><button type="button" id="viewAllTeamTransactions" class="text-button">View All Transactions →</button></p></section><section id="teamRecentArticles" class="team-recent-articles panel"><div class="panel-head"><div><div class="eyebrow">FROM THE ARCHIVE</div><h3>Recent Articles</h3></div><button class="text-button" type="button" id="viewAllTeamArticles">View All Team Articles →</button></div><div id="teamRecentArticleList" class="stories"></div></section>`;const selector=el.querySelector("#h2hSeasonSelect");if(selector)selector.addEventListener("change",e=>{state.h2hSeason=e.target.value;render()});const allTx=$('#viewAllTeamTransactions');if(allTx)allTx.onclick=()=>{state.transactionTeam=state.team;state.view='transactions';change();window.scrollTo(0,0)};}
 function renderTeamArticles(){
@@ -865,7 +834,6 @@ function hpiFranchiseData(pd){
  // Fixed scoring reference for within-season analysis; do not claim these are external projections.
  const scoredAvg=out.map(t=>t.avg),recentVals=out.map(t=>t.recent);
  for(const t of out){const seasonPerf=hpiPct(scoredAvg,t.avg),form=hpiPct(recentVals,t.recent);
-   t.seasonPerf=seasonPerf;t.form=form;
    t.rating=Number((.45*t.starter+.25*t.depth+.20*seasonPerf+.10*form).toFixed(1));
  }
  out.sort((a,b)=>b.rating-a.rating||b.avg-a.avg);out.forEach((t,i)=>t.rank=i+1);
@@ -903,19 +871,7 @@ function renderPowerAndTools(){
  const pd=hpiPlayerData(),teams=hpiFranchiseData(pd),panel=$('#franchisePowerPanel');
  const placeholder='Ratings unavailable until the NFL-wide player statistics export, current roster ownership, and completed matchup scores are available and validated.';
  if(panel){if(!teams){panel.innerHTML='<h3>Franchise Power Rankings · HPI-F</h3><p class="muted">'+placeholder+'</p>'}
- else {
-  panel.innerHTML='<h3>Franchise Power Rankings · HPI-F</h3>'+
-   '<p class="muted">Competitive-strength estimate: 45% optimized starters, 25% bench depth, 20% season scoring, 10% last-three-week form. Updated from completed data; not official standings or a game prediction.</p>'+
-   '<div class="standings-scroll" role="region" aria-label="Franchise power rankings and component grades" tabindex="0"><table class="standings-table hpi-power-table"><thead><tr><th>Power Rank</th><th>Franchise</th><th>HPI-F</th><th>Record</th><th>Lineup</th><th>Depth</th><th>Season Scoring</th><th>Last 3 Weeks</th></tr></thead><tbody>'+
-   teams.map(t=>{const roster=state.standings.find(r=>r.teamId===t.id);
-    return '<tr><td>'+rankCell(t.rank,t.id,String(state.config.season),'power')+'</td><td><div class="team-cell">'+teamLogoMarkup(t.id,t.name,'table-team-logo')+'<button type="button" class="teamlink" data-power-team="'+safe(t.id)+'">'+safe(t.name)+'</button></div></td><td><b>'+t.rating.toFixed(1)+'</b></td><td>'+(roster?roster.wins+'–'+roster.losses:'—')+'</td><td>'+t.starter.toFixed(1)+'</td><td>'+t.depth.toFixed(1)+'</td><td>'+t.seasonPerf.toFixed(1)+'</td><td>'+t.form.toFixed(1)+'</td></tr>';
-   }).join('')+'</tbody></table></div><p class="muted">All four component grades use a 0–100 scale. Week-over-week changes compare saved completed-week snapshots; N/A means the historical comparison is not yet available.</p>';
-  panel.querySelectorAll('[data-power-team]').forEach(button=>button.addEventListener('click',()=>{
-   const teamId=button.dataset.powerTeam;
-   if(!state.config.teams.some(t=>t.id===teamId))return;
-   state.team=teamId;state.view='teams';state.article=null;change();pageTop();
-  }));
- } }
+ else {const current=teams[0]?.id;panel.innerHTML='<h3>Franchise Power Rankings · HPI-F</h3><p class="muted">Competitive-strength estimate: 45% optimized starters, 25% bench depth, 20% season scoring, 10% last-three-week form. Updated from completed data; not official standings or a game prediction.</p><div class="standings-scroll"><table class="standings-table"><thead><tr><th>Power Rank</th><th>Franchise</th><th>HPI-F</th><th>Record</th><th>Lineup</th><th>Depth</th></tr></thead><tbody>'+teams.map(t=>{const roster=state.standings.find(r=>r.teamId===t.id);return '<tr><td>'+t.rank+'</td><td>'+teamLogoMarkup(t.id,t.name,'table-team-logo')+' '+safe(t.name)+'</td><td><b>'+t.rating.toFixed(1)+'</b></td><td>'+(roster?roster.wins+'–'+roster.losses:'—')+'</td><td>'+t.starter.toFixed(1)+'</td><td>'+t.depth.toFixed(1)+'</td></tr>'}).join('')+'</tbody></table></div><p class="muted">Historical week-to-week movement becomes available after the first saved weekly HPI-F snapshot.</p>';}}
  const rank=$('#teamPowerRank');if(rank)rank.textContent=teams?.find(t=>t.id===state.team)?.rank?('#'+teams.find(t=>t.id===state.team).rank+' / 10'):'—';
  const movement=$('#teamPowerMovement');if(movement)movement.textContent='';
  const needs=$('#rosterNeeds'),comparison=$('#playerComparisonPanel'),partner=$('#tradePartnerPanel');if(!needs&&!comparison&&!partner)return;
@@ -940,7 +896,7 @@ function renderPowerAndTools(){
  }
 }
 
-async function init(){try{const [config,stories]=await Promise.all([fetch('data/config.json').then(r=>{if(!r.ok)throw Error('config.json missing');return r.json()}),fetch('data/stories.json').then(r=>{if(!r.ok)throw Error('stories.json missing');return r.json()})]);state.config=config;state.stories=stories;state.playerYears=[state.playerYear];state.playerWeeks=Array.from({length:seasonWeeks(state.playerYear)},(_,i)=>i+1);urlState();setupSelectors();render();loadRankHistory();loadConstitution();loadLive();setInterval(loadTransactions,300000);loadPlayerScores();}catch(err){console.error(err);$('#dataStatus').textContent='Unable to load site files. Use GitHub Pages or a local server.'}}
+async function init(){try{const [config,stories]=await Promise.all([fetch('data/config.json').then(r=>{if(!r.ok)throw Error('config.json missing');return r.json()}),fetch('data/stories.json?v=week9-chart-fix1',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('stories.json missing');return r.json()})]);state.config=config;state.stories=stories;state.playerYears=[state.playerYear];state.playerWeeks=Array.from({length:seasonWeeks(state.playerYear)},(_,i)=>i+1);urlState();setupSelectors();render();loadConstitution();loadLive();setInterval(loadTransactions,300000);loadPlayerScores();}catch(err){console.error(err);$('#dataStatus').textContent='Unable to load site files. Use GitHub Pages or a local server.'}}
 function setupBackToTop(){const b=$('#backToTop');if(!b)return;const update=()=>{b.hidden=window.scrollY<500};window.addEventListener('scroll',update,{passive:true});update();b.addEventListener('click',()=>window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}))}
 setupBackToTop();
 init();

@@ -1,1 +1,162 @@
-{"schema":1,"seasons":{}}
+{
+  "schema": 1,
+  "seasons": {
+    "2026": {
+      "weeks": {
+        "1": {
+          "standings": {
+            "hou-you-like-that": 1,
+            "new-york-noodles": 2,
+            "good-things-we-okc": 3,
+            "njz-bunniez": 4,
+            "utah-yetis": 5,
+            "seattle-supersonics": 6,
+            "lalalala": 7,
+            "district-of-daebak": 8,
+            "dalla-dalla-dallas": 9,
+            "tampa-bay-tyranny": 10
+          }
+        },
+        "2": {
+          "standings": {
+            "new-york-noodles": 1,
+            "good-things-we-okc": 2,
+            "njz-bunniez": 3,
+            "utah-yetis": 4,
+            "hou-you-like-that": 5,
+            "lalalala": 6,
+            "district-of-daebak": 7,
+            "seattle-supersonics": 8,
+            "tampa-bay-tyranny": 9,
+            "dalla-dalla-dallas": 10
+          }
+        },
+        "3": {
+          "standings": {
+            "new-york-noodles": 1,
+            "good-things-we-okc": 2,
+            "njz-bunniez": 3,
+            "lalalala": 4,
+            "utah-yetis": 5,
+            "seattle-supersonics": 6,
+            "hou-you-like-that": 7,
+            "dalla-dalla-dallas": 8,
+            "district-of-daebak": 9,
+            "tampa-bay-tyranny": 10
+          }
+        },
+        "4": {
+          "standings": {
+            "new-york-noodles": 1,
+            "good-things-we-okc": 2,
+            "njz-bunniez": 3,
+            "seattle-supersonics": 4,
+            "lalalala": 5,
+            "utah-yetis": 6,
+            "hou-you-like-that": 7,
+            "district-of-daebak": 8,
+            "dalla-dalla-dallas": 9,
+            "tampa-bay-tyranny": 10
+          }
+        },
+        "5": {
+          "standings": {
+            "new-york-noodles": 1,
+            "njz-bunniez": 2,
+            "good-things-we-okc": 3,
+            "seattle-supersonics": 4,
+            "lalalala": 5,
+            "dalla-dalla-dallas": 6,
+            "utah-yetis": 7,
+            "district-of-daebak": 8,
+            "hou-you-like-that": 9,
+            "tampa-bay-tyranny": 10
+          }
+        },
+        "6": {
+          "standings": {
+            "new-york-noodles": 1,
+            "njz-bunniez": 2,
+            "good-things-we-okc": 3,
+            "seattle-supersonics": 4,
+            "lalalala": 5,
+            "district-of-daebak": 6,
+            "dalla-dalla-dallas": 7,
+            "utah-yetis": 8,
+            "tampa-bay-tyranny": 9,
+            "hou-you-like-that": 10
+          }
+        },
+        "7": {
+          "standings": {
+            "new-york-noodles": 1,
+            "njz-bunniez": 2,
+            "good-things-we-okc": 3,
+            "seattle-supersonics": 4,
+            "lalalala": 5,
+            "district-of-daebak": 6,
+            "hou-you-like-that": 7,
+            "dalla-dalla-dallas": 8,
+            "utah-yetis": 9,
+            "tampa-bay-tyranny": 10
+          }
+        },
+        "8": {
+          "standings": {
+            "new-york-noodles": 1,
+            "njz-bunniez": 2,
+            "good-things-we-okc": 3,
+            "lalalala": 4,
+            "seattle-supersonics": 5,
+            "hou-you-like-that": 6,
+            "district-of-daebak": 7,
+            "utah-yetis": 8,
+            "dalla-dalla-dallas": 9,
+            "tampa-bay-tyranny": 10
+          }
+        },
+        "9": {
+          "standings": {
+            "new-york-noodles": 1,
+            "njz-bunniez": 2,
+            "good-things-we-okc": 3,
+            "lalalala": 4,
+            "seattle-supersonics": 5,
+            "utah-yetis": 6,
+            "hou-you-like-that": 7,
+            "district-of-daebak": 8,
+            "dalla-dalla-dallas": 9,
+            "tampa-bay-tyranny": 10
+          }
+        },
+        "10": {
+          "standings": {
+            "new-york-noodles": 1,
+            "njz-bunniez": 2,
+            "good-things-we-okc": 3,
+            "seattle-supersonics": 4,
+            "lalalala": 5,
+            "utah-yetis": 6,
+            "hou-you-like-that": 7,
+            "district-of-daebak": 8,
+            "tampa-bay-tyranny": 9,
+            "dalla-dalla-dallas": 10
+          },
+          "power": {
+            "new-york-noodles": 1,
+            "njz-bunniez": 2,
+            "lalalala": 3,
+            "seattle-supersonics": 4,
+            "hou-you-like-that": 5,
+            "tampa-bay-tyranny": 6,
+            "good-things-we-okc": 7,
+            "district-of-daebak": 8,
+            "utah-yetis": 9,
+            "dalla-dalla-dallas": 10
+          },
+          "captured_at": "2026-11-19T20:41:59.978Z"
+        }
+      }
+    }
+  }
+}

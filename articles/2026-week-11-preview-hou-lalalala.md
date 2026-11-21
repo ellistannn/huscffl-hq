@@ -6,7 +6,7 @@ type: preview
 title: 'Houston Looks for a Late-Season Spark Against a Fragile .500 Rival'
 summary: 'Rivalry Week 11: HOU You Like That vs. LALALALA, the six-team byepocalypse and playoff stakes.'
 date: 2026-11-20
-teams: all
+teams: hou-you-like-that, lalalala
 ---
 
 # Houston Looks for a Late-Season Spark Against a Fragile .500 Rival

@@ -6,7 +6,7 @@ type: preview
 title: 'Tyranny Finds Momentum as Seattle Faces a Shorthanded Test'
 summary: 'Rivalry Week 11: Tampa Bay Tyranny vs. Seattle Supersonics, the six-team byepocalypse and playoff stakes.'
 date: 2026-11-20
-teams: all
+teams: tampa-bay-tyranny, seattle-supersonics
 ---
 
 # Tyranny Finds Momentum as Seattle Faces a Shorthanded Test

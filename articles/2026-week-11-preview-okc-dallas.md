@@ -6,7 +6,7 @@ type: preview
 title: 'OKC Survived by 0.63; Dallas Faces the Week’s Biggest Bye Crisis'
 summary: 'Rivalry Week 11: Good Things We OKC! vs. Dalla Dalla Dallas, the six-team byepocalypse and playoff stakes.'
 date: 2026-11-20
-teams: all
+teams: good-things-we-okc, dalla-dalla-dallas
 ---
 
 # OKC Survived by 0.63; Dallas Faces the Week’s Biggest Bye Crisis

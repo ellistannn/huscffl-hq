@@ -6,7 +6,7 @@ type: preview
 title: 'Ten and Counting, but Byes Threaten the Perfect Season'
 summary: 'Rivalry Week 11: New York Noodles vs. District of Daebak, the six-team byepocalypse and playoff stakes.'
 date: 2026-11-20
-teams: all
+teams: new-york-noodles, district-of-daebak
 ---
 
 # Ten and Counting, but Byes Threaten the Perfect Season

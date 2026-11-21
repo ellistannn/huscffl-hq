@@ -6,7 +6,7 @@ type: preview
 title: 'Bunniez Chase First Place as Utah Tries to Steal a Lifeline'
 summary: 'Rivalry Week 11: NJz Bunniez vs. Utah Yetis, the six-team byepocalypse and playoff stakes.'
 date: 2026-11-20
-teams: all
+teams: njz-bunniez, utah-yetis
 ---
 
 # Bunniez Chase First Place as Utah Tries to Steal a Lifeline

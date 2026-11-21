@@ -341,3 +341,11 @@
 .recap-cover-logos{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;align-items:center;max-width:285px;width:100%}
 .recap-cover-logos img{width:100%;max-width:49px;aspect-ratio:1;object-fit:contain;border-radius:9px;background:#ffffffeb;padding:2px}
 @media(max-width:610px){.recap-scorecards{grid-template-columns:1fr}.recap-scoreteam img{width:58px;height:58px}}
+
+/* Complete franchise representation on all-league preview article pages */
+.league-preview-logos{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:20px 0 12px}
+.league-preview-logo{display:flex;align-items:center;flex-direction:column;justify-content:center;gap:7px;min-width:0;padding:12px 5px;border:1px solid var(--line);border-radius:12px;background:#fffaf8;text-align:center}
+.league-preview-logo img{width:52px;height:52px;object-fit:contain}
+.league-preview-logo span{font-size:10px;line-height:1.2;font-weight:700;overflow-wrap:anywhere}
+@media(max-width:760px){.league-preview-logos{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:420px){.league-preview-logos{grid-template-columns:repeat(2,minmax(0,1fr))}}

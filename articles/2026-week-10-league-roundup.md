@@ -21,6 +21,8 @@ It turns out an undefeated team does not have to look invincible to keep winning
 - **NJz Bunniez 298.92** over **HOU You Like That 236.58** — margin **62.34**
 - **Good Things We OKC! 186.30** over **Utah Yetis 185.67** — margin **0.63**
 
+{{week10_matchup_scorecards}}
+
 {{week10_recap_chart:overall}}
 
 ## Featured Game: OKC Survives the 0.63-Point Knife Edge

@@ -330,3 +330,14 @@
 .w10-footnote{grid-column:1/-1;font-size:11px;color:#816873;margin:0}
 @media(max-width:780px){.w10-visuals{grid-template-columns:1fr}.w10-barrow{grid-template-columns:minmax(90px,135px) minmax(0,1fr) 48px}}
 @media(max-width:420px){.w10-barrow{grid-template-columns:82px minmax(0,1fr) 43px;gap:6px;font-size:10px}.w10-chart{padding:13px}}
+
+/* Week 9/10 recap franchise imagery; static logo assets already included in website. */
+.recap-scorecards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:20px 0 24px}
+.recap-scorecard{display:flex;align-items:center;gap:6px;min-width:0;padding:12px 8px;border:1px solid #e6d7dc;border-radius:12px;background:linear-gradient(135deg,#fffaf8,#fff0f0)}
+.recap-scoreteam{display:flex;flex:1;min-width:0;flex-direction:column;align-items:center;text-align:center;gap:4px;line-height:1.25;font-size:11px;font-weight:650}
+.recap-scoreteam img{width:53px;height:53px;object-fit:contain;border-radius:12px;background:#fff;box-shadow:0 2px 8px #00000013}
+.recap-scoreteam strong{font-size:18px;font-variant-numeric:tabular-nums;color:#5b273f}
+.recap-score-vs{font-size:9px;color:#8a6073;letter-spacing:.9px;font-weight:900}
+.recap-cover-logos{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;align-items:center;max-width:285px;width:100%}
+.recap-cover-logos img{width:100%;max-width:49px;aspect-ratio:1;object-fit:contain;border-radius:9px;background:#ffffffeb;padding:2px}
+@media(max-width:610px){.recap-scorecards{grid-template-columns:1fr}.recap-scoreteam img{width:58px;height:58px}}

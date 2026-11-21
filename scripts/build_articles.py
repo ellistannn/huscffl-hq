@@ -134,6 +134,20 @@ def week11_bye_exposure():
         n=len(team['prior_starting_byes']);out.append(f'<div class="wk9-chart-row"><span class="wk9-chart-name">{html.escape(team["name"])}</span><span class="wk9-chart-track"><span class="wk9-chart-fill" style="width:{100*n/10:.2f}%"></span></span><strong class="wk9-chart-value">{n} / 20</strong></div>')
     out.append('</div><p><em>Count of players started in Week 10 whose NFL teams are on Week 11 bye. Not a forecast of the submitted Week 11 lineup.</em></p>');return ''.join(out)
 
+
+RECAP_SCORECARDS = {9: [('new-york-noodles', 302.25, 'good-things-we-okc', 199.8), ('lalalala', 280.81, 'district-of-daebak', 223.85), ('utah-yetis', 248.34, 'hou-you-like-that', 198.74), ('njz-bunniez', 281.69, 'tampa-bay-tyranny', 263.1), ('seattle-supersonics', 274.74, 'dalla-dalla-dallas', 202.64)], 10: [('new-york-noodles', 213.16, 'dalla-dalla-dallas', 204.79), ('seattle-supersonics', 249.3, 'district-of-daebak', 230.51), ('tampa-bay-tyranny', 267.08, 'lalalala', 248.04), ('njz-bunniez', 298.92, 'hou-you-like-that', 236.58), ('good-things-we-okc', 186.3, 'utah-yetis', 185.67)]}
+TEAM_LABELS = {t['id']:t['name'] for t in json.loads((ROOT/'data/config.json').read_text())['teams']}
+def recap_scorecards(week):
+    blocks = ['<section class="recap-scorecards" aria-label="Week %s matchup scores with franchise logos">' % week]
+    for a,score_a,b,score_b in RECAP_SCORECARDS[week]:
+        name_a, name_b = TEAM_LABELS[a], TEAM_LABELS[b]
+        blocks.append('<div class="recap-scorecard">'
+            +f'<div class="recap-scoreteam"><img loading="lazy" src="assets/team-logos/{a}.png" alt="{html.escape(name_a,quote=True)} logo"><span>{html.escape(name_a)}</span><strong>{score_a:.2f}</strong></div>'
+            +'<span class="recap-score-vs">FINAL</span>'
+            +f'<div class="recap-scoreteam"><img loading="lazy" src="assets/team-logos/{b}.png" alt="{html.escape(name_b,quote=True)} logo"><span>{html.escape(name_b)}</span><strong>{score_b:.2f}</strong></div>'
+            +'</div>')
+    return ''.join(blocks)+'</section>'
+
 def markdown_to_html(text):
     out, paragraph, list_items = [], [], []
     def flush():
@@ -151,6 +165,8 @@ def markdown_to_html(text):
         elif line.startswith('- ') or line.startswith('* '):
             if paragraph: flush()
             list_items.append(line[2:])
+        elif line in ('{{week9_matchup_scorecards}}', '{{week10_matchup_scorecards}}'):
+            flush(); out.append(recap_scorecards(9 if 'week9' in line else 10))
         elif line == '{{week9_scoring_chart}}':
             flush()
             bars = [('New York Noodles',302.25),('NJz Bunniez',281.69),('LALALALA',280.81),('Seattle Supersonics',274.74),('Tampa Bay Tyranny',263.10),('Utah Yetis',248.34),('District of Daebak',223.85),('Dalla Dalla Dallas',202.64),('Good Things We OKC!',199.80),('HOU You Like That',198.74)]

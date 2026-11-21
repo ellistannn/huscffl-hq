@@ -23,6 +23,8 @@ New York Noodles remain alone at **9–0**. NJz Bunniez are chasing at **7–2**
 - **NJz Bunniez 281.69** over **Tampa Bay Tyranny 263.10** — 18.59-point margin
 - **Seattle Supersonics 274.74** over **Dalla Dalla Dallas 202.64** — 72.10-point margin
 
+{{week9_matchup_scorecards}}
+
 {{week9_scoring_chart}}
 
 Week 9 also produced clear specialists. The three most explosive offenses and the three stingiest defenses are worth their own spotlight, because several matchups were decided more by one side of the ball than the final totals alone suggest.

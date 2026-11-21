@@ -9,3 +9,4 @@ All Week 11 bye exposure values reflect Week 10 STARTERS ONLY, not final Week 11
 Do not remove live-generated data/player-stats-2026.json or data/rank-history.json during upload. The archive intentionally omits both. Upload/merge the archive contents without deleting files already in the GitHub repository.
 
 This is an editorial update; the base website ranking computation is unchanged. Check Power Rankings with the live generated player-stats file after deployment.
+\n### Article archive filter correction\n- League-wide roundups/previews tagged `all` display when All teams is selected, not under every individual franchise.\n- Specific matchup previews/recaps appear when either participating franchise is selected.\n- Article type (`recap`, `preview`, `feature`) persists in query-string navigation and refresh.\n- Verified 44 articles and Week 10/11 franchise filters with `node scripts/test_article_filters.js`.\n

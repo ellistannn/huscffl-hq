@@ -97,6 +97,43 @@ def week10_recap_chart(which):
             graph.append('</div>')
     return ''.join(graph)
 
+
+WEEK11_PREVIEW = json.loads((ROOT/'data/week11_preview_snapshot.json').read_text(encoding='utf-8'))
+WEEK11_MATCHUPS = {
+    'noodles-daebak': ('New York Noodles 🍜', 'District of Daebak'),
+    'tyranny-seattle': ('Tampa Bay Tyranny ☠️', 'Seattle Supersonics'),
+    'hou-lalalala': ('HOU You Like That', 'LALALALA 🍒'),
+    'okc-dallas': ('Good Things We OKC!', 'Dalla Dalla Dallas'),
+    'bunniez-utah': ('NJz Bunniez', 'Utah Yetis'),
+}
+
+def week11_bars(title, rows, ceiling):
+    parts=[f'<div class="wk9-chart" role="img" aria-label="{html.escape(title,quote=True)}"><div class="wk9-chart-title">{html.escape(title)}</div>']
+    for name, value in rows:
+        pct=max(0,min(100,100*value/ceiling))
+        parts.append(f'<div class="wk9-chart-row"><span class="wk9-chart-name">{html.escape(name)}</span><span class="wk9-chart-track"><span class="wk9-chart-fill" style="width:{pct:.2f}%"></span></span><strong class="wk9-chart-value">{value:.2f}</strong></div>')
+    parts.append('</div>');return ''.join(parts)
+
+def week11_compare(key):
+    a,b=WEEK11_MATCHUPS[key]; A,B=WEEK11_PREVIEW[a],WEEK11_PREVIEW[b]
+    recent=[]
+    for week in [8,9,10]:
+        for x in [A,B]:
+            v=next(v['points'] for v in x['recent'] if v['week']==week)
+            recent.append((f"W{week} · {x['name']}",v))
+    out=['<section aria-label="Week 11 preview historical scoring charts">',week11_bars('WEEKS 8–10 · SCORING FORM',recent,340)]
+    out.append(week11_bars('WEEK 10 · OFFENSE',[(x['name'],x['offense']) for x in [A,B]],200))
+    out.append(week11_bars('WEEK 10 · DEFENSE',[(x['name'],x['defense']) for x in [A,B]],200))
+    out.append('<p><em>These are historical scoring comparisons, not Week 11 projections.</em></p></section>')
+    return ''.join(out)
+
+def week11_bye_exposure():
+    ranked=sorted(WEEK11_PREVIEW.values(),key=lambda v:-len(v['prior_starting_byes']))
+    out=[f'<div class="wk9-chart" role="img" aria-label="Bye-exposed Week 10 starters across all 10 franchises"><div class="wk9-chart-title">BYEPOCALYPSE · LAST WEEK’S STARTERS AT RISK</div>']
+    for team in ranked:
+        n=len(team['prior_starting_byes']);out.append(f'<div class="wk9-chart-row"><span class="wk9-chart-name">{html.escape(team["name"])}</span><span class="wk9-chart-track"><span class="wk9-chart-fill" style="width:{100*n/10:.2f}%"></span></span><strong class="wk9-chart-value">{n} / 20</strong></div>')
+    out.append('</div><p><em>Count of players started in Week 10 whose NFL teams are on Week 11 bye. Not a forecast of the submitted Week 11 lineup.</em></p>');return ''.join(out)
+
 def markdown_to_html(text):
     out, paragraph, list_items = [], [], []
     def flush():
@@ -150,6 +187,12 @@ def markdown_to_html(text):
             if team_a not in WEEK10_STATS or team_b not in WEEK10_STATS:
                 raise ValueError("Unknown team in Week 10 visual")
             out.append(week10_chart_html(team_a, team_b))
+        elif re.fullmatch(r'\{\{week11_compare:([a-z0-9-]+)\}\}',line):
+            flush()
+            match=re.fullmatch(r'\{\{week11_compare:([a-z0-9-]+)\}\}',line)
+            out.append(week11_compare(match.group(1)))
+        elif line == '{{week11_bye_exposure}}':
+            flush();out.append(week11_bye_exposure())
         elif line.startswith('> '):
             flush(); out.append('<blockquote>'+inline(line[2:])+'</blockquote>')
         elif line in {'---','***'}:

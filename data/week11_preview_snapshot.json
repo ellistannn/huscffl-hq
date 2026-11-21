@@ -1,0 +1,452 @@
+{
+  "New York Noodles 🍜": {
+    "name": "New York Noodles",
+    "record": "10-0",
+    "recent": [
+      {
+        "week": 8,
+        "points": 291.77
+      },
+      {
+        "week": 9,
+        "points": 302.25
+      },
+      {
+        "week": 10,
+        "points": 213.16
+      }
+    ],
+    "average": 293.12,
+    "offense": 104.06,
+    "defense": 109.1,
+    "prior_starting_byes": [
+      {
+        "name": "Drake London",
+        "nfl_team": "ATL",
+        "slot": "WR"
+      },
+      {
+        "name": "Denzel Boston",
+        "nfl_team": "CLE",
+        "slot": "WR"
+      },
+      {
+        "name": "Drake Maye",
+        "nfl_team": "NE",
+        "slot": "SUPER_FLEX"
+      },
+      {
+        "name": "Ernest Jones IV",
+        "nfl_team": "SEA",
+        "slot": "LB"
+      },
+      {
+        "name": "Xavier Watts",
+        "nfl_team": "ATL",
+        "slot": "DB"
+      },
+      {
+        "name": "Julian Love",
+        "nfl_team": "SEA",
+        "slot": "DB"
+      }
+    ]
+  },
+  "District of Daebak": {
+    "name": "District of Daebak",
+    "record": "3-7",
+    "recent": [
+      {
+        "week": 8,
+        "points": 200.55
+      },
+      {
+        "week": 9,
+        "points": 223.85
+      },
+      {
+        "week": 10,
+        "points": 230.51
+      }
+    ],
+    "average": 239.32,
+    "offense": 131.76,
+    "defense": 98.75,
+    "prior_starting_byes": [
+      {
+        "name": "Matthew Stafford",
+        "nfl_team": "LAR",
+        "slot": "QB"
+      },
+      {
+        "name": "Blake Corum",
+        "nfl_team": "LAR",
+        "slot": "RB"
+      },
+      {
+        "name": "Hunter Henry",
+        "nfl_team": "NE",
+        "slot": "FLEX"
+      },
+      {
+        "name": "Jordan Love",
+        "nfl_team": "GB",
+        "slot": "SUPER_FLEX"
+      }
+    ]
+  },
+  "Tampa Bay Tyranny ☠️": {
+    "name": "Tampa Bay Tyranny",
+    "record": "2-8",
+    "recent": [
+      {
+        "week": 8,
+        "points": 241.15
+      },
+      {
+        "week": 9,
+        "points": 263.1
+      },
+      {
+        "week": 10,
+        "points": 267.08
+      }
+    ],
+    "average": 244.06,
+    "offense": 142.08,
+    "defense": 125.0,
+    "prior_starting_byes": [
+      {
+        "name": "Corey Kiner",
+        "nfl_team": "NE",
+        "slot": "RB"
+      },
+      {
+        "name": "Tucker Kraft",
+        "nfl_team": "GB",
+        "slot": "TE"
+      },
+      {
+        "name": "Myles Garrett",
+        "nfl_team": "LAR",
+        "slot": "DL"
+      },
+      {
+        "name": "Lukas Van Ness",
+        "nfl_team": "GB",
+        "slot": "DL"
+      },
+      {
+        "name": "Evan Williams",
+        "nfl_team": "GB",
+        "slot": "DB"
+      }
+    ]
+  },
+  "Seattle Supersonics": {
+    "name": "Seattle Supersonics",
+    "record": "6-4",
+    "recent": [
+      {
+        "week": 8,
+        "points": 202.37
+      },
+      {
+        "week": 9,
+        "points": 274.74
+      },
+      {
+        "week": 10,
+        "points": 249.3
+      }
+    ],
+    "average": 248.2,
+    "offense": 131.9,
+    "defense": 117.4,
+    "prior_starting_byes": [
+      {
+        "name": "Quinshon Judkins",
+        "nfl_team": "CLE",
+        "slot": "RB"
+      },
+      {
+        "name": "Konata Mumpfield",
+        "nfl_team": "LAR",
+        "slot": "WR"
+      },
+      {
+        "name": "Christian Watson",
+        "nfl_team": "GB",
+        "slot": "WR"
+      },
+      {
+        "name": "Aaron Donald",
+        "nfl_team": "LAR",
+        "slot": "DL"
+      },
+      {
+        "name": "Keisean Nixon",
+        "nfl_team": "GB",
+        "slot": "DB"
+      }
+    ]
+  },
+  "HOU You Like That": {
+    "name": "HOU You Like That",
+    "record": "3-7",
+    "recent": [
+      {
+        "week": 8,
+        "points": 314.23
+      },
+      {
+        "week": 9,
+        "points": 198.74
+      },
+      {
+        "week": 10,
+        "points": 236.58
+      }
+    ],
+    "average": 245.11,
+    "offense": 134.08,
+    "defense": 102.5,
+    "prior_starting_byes": [
+      {
+        "name": "Zach Charbonnet",
+        "nfl_team": "SEA",
+        "slot": "RB"
+      },
+      {
+        "name": "Brandon Cisse",
+        "nfl_team": "GB",
+        "slot": "DB"
+      },
+      {
+        "name": "Drake Thomas",
+        "nfl_team": "SEA",
+        "slot": "IDP_FLEX"
+      }
+    ]
+  },
+  "LALALALA 🍒": {
+    "name": "LALALALA",
+    "record": "5-5",
+    "recent": [
+      {
+        "week": 8,
+        "points": 234.73
+      },
+      {
+        "week": 9,
+        "points": 280.81
+      },
+      {
+        "week": 10,
+        "points": 248.04
+      }
+    ],
+    "average": 257.06,
+    "offense": 145.74,
+    "defense": 102.3,
+    "prior_starting_byes": [
+      {
+        "name": "Harold Fannin Jr.",
+        "nfl_team": "CLE",
+        "slot": "FLEX"
+      },
+      {
+        "name": "Quincy Williams",
+        "nfl_team": "CLE",
+        "slot": "LB"
+      }
+    ]
+  },
+  "Good Things We OKC!": {
+    "name": "Good Things We OKC!",
+    "record": "7-3",
+    "recent": [
+      {
+        "week": 8,
+        "points": 253.66
+      },
+      {
+        "week": 9,
+        "points": 199.8
+      },
+      {
+        "week": 10,
+        "points": 186.3
+      }
+    ],
+    "average": 244.11,
+    "offense": 92.3,
+    "defense": 94.0,
+    "prior_starting_byes": [
+      {
+        "name": "AJ Barner",
+        "nfl_team": "SEA",
+        "slot": "FLEX"
+      },
+      {
+        "name": "Byron Young",
+        "nfl_team": "LAR",
+        "slot": "DL"
+      },
+      {
+        "name": "Nate Landman",
+        "nfl_team": "LAR",
+        "slot": "LB"
+      },
+      {
+        "name": "Quentin Lake",
+        "nfl_team": "LAR",
+        "slot": "DB"
+      }
+    ]
+  },
+  "Dalla Dalla Dallas": {
+    "name": "Dalla Dalla Dallas",
+    "record": "2-8",
+    "recent": [
+      {
+        "week": 8,
+        "points": 195.06
+      },
+      {
+        "week": 9,
+        "points": 202.64
+      },
+      {
+        "week": 10,
+        "points": 204.79
+      }
+    ],
+    "average": 216.05,
+    "offense": 100.69,
+    "defense": 104.1,
+    "prior_starting_byes": [
+      {
+        "name": "Deshaun Watson",
+        "nfl_team": "CLE",
+        "slot": "QB"
+      },
+      {
+        "name": "Kyren Williams",
+        "nfl_team": "LAR",
+        "slot": "RB"
+      },
+      {
+        "name": "Matthew Golden",
+        "nfl_team": "GB",
+        "slot": "WR"
+      },
+      {
+        "name": "KC Concepcion Jr.",
+        "nfl_team": "CLE",
+        "slot": "FLEX"
+      },
+      {
+        "name": "Dylan Sampson",
+        "nfl_team": "CLE",
+        "slot": "FLEX"
+      },
+      {
+        "name": "Za'Darius Smith",
+        "nfl_team": "ATL",
+        "slot": "DL"
+      },
+      {
+        "name": "Robert Spillane",
+        "nfl_team": "NE",
+        "slot": "LB"
+      },
+      {
+        "name": "Nick Emmanwori",
+        "nfl_team": "SEA",
+        "slot": "DB"
+      },
+      {
+        "name": "Xavier McKinney",
+        "nfl_team": "GB",
+        "slot": "DB"
+      }
+    ]
+  },
+  "NJz Bunniez": {
+    "name": "NJz Bunniez",
+    "record": "8-2",
+    "recent": [
+      {
+        "week": 8,
+        "points": 217.55
+      },
+      {
+        "week": 9,
+        "points": 281.69
+      },
+      {
+        "week": 10,
+        "points": 298.92
+      }
+    ],
+    "average": 270.01,
+    "offense": 177.72,
+    "defense": 121.2,
+    "prior_starting_byes": [
+      {
+        "name": "Bijan Robinson",
+        "nfl_team": "ATL",
+        "slot": "RB"
+      },
+      {
+        "name": "Jaxon Smith-Njigba",
+        "nfl_team": "SEA",
+        "slot": "WR"
+      },
+      {
+        "name": "Mason Graham",
+        "nfl_team": "CLE",
+        "slot": "DL"
+      },
+      {
+        "name": "Carson Schwesinger",
+        "nfl_team": "CLE",
+        "slot": "LB"
+      },
+      {
+        "name": "Devon Witherspoon",
+        "nfl_team": "SEA",
+        "slot": "DB"
+      }
+    ]
+  },
+  "Utah Yetis": {
+    "name": "Utah Yetis",
+    "record": "4-6",
+    "recent": [
+      {
+        "week": 8,
+        "points": 231.16
+      },
+      {
+        "week": 9,
+        "points": 248.34
+      },
+      {
+        "week": 10,
+        "points": 185.67
+      }
+    ],
+    "average": 211.18,
+    "offense": 81.92,
+    "defense": 103.75,
+    "prior_starting_byes": [
+      {
+        "name": "Byron Murphy II",
+        "nfl_team": "SEA",
+        "slot": "DL"
+      }
+    ]
+  }
+}

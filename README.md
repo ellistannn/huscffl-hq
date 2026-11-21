@@ -68,3 +68,12 @@ Replace `assets/app.js`, `assets/styles.css` and `README.md` (optional), and **a
 This build is derived from **HUSCFFL-Website-v24.2.zip**, not the older v24 content baseline. Original `assets/app.js`, rank history script, rank history workflow, `data/rank-history.json`, and ranking styles are preserved. Added Week 9 roundup with visualizations, Week 10 previews with their comparative charts, Week 10 recap and five matchup writeups with scoring charts. The `scripts/build_articles.py` compiler supports these article chart macros and `data/stories.json` has been regenerated.
 
 To deploy: replace files in the repository with the extracted contents of this ZIP, retaining the folder structure. Do not upload the older Week10-Recaps-Complete ZIP after this one. Rank movement appears only for documented historical snapshots; where unavailable it displays N/A.
+
+
+## Power Rankings deployment safeguard (November 19, 2026)
+
+The HPI-F engine in `assets/app.js` is unchanged mathematically. If ratings cannot display, the Standings page now identifies missing/incomplete player stats, roster ownership, or weekly scoring. The generated file `data/player-stats-2026.json` is required to compute HPI-F and is NOT bundled: preserve the one already in your repository, or rerun the GitHub Action **Refresh NFL-wide fantasy player statistics**. Verify its output and published path before expecting ranks. The unofficial external stats feed can fail; a successful workflow is required.
+
+The empty `data/rank-history.json` seed has deliberately been EXCLUDED from this update. Do not delete or replace any existing rank-history snapshots during deployment. Rank movements only appear once valid snapshots from successive completed weeks have been captured by **Refresh weekly franchise rank history**. If your repository doesn't yet have a rank-history file, the existing workflow can create one after a successful stats export.
+
+**Safest update:** replace only the files listed in `PATCH_ONLY_README.md` from the separate patch archive. If using the full website archive, copy/overwrite its contents into the existing repository rather than deleting and recreating the repository. Preserve all generated `data/player-stats-*.json` and `data/rank-history.json` files already on GitHub.

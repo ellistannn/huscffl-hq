@@ -901,7 +901,18 @@ function setupTeamTabs(){
 function renderPowerAndTools(){
  if(!state.config)return;
  const pd=hpiPlayerData(),teams=hpiFranchiseData(pd),panel=$('#franchisePowerPanel');
- const placeholder='Ratings unavailable until the NFL-wide player statistics export, current roster ownership, and completed matchup scores are available and validated.';
+ const season=String(state.config.season), exportFile=state.playerFiles[season], map=state.playerRosterMap[season], diagnostic=state.playerOwnershipDiagnostics?.[season], scoring=state.scoring[season];
+ const blockers=[];
+ if(!exportFile)blockers.push('NFL-wide player statistics are still loading.');
+ else if(exportFile.error||!exportFile.players||!Number(exportFile.weeks))blockers.push('NFL-wide statistics export is missing or invalid (data/player-stats-'+season+'.json). Run the Refresh NFL-wide fantasy player statistics workflow and verify that the JSON is published.');
+ if(!map)blockers.push('Live franchise roster ownership has not loaded from Sleeper.');
+ else if(diagnostic?.missingRosters?.length)blockers.push('The Sleeper roster mapping is incomplete ('+diagnostic.missingRosters.length+' unmapped rosters).');
+ if(!scoring)blockers.push('Completed Sleeper matchup scores are still loading.');
+ else if(scoring.error)blockers.push('Completed Sleeper matchup scores could not be loaded.');
+ else if(scoring.failed||scoring.unmapped)blockers.push('Some weekly scores failed to load or were not mapped ('+(scoring.failed||0)+' failed weeks, '+(scoring.unmapped||0)+' unmapped entries).');
+ else if(!state.config.teams.every(t=>scoring.rows?.[t.id]?.length))blockers.push('At least one franchise is missing completed weekly scoring data.');
+ if(!teams && !blockers.length)blockers.push('Player scores or roster data are insufficient to calculate ratings for all ten franchises.');
+ const placeholder='Power Rankings unavailable: '+blockers.join(' ');
  if(panel){if(!teams){panel.innerHTML='<h3>Franchise Power Rankings · HPI-F</h3><p class="muted">'+placeholder+'</p>'}
  else {
   panel.innerHTML='<h3>Franchise Power Rankings · HPI-F</h3>'+

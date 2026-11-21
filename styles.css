@@ -306,15 +306,28 @@
 .rank-move-na{font-size:.65rem;font-weight:500}
 @media(max-width:600px){.rank-with-movement{gap:.25rem}.rank-move{font-size:.68rem}}
 
-/* v24.3: current postseason zones; only mathematically clinched teams receive badges. */
-#homeStandings .standings-table tr.postseason-zone-playoff td:first-child,
-#fullStandings .standings-table tr.postseason-zone-playoff td:first-child,
-.hpi-power-table tr.postseason-zone-playoff td:first-child{box-shadow:inset 3px 0 0 #4d9476;background:#f2faf5}
-#homeStandings .standings-table tr.postseason-zone-toilet td:first-child,
-#fullStandings .standings-table tr.postseason-zone-toilet td:first-child,
-.hpi-power-table tr.postseason-zone-toilet td:first-child{box-shadow:inset 3px 0 0 #cb786b;background:#fff6f2}
-#homeStandings .standings-table tr.postseason-cutoff td,
-#fullStandings .standings-table tr.postseason-cutoff td{border-top:2px solid #bba5a6}
+/* v24.3.1: full-row postseason zones; clinched badges remain separate. */
+#homeStandings .standings-table tbody tr.postseason-zone-playoff > td,
+#fullStandings .standings-table tbody tr.postseason-zone-playoff > td,
+.hpi-power-table tbody tr.postseason-zone-playoff > td{background-color:#e9f5ec}
+#homeStandings .standings-table tbody tr.postseason-zone-toilet > td,
+#fullStandings .standings-table tbody tr.postseason-zone-toilet > td,
+.hpi-power-table tbody tr.postseason-zone-toilet > td{background-color:#fff0e8}
+#homeStandings .standings-table tbody tr.postseason-zone-playoff > td:first-child,
+#fullStandings .standings-table tbody tr.postseason-zone-playoff > td:first-child,
+.hpi-power-table tbody tr.postseason-zone-playoff > td:first-child{box-shadow:inset 4px 0 #32805c}
+#homeStandings .standings-table tbody tr.postseason-zone-toilet > td:first-child,
+#fullStandings .standings-table tbody tr.postseason-zone-toilet > td:first-child,
+.hpi-power-table tbody tr.postseason-zone-toilet > td:first-child{box-shadow:inset 4px 0 #b86043}
+/* The boundary is attached to official seed seven, not HPI-F rank seven. */
+#homeStandings .standings-table tbody tr.postseason-cutoff > td,
+#fullStandings .standings-table tbody tr.postseason-cutoff > td{border-top:4px solid #b97d63}
+#homeStandings .standings-table tbody tr.postseason-zone-playoff:hover > td,
+#fullStandings .standings-table tbody tr.postseason-zone-playoff:hover > td,
+.hpi-power-table tbody tr.postseason-zone-playoff:hover > td{background-color:#dbecdf}
+#homeStandings .standings-table tbody tr.postseason-zone-toilet:hover > td,
+#fullStandings .standings-table tbody tr.postseason-zone-toilet:hover > td,
+.hpi-power-table tbody tr.postseason-zone-toilet:hover > td{background-color:#fae5d9}
 .postseason-badge{display:inline-flex;align-items:center;flex:0 0 auto;gap:3px;padding:3px 6px;border:1px solid currentColor;border-radius:999px;font-size:9px;line-height:1.2;font-weight:750;white-space:nowrap;letter-spacing:0;vertical-align:middle}
 .postseason-bye{color:#315a9a;background:#eff3fc}
 .postseason-playoffs{color:#23744b;background:#eff9f1}

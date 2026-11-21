@@ -386,24 +386,34 @@ async function loadRankHistory(){
 // qualification is mathematically unavoidable even with unfavorable results/tiebreaks.
 // HUSCFFL regular season ends Week 14; seeds 1-2 receive first-round byes.
 function postseasonStatuses(){
+ // Standings position and clinch status are separate concepts. Only prove a
+ // clinch when every remaining possible regular-season outcome preserves it.
+ // Teams may have unequal games played during a live week, so use each team's
+ // own remaining-game count rather than hiding all markers midweek.
  const rows=state.standings;
  const out=new Map();
- if(!state.live||rows.length!==10||rows.some(r=>!r.teamId||!Number.isFinite(Number(r.wins))||!Number.isFinite(Number(r.losses))||!Number.isFinite(Number(r.ties))))return out;
+ if(!state.live||rows.length!==10||rows.some(r=>!r.teamId||![r.wins,r.losses,r.ties].every(v=>Number.isInteger(Number(v))&&Number(v)>=0)))return out;
  if(new Set(rows.map(r=>r.teamId)).size!==10)return out;
- const games=rows.map(r=>Number(r.wins)+Number(r.losses)+Number(r.ties));
- if(games.some(g=>g>14||g<0)||new Set(games).size!==1)return out;
- const remaining=14-games[0];
- // With all regular-season games finished, the official ordered standings are definitive.
- if(remaining===0){rows.forEach((r,i)=>out.set(r.teamId,i<2?'bye':i<6?'playoffs':'toilet'));return out;}
- const bounds=rows.map(r=>({id:r.teamId,low:Number(r.wins)+Number(r.ties)/2,high:Number(r.wins)+Number(r.ties)/2+remaining}));
+ const regularSeasonGames=14;
+ const bounds=rows.map(r=>{
+  const played=Number(r.wins)+Number(r.losses)+Number(r.ties);
+  return {id:r.teamId,played,low:Number(r.wins)+Number(r.ties)/2,high:Number(r.wins)+Number(r.ties)/2+regularSeasonGames-played};
+ });
+ if(bounds.some(r=>r.played>regularSeasonGames))return out;
+ // Sleeper's official ordered table is authoritative after the regular season.
+ if(bounds.every(r=>r.played===regularSeasonGames)){
+  rows.forEach((r,i)=>out.set(r.teamId,i<2?'bye':i<6?'playoffs':'toilet'));
+  return out;
+ }
  for(const team of bounds){
-  const other=bounds.filter(b=>b.id!==team.id);
-  // Include all potential ties in the threat count; never assume a favorable tiebreak.
-  const couldCatch=other.filter(b=>b.high>=team.low).length;
-  const definitelyAhead=other.filter(b=>b.low>team.high).length;
-  if(couldCatch<=1)out.set(team.id,'bye');
-  else if(couldCatch<=5)out.set(team.id,'playoffs');
-  else if(definitelyAhead>=6)out.set(team.id,'toilet');
+  const other=bounds.filter(r=>r.id!==team.id);
+  // Ties at the boundary count against the franchise unless all relevant
+  // tiebreak information is available; never mark an unproven clinch.
+  const couldFinishAhead=other.filter(r=>r.high>=team.low).length;
+  const guaranteedAhead=other.filter(r=>r.low>team.high).length;
+  if(couldFinishAhead<=1)out.set(team.id,'bye');
+  else if(couldFinishAhead<=5)out.set(team.id,'playoffs');
+  else if(guaranteedAhead>=6)out.set(team.id,'toilet');
  }
  return out;
 }

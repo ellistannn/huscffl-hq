@@ -437,6 +437,33 @@
             "dalla-dalla-dallas": 10
           },
           "captured_at": "2026-11-24T00:12:03.045Z"
+        },
+        "11": {
+          "standings": {
+            "new-york-noodles": 1,
+            "njz-bunniez": 2,
+            "good-things-we-okc": 3,
+            "seattle-supersonics": 4,
+            "lalalala": 5,
+            "utah-yetis": 6,
+            "hou-you-like-that": 7,
+            "district-of-daebak": 8,
+            "tampa-bay-tyranny": 9,
+            "dalla-dalla-dallas": 10
+          },
+          "power": {
+            "new-york-noodles": 1,
+            "njz-bunniez": 2,
+            "lalalala": 3,
+            "seattle-supersonics": 4,
+            "hou-you-like-that": 5,
+            "tampa-bay-tyranny": 6,
+            "good-things-we-okc": 7,
+            "district-of-daebak": 8,
+            "utah-yetis": 9,
+            "dalla-dalla-dallas": 10
+          },
+          "captured_at": "2026-11-24T22:41:17.104Z"
         }
       }
     }

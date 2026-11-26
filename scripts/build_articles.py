@@ -148,6 +148,47 @@ def recap_scorecards(week):
             +'</div>')
     return ''.join(blocks)+'</section>'
 
+
+W11W12 = json.loads((ROOT/'data/week11_recap_week12_preview.json').read_text(encoding='utf-8'))
+W11_TEAMS={str(x['id']):x for x in W11W12['teams']}
+HOLIDAY_GAMES=[('THANKSGIVING EVE · WED NOV 25','GB at LAR','8:00 PM ET'),('THANKSGIVING DAY · THU NOV 26','CHI at DET','1:00 PM ET'),('THANKSGIVING DAY · THU NOV 26','PHI at DAL','4:30 PM ET'),('THANKSGIVING DAY · THU NOV 26','KC at BUF','8:20 PM ET'),('BLACK FRIDAY · FRI NOV 27','DEN at PIT','3:00 PM ET')]
+def w11_bars(title, pairs):
+    ceiling=max((float(score) for _,score in pairs),default=1)*1.05 or 1
+    parts=[f'<div class="wk9-chart" role="img" aria-label="{html.escape(title,quote=True)}"><div class="wk9-chart-title">{html.escape(title)}</div>']
+    for name,score in pairs:
+        width=100*float(score)/ceiling
+        parts.append(f'<div class="wk9-chart-row"><span class="wk9-chart-name">{html.escape(name)}</span><span class="wk9-chart-track"><span class="wk9-chart-fill" style="width:{width:.2f}%"></span></span><strong class="wk9-chart-value">{score:.2f}</strong></div>')
+    return ''.join(parts)+'</div>'
+def w11_charts(which,first=None,second=None):
+    allteams=W11W12['teams']
+    if which in ('overall','offense','defense'):
+        field={'overall':'score','offense':'offense','defense':'defense'}[which]
+        top=sorted(allteams,key=lambda t:-t[field])[:(10 if field=='score' else 3)]
+        return w11_bars('WEEK 11 · '+('TOTAL SCORING' if field=='score' else 'TOP 3 '+field.upper()),[(t['name'],t[field]) for t in top])
+    a,b=W11_TEAMS[first],W11_TEAMS[second]
+    if which=='recap':
+        return (w11_bars('WEEK 11 · FINAL POINTS',[(t['name'],t['score']) for t in (a,b)])
+           +w11_bars('OFFENSE · STARTERS',[(t['name'],t['offense']) for t in (a,b)])
+           +w11_bars('DEFENSE · STARTERS',[(t['name'],t['defense']) for t in (a,b)]))
+    if which=='preview':
+        r=[]
+        for wk in (9,10,11):
+            r.extend([(f'W{wk} · {t["name"]}',t['last3'][str(wk)]) for t in (a,b)])
+        return (w11_bars('WEEKS 9–11 · SCORING FORM',r)
+           +w11_bars('WEEK 11 · OFFENSE',[(t['name'],t['offense']) for t in (a,b)])
+           +w11_bars('WEEK 11 · DEFENSE',[(t['name'],t['defense']) for t in (a,b)])
+           +'<p><em>Historical values, not a Week 12 projection.</em></p>')
+    raise ValueError('Invalid W11/W12 visual '+which)
+def holiday_games_html():
+    return ('<div class="holiday-ribbon">THANKSGIVING RIVALRY WEEK · WEDNESDAY TO MONDAY · FIVE NFL GAME DAYS</div>'
+            +'<div class="holiday-game-grid">'+''.join('<div class="holiday-game"><strong>'+html.escape(day)+'</strong>'+html.escape(team)+'<br>'+html.escape(time)+'</div>' for day,team,time in HOLIDAY_GAMES)+'</div>')
+def w11_cards(items,week):
+    def card(a,b,scorea=None,scoreb=None):
+        na,nb=W11_TEAMS[str(a)],W11_TEAMS[str(b)]
+        value=f'<span class="score">{scorea:.2f} – {scoreb:.2f}</span>' if scorea is not None else '<span class="score">RIVALRY</span>'
+        return ('<div class="w11-matchup-line"><div class="side"><img loading="lazy" src="assets/team-logos/'+na['slug']+'.png" alt="'+html.escape(na['name'],quote=True)+' logo"><span>'+html.escape(na['name'])+'</span></div>'+value+'<div class="side"><img loading="lazy" src="assets/team-logos/'+nb['slug']+'.png" alt="'+html.escape(nb['name'],quote=True)+' logo"><span>'+html.escape(nb['name'])+'</span></div></div>')
+    return '<section aria-label="Week '+str(week)+' franchise matchups">'+''.join(card(x['a'],x['b'],x.get('score_a'),x.get('score_b')) for x in items)+'</section>'
+
 def markdown_to_html(text):
     out, paragraph, list_items = [], [], []
     def flush():
@@ -194,6 +235,18 @@ def markdown_to_html(text):
                 graph.append(f'<div class="wk9-chart-row"><span class="wk9-chart-name">{html.escape(name)}</span><span class="wk9-chart-track"><span class="wk9-chart-fill" style="width:{width:.2f}%"></span></span><strong class="wk9-chart-value">{value:.2f}</strong></div>')
             graph.append('</div>')
             out.append(''.join(graph))
+        elif line == '{{week12_holiday_games}}':
+            flush();out.append(holiday_games_html())
+        elif line == '{{week12_matchup_cards}}':
+            flush();out.append(w11_cards(W11W12['upcoming'],12))
+        elif line == '{{week11_recap_scorecards}}':
+            flush();out.append(w11_cards(W11W12['matchups'],11))
+        elif line.startswith('{{week11_recap_chart:') and line.endswith('}}'):
+            flush();out.append(w11_charts(line[len('{{week11_recap_chart:'):-2]))
+        elif line.startswith('{{week11_recap_matchup:') and line.endswith('}}'):
+            flush();a,b=line[len('{{week11_recap_matchup:'):-2].split(':');out.append(w11_charts('recap',a,b))
+        elif line.startswith('{{week12_preview_matchup:') and line.endswith('}}'):
+            flush();a,b=line[len('{{week12_preview_matchup:'):-2].split(':');out.append(w11_charts('preview',a,b))
         elif line.startswith('{{week10_recap_chart:') and line.endswith('}}'):
             flush()
             out.append(week10_recap_chart(line[len('{{week10_recap_chart:'):-2]))

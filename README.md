@@ -63,17 +63,21 @@ The ratings recalculate in the browser when refreshed stat exports and current f
 Replace `assets/app.js`, `assets/styles.css` and `README.md` (optional), and **add** `data/rank-history.json`, `scripts/build_rank_history.js`, `.github/workflows/refresh-rank-history.yml`. Keep your newer `player-stats-*.json` files and articles. The new workflow requires GitHub Actions **Read and write permissions** for repository contents.
 
 
-## Week 10 recap + v24.2 safe merge (November 19, 2026)
+## v24.3 — Playoff cutoff and confirmed postseason berths
 
-This build is derived from **HUSCFFL-Website-v24.2.zip**, not the older v24 content baseline. Original `assets/app.js`, rank history script, rank history workflow, `data/rank-history.json`, and ranking styles are preserved. Added Week 9 roundup with visualizations, Week 10 previews with their comparative charts, Week 10 recap and five matchup writeups with scoring charts. The `scripts/build_articles.py` compiler supports these article chart macros and `data/stories.json` has been regenerated.
+- Home and League Standings visually distinguish current seeds 1–6 (playoff zone) and 7–10 (Toilet Bowl zone), with a subtle line at the sixth/seventh-place cutoff when the table is sorted in standings order. These zone accents **are not clinch markers**.
+- The Franchise Power Rankings table uses each franchise's **official standings position** for zone colors and clinch indicators, never HPI-F rank.
+- My Team Overview shows a postseason badge only when one of three outcomes has been mathematically proved: **Clinched Bye** (top two), **Clinched Playoffs** (top six), **Clinched Toilet Bowl** (bottom four). A bye replaces, rather than duplicates, the playoff marker.
+- Clinch logic uses verified live ten-team standings and the 14-game regular season (Weeks 1–14). Before Week 14 ends, it uses conservative win-equivalent lower/upper bounds and assumes all ties/tiebreaks go against a franchise, so **some true clinches may not yet be displayed**. This avoids unsupported badges. When all 14 games are complete, official standing positions determine badges.
+- No changes to HPI-F scoring, ranking-history workflow, official standings ordering, articles, or Constitution.
 
-To deploy: replace files in the repository with the extracted contents of this ZIP, retaining the folder structure. Do not upload the older Week10-Recaps-Complete ZIP after this one. Rank movement appears only for documented historical snapshots; where unavailable it displays N/A.
+### Minimal upgrade from v24.2
+
+**Replace ONLY** `index.html`, `assets/app.js`, and `assets/styles.css`. The full ZIP also contains static historical files from the v24.2 baseline, including an empty initial `data/rank-history.json`. **Do not replace your live `data/rank-history.json`, generated `data/player-stats-*.json`, or newly published stories with older copies from this ZIP.** If your GitHub repository contains a more recent history snapshot, preserve it.
 
 
-## Power Rankings deployment safeguard (November 19, 2026)
+## v24.3.1 corrective upgrade
 
-The HPI-F engine in `assets/app.js` is unchanged mathematically. If ratings cannot display, the Standings page now identifies missing/incomplete player stats, roster ownership, or weekly scoring. The generated file `data/player-stats-2026.json` is required to compute HPI-F and is NOT bundled: preserve the one already in your repository, or rerun the GitHub Action **Refresh NFL-wide fantasy player statistics**. Verify its output and published path before expecting ranks. The unofficial external stats feed can fail; a successful workflow is required.
+Deploy only `index.html`, `assets/app.js`, and `assets/styles.css` to an existing v24.3 repository. Do not overwrite the live `data/rank-history.json`, generated player statistics, articles, or workflows.
 
-The empty `data/rank-history.json` seed has deliberately been EXCLUDED from this update. Do not delete or replace any existing rank-history snapshots during deployment. Rank movements only appear once valid snapshots from successive completed weeks have been captured by **Refresh weekly franchise rank history**. If your repository doesn't yet have a rank-history file, the existing workflow can create one after a successful stats export.
-
-**Safest update:** replace only the files listed in `PATCH_ONLY_README.md` from the separate patch archive. If using the full website archive, copy/overwrite its contents into the existing repository rather than deleting and recreating the repository. Preserve all generated `data/player-stats-*.json` and `data/rank-history.json` files already on GitHub.
+The playoff (1–6) and Toilet Bowl (7–10) zones now shade entire standings rows rather than only the Rank cells. The top of official seed 7 has a clearer cutoff line. The zone for each team in the HPI-F table is based on official standings, not its power rank. No badge is shown for unclinched teams. Clinching uses individual games played, allowing unequal games completed during the current week; the test is intentionally conservative about unknown tiebreaks or unmodeled future fixtures, and may omit some truly clinched teams until final standings. No data or ranking formulas are modified.

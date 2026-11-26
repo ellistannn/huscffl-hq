@@ -1,0 +1,189 @@
+{
+  "week": 11,
+  "teams": [
+    {
+      "id": 1,
+      "name": "New York Noodles",
+      "slug": "new-york-noodles",
+      "score": 295.2,
+      "offense": 99.0,
+      "defense": 196.2,
+      "last3": {
+        "9": 302.25,
+        "10": 213.16,
+        "11": 295.2
+      }
+    },
+    {
+      "id": 2,
+      "name": "Tampa Bay Tyranny",
+      "slug": "tampa-bay-tyranny",
+      "score": 214.84,
+      "offense": 145.44,
+      "defense": 69.4,
+      "last3": {
+        "9": 263.1,
+        "10": 267.08,
+        "11": 214.84
+      }
+    },
+    {
+      "id": 3,
+      "name": "HOU You Like That",
+      "slug": "hou-you-like-that",
+      "score": 275.1,
+      "offense": 153.1,
+      "defense": 122.0,
+      "last3": {
+        "9": 198.74,
+        "10": 236.58,
+        "11": 275.1
+      }
+    },
+    {
+      "id": 4,
+      "name": "Good Things We OKC!",
+      "slug": "good-things-we-okc",
+      "score": 247.44,
+      "offense": 141.19,
+      "defense": 106.25,
+      "last3": {
+        "9": 199.8,
+        "10": 186.3,
+        "11": 247.44
+      }
+    },
+    {
+      "id": 5,
+      "name": "LALALALA",
+      "slug": "lalalala",
+      "score": 229.33,
+      "offense": 109.58,
+      "defense": 119.75,
+      "last3": {
+        "9": 280.81,
+        "10": 248.04,
+        "11": 229.33
+      }
+    },
+    {
+      "id": 6,
+      "name": "Seattle Supersonics",
+      "slug": "seattle-supersonics",
+      "score": 235.76,
+      "offense": 96.96,
+      "defense": 138.8,
+      "last3": {
+        "9": 274.74,
+        "10": 249.3,
+        "11": 235.76
+      }
+    },
+    {
+      "id": 7,
+      "name": "NJz Bunniez",
+      "slug": "njz-bunniez",
+      "score": 184.3,
+      "offense": 96.8,
+      "defense": 87.5,
+      "last3": {
+        "9": 281.69,
+        "10": 298.92,
+        "11": 184.3
+      }
+    },
+    {
+      "id": 8,
+      "name": "Utah Yetis",
+      "slug": "utah-yetis",
+      "score": 248.04,
+      "offense": 120.24,
+      "defense": 127.8,
+      "last3": {
+        "9": 248.34,
+        "10": 185.67,
+        "11": 248.04
+      }
+    },
+    {
+      "id": 9,
+      "name": "District of Daebak",
+      "slug": "district-of-daebak",
+      "score": 243.38,
+      "offense": 115.18,
+      "defense": 128.2,
+      "last3": {
+        "9": 223.85,
+        "10": 230.51,
+        "11": 243.38
+      }
+    },
+    {
+      "id": 10,
+      "name": "Dalla Dalla Dallas",
+      "slug": "dalla-dalla-dallas",
+      "score": 198.11,
+      "offense": 121.16,
+      "defense": 76.95,
+      "last3": {
+        "9": 202.64,
+        "10": 204.79,
+        "11": 198.11
+      }
+    }
+  ],
+  "matchups": [
+    {
+      "a": 1,
+      "b": 9,
+      "score_a": 295.2,
+      "score_b": 243.38
+    },
+    {
+      "a": 4,
+      "b": 10,
+      "score_a": 247.44,
+      "score_b": 198.11
+    },
+    {
+      "a": 3,
+      "b": 5,
+      "score_a": 275.1,
+      "score_b": 229.33
+    },
+    {
+      "a": 7,
+      "b": 8,
+      "score_a": 184.3,
+      "score_b": 248.04
+    },
+    {
+      "a": 2,
+      "b": 6,
+      "score_a": 214.84,
+      "score_b": 235.76
+    }
+  ],
+  "upcoming": [
+    {
+      "a": 1,
+      "b": 3
+    },
+    {
+      "a": 2,
+      "b": 8
+    },
+    {
+      "a": 4,
+      "b": 6
+    },
+    {
+      "a": 5,
+      "b": 10
+    },
+    {
+      "a": 7,
+      "b": 9
+    }
+  ]
+}
